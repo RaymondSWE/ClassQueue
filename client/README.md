@@ -1,46 +1,100 @@
-# Getting Started with Create React App
+# DistributedQueue Client Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the client application for DistributedQueue built with React and Electron. Follow the setup instructions below to get started.
 
-## Available Scripts
+## Requirements
 
-In the project directory, you can run:
+- Node.js
+- npm
 
-### `npm start`
+### For WSL2 (Windows Subsystem for Linux) Users
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- VcXsrv or any X server software
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Setup Instructions
 
-### `npm test`
+### Windows Users
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the Repository**
 
-### `npm run build`
+    ```bash
+    git clone https://path-to-your-repo.git
+    cd DistributedQueue/client
+    ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Install Dependencies**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    ```bash
+    npm install
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Run the Application**
 
-### `npm run eject`
+    ```bash
+    npm run electron-dev
+    ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Ubuntu Users
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Clone the Repository**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    ```bash
+    git clone https://path-to-your-repo.git
+    cd DistributedQueue/client
+    ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+2. **Install Dependencies**
 
-## Learn More
+    ```bash
+    npm install
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. **Run the Application**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    ```bash
+    npm run electron-dev
+    ```
+
+### WSL2 Users
+
+1. **Install an X Server on Windows**: A recommended choice is [VcXsrv](https://sourceforge.net/projects/vcxsrv/). Download and install it.
+
+2. **Launch VcXsrv**: After installing, launch XLaunch from the start menu. Use default settings and on the final page, for testing purposes, check the box "Disable access control". Finish the setup.
+
+3. **Set up the `DISPLAY` variable in WSL2**: In your WSL2 terminal, add the following:
+
+    ```bash
+    echo 'export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0' >> ~/.bashrc
+    source ~/.bashrc
+    ```
+
+4. **Clone the Repository**
+
+    ```bash
+    git clone https://path-to-your-repo.git
+    cd DistributedQueue/client
+    ```
+
+5. **Install Dependencies**
+
+    ```bash
+    npm install
+    ```
+
+6. **Run the Application**
+
+    ```bash
+    npm run electron-dev
+    ```
+
+## Contributing
+
+If you'd like to contribute, please fork the repository, make your changes, and open a pull request. We greatly appreciate your help!
+
+## Issues
+
+If you encounter any issues, please open an issue on the GitHub repository.
+
+## License
+
+This project is licensed under the MIT License.
