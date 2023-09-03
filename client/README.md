@@ -18,7 +18,7 @@ This is the client application for DistributedQueue built with React and Electro
 1. **Clone the Repository**
 
     ```bash
-    git clone https://path-to-your-repo.git
+    git clone https://github.com/RaymondSWE/DistributedQueue/tree/main
     cd DistributedQueue/client
     ```
 
@@ -39,7 +39,7 @@ This is the client application for DistributedQueue built with React and Electro
 1. **Clone the Repository**
 
     ```bash
-    git clone https://path-to-your-repo.git
+    git clone https://github.com/RaymondSWE/DistributedQueue/tree/main
     cd DistributedQueue/client
     ```
 
@@ -71,7 +71,7 @@ This is the client application for DistributedQueue built with React and Electro
 4. **Clone the Repository**
 
     ```bash
-    git clone https://path-to-your-repo.git
+    git clone https://github.com/RaymondSWE/DistributedQueue/tree/main
     cd DistributedQueue/client
     ```
 
