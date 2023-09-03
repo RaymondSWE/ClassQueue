@@ -11,8 +11,4 @@ This project implements a heterogeneous distributed queue system for supervision
 
 1. Clone the repository:
 
-```bash
-git clone <repository-url>
-```
-
 2. Install the required packages also read the scripts to get going
