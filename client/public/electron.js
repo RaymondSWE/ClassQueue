@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
+const path = require('path');
 
 function createWindow() {
   // Create the browser window.
@@ -8,6 +9,8 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,  
+
     },
   });
 
