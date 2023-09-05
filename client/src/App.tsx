@@ -7,9 +7,9 @@ import { Login } from './components/Login/Login';
 function App() {
   return (
     < >
-      <Navbar role="STUDENT"/>
-      <Login />
-      {/* <StudentClient /> */}
+      <Navbar role="ALL"/>
+      {/* <Login /> */}
+      <StudentClient />
     </>
   );
 }
