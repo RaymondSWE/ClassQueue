@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './StudentClient.css'
 import { Button } from '../Button/Button';
-interface Student {
-  name: string;
-  ticket?: number;
-}
-
-interface Supervisor {
-  name: string;
-  status: 'pending' | 'available' | 'occupied';
-  client?: Student;
-}
-
+import { Student, Supervisor } from '../../types/StudentClientTypes';
 
 export const StudentClient: React.FC = () => {
   const [name, setName] = useState<string>('');
@@ -19,7 +9,6 @@ export const StudentClient: React.FC = () => {
   const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
   const [notification, setNotification] = useState<string | null>(null);
   
-    //mock for design
   useEffect(() => {
     const initialQueue = [
       { name: 'Raman' },
@@ -45,7 +34,6 @@ export const StudentClient: React.FC = () => {
         <input
           type="text"
           placeholder="Server:Port"
-          //... add value and onChange handlers
         />
         <input 
           type="text" 
