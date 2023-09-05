@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './StudentClient.css'
+import { Button } from '../Button/Button';
 interface Student {
   name: string;
 }
@@ -36,7 +37,7 @@ export const StudentClient: React.FC = () => {
           value={name} 
           onChange={handleNameChange} 
         />
-        <button onClick={handleJoinQueue}>Join Queue</button>
+        <Button text= "Join Queue" />
       </div>
       <div className="queue-section">
         <h2>Students in Queue:</h2>

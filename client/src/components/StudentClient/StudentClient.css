@@ -1,44 +1,51 @@
 .student-client {
-    font-family: Arial, sans-serif;
-    max-width: 400px;
-    margin: 10rem auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .input-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .input-section input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    flex: 1;
-    margin-right: 10px;
-  }
-  
-  .input-section button {
-    padding: 8px 12px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .queue-section h2 {
-    margin-top: 0;
-    color: black;
-  }
-  
-  .queue-section ul {
-    list-style-type: none;
-    padding: 0;
-    color: black;
-  }
-  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 400px;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background: rgba(0,0,0,.5);
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+  color: white; 
+}
+
+.input-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input-section input {
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid #fff; 
+  background: transparent;
+  color: white; 
+  outline: none;
+  flex: 1;
+  margin-right: 10px;
+}
+
+
+
+.queue-section h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 10px;
+  font-weight: normal;
+  text-align: center;
+}
+
+.queue-section ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.queue-section li {
+  padding: 5px 0;
+  text-align: center;
+}

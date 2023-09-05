@@ -1,49 +1,13 @@
+html, body {
+  height: 100%;
+}
 
 body {
-  margin: 0;
-  padding: 0;
   font-family: "Roboto", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #c2c2c2;
-  overflow-x: hidden;
+  margin:0;
+  padding:0;
+  font-family: sans-serif;
+  background: linear-gradient(#141e30, #243b55) !important; 
 }
 
-code {
-  font-family: "Fira Code", monospace;
-  color: #ff9800;
-}
-
-button {
-  color: #c2c2c2;
-  background-color: #212121;
-  border: none;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-  border: 3px solid #ff9800;
-  border-radius: 12px;
-}
-
-a {
-  color: #ff9800;
-  text-decoration: none;
-}
-
-
-/* Styles for h1 heading tag.*/
-h1 {
-  color: #c2c2c2;
-  font-weight: 400;
-}
-
-/* Styles for your main container */
-.container {
-  margin: 0 auto;
-  padding: 2em;
-}
 
