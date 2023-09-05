@@ -6,7 +6,7 @@
     padding: 1rem 2rem;
     z-index: 1000;
     font-family: "Orbitron", sans-serif;
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(20, 30, 48, 0.85); 
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
   }
   
@@ -17,7 +17,7 @@
   }
   
   .navbar-container-navbar-logo {
-    color: black;
+    color: white;
     font-size: 1.5rem;
     text-decoration: none;
   }
@@ -35,7 +35,7 @@
   }
   
   .navbar-container-navbar-links {
-    color: black;
+    color: white;
     text-decoration: none;
     position: relative;
     overflow: hidden; 
@@ -50,13 +50,12 @@
     left: 0;
     width: 0%; 
     height: 2px; 
-    background-color: #ff9800; 
+    background-color: #03e9f4;
+    ; 
     transition: width 0.3s; 
   
   }
-  .navbar-container-navbar-links:hover {
-    color: #ff9800;
-  }
+
   
   .navbar-container-navbar-links:hover::before {
     width: 100%; 

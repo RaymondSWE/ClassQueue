@@ -1,0 +1,35 @@
+.custom-button {
+    padding: 10px 20px;
+    background-color: #03e9f4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    transition: 0.5s;
+    cursor: pointer;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.custom-button:hover {
+    background: #02c6d3;
+    box-shadow: 0 0 5px #03e9f4,
+                0 0 25px #03e9f4,
+                0 0 50px #03e9f4,
+                0 0 100px #03e9f4;
+}
+
+
+/* Secondary style */
+.custom-button.secondary {
+    background-color: #f47b85; 
+}
+
+.custom-button.secondary:hover {
+    background: #e3697a;
+    box-shadow: 0 0 5px #f47b85,
+                0 0 25px #f47b85,
+                0 0 50px #f47b85,
+                0 0 100px #f47b85;
+}
