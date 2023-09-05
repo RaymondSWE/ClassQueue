@@ -2,7 +2,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  max-width: 400px;
+  max-width: 600px;
   transform: translate(-50%, -50%);
   padding: 20px;
   background: rgba(0,0,0,.5);
@@ -13,13 +13,36 @@
 
 .input-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; 
+  align-items: center;     
+  justify-content: center; 
   margin-bottom: 20px;
+  gap: 15px;               
+}
+
+.queue-button {
+  width: 80%;
+  margin: auto;
+  margin-left: 50%;
+  margin-right: 50%;
+  border-radius: 20px !important;
+  color: white;
+  font-size: 18px;
+  background: linear-gradient(135deg, #56ab2f, #a8e063);
+}
+
+.queue-button:hover {
+  background: linear-gradient(135deg, #3c9d2c, #90d856) !important; 
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+.queue-button:active {
+  transform: translateY(1px);
 }
 
 .input-section input {
-  padding: 8px 12px;
+  padding: 10px 15px;
   border: none;
   border-bottom: 1px solid #fff; 
   background: transparent;
@@ -27,11 +50,23 @@
   outline: none;
   flex: 1;
   margin-right: 10px;
+  font-size: 18px;
 }
 
+.notification-section {
+  padding: 10px;
+  background: #f05f57; 
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 20px;
+}
 
+.queue-section, .supervisors-section {
+  margin-top: 20px;
+}
 
-.queue-section h2 {
+.queue-section h2, .supervisors-section h2 {
   margin-top: 0;
   border-bottom: 1px solid #fff;
   padding-bottom: 10px;
@@ -39,13 +74,13 @@
   text-align: center;
 }
 
-.queue-section ul {
+.queue-section ul, .supervisors-section ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.queue-section li {
+.queue-section li, .supervisors-section li {
   padding: 5px 0;
   text-align: center;
 }
