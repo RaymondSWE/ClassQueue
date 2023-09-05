@@ -2,47 +2,104 @@ const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
 
-function createWindow() {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,  
+function createMainMenuWindow() {
+    const win = new BrowserWindow({
+        title: "Main Menu",
+        width: 1200,
+        height: 800,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
 
-    },
-  });
+    win.loadURL(
+        isDev
+            ? 'http://localhost:3000/mainmenu'
+            : `file://${path.join(__dirname, '../build/mainmenu.html')}`
+    );
 
-  // and load the index.html of the app.
-  // win.loadFile("index.html");
-  win.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../build/index.html')}`
-  );
-  // Open the DevTools.
-  if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' });
-  }
+    if (isDev) win.webContents.openDevTools({ mode: 'detach' });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+function createStudentWindow() {
+    const win = new BrowserWindow({
+        title: "Students",
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+    win.loadURL(
+        isDev
+            ? 'http://localhost:3000/students'
+            : `file://${path.join(__dirname, '../build/students.html')}`
+    );
+
+    if (isDev) win.webContents.openDevTools({ mode: 'detach' });
+}
+
+function createSupervisorWindow() {
+    const win = new BrowserWindow({
+        title: "Supervisor",
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    win.loadURL(
+        isDev
+            ? 'http://localhost:3000/supervisor'
+            : `file://${path.join(__dirname, '../build/supervisor.html')}`
+    );
+
+    if (isDev) win.webContents.openDevTools({ mode: 'detach' });
+}
+
+function createServerWindow() {
+    const win = new BrowserWindow({
+        title: "Server",
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+    });
+
+    win.loadURL(
+        isDev
+            ? 'http://localhost:3000/server'
+            : `file://${path.join(__dirname, '../build/server.html')}`
+    );
+
+    if (isDev) win.webContents.openDevTools({ mode: 'detach' });
+}
+
+app.whenReady().then(() => {
+    createMainMenuWindow();
+    // createStudentWindow();
+    // createSupervisorWindow();
+    // createServerWindow();
+});
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createMainMenuWindow();
+        createStudentWindow();
+        createSupervisorWindow();
+        createServerWindow();
+    }
 });
