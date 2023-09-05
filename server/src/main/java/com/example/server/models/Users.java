@@ -1,8 +1,6 @@
 package com.example.server.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +14,7 @@ public class Users {
 
     @Id
     private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @NotBlank
     @Size(max = 50)
