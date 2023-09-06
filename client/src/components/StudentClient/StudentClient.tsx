@@ -3,12 +3,13 @@ import './StudentClient.css'
 import { Button } from '../Button/Button';
 import { Student, Supervisor } from '../../types/StudentClientTypes';
 
+
 export const StudentClient: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [queue, setQueue] = useState<Student[]>([]);
   const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
   const [notification, setNotification] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const initialQueue = [
       { name: 'Raman' },
@@ -20,6 +21,7 @@ export const StudentClient: React.FC = () => {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
+
 
   const handleJoinQueue = () => {
     setQueue([...queue, { name }]);
