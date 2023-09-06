@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+/*
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -29,3 +30,20 @@ public class WebSecurityConfig {
     }
 
 }
+
+ */
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable() // Disable CSRF
+                .authorizeRequests()
+                .requestMatchers("/**").permitAll(); // Allow all requests
+
+        return http.build();
+    }
+}
+
+
+
