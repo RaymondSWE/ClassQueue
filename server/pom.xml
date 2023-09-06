@@ -67,6 +67,7 @@
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-zeromq</artifactId>
+
 		</dependency>
 
 		<!-- Spring Boot Starter pack -->
@@ -74,6 +75,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+
+		<!-- JeroMQ https://www.baeldung.com/java-jeromq-zeromq -->
+		<dependency>
+			<groupId>org.zeromq</groupId>
+			<artifactId>jeromq</artifactId>
+			<version>0.5.3</version>
+		</dependency>
+
+
 
 		<!-- add comments whenever u add new dependency -->
 
