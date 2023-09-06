@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./StudentClient.css";
 import { Button } from "../Button/Button";
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid'; 
+import { toast } from 'react-hot-toast';
+
 interface Student {
   name: string;
 }
@@ -11,7 +13,6 @@ export const StudentClient: React.FC = () => {
   const [queue, setQueue] = useState<Student[]>([]);
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState<number>(1);
-
   const indexOfLastStudent = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstStudent = indexOfLastStudent - ITEMS_PER_PAGE;
   const currentStudents = queue.slice(indexOfFirstStudent, indexOfLastStudent);
@@ -70,7 +71,12 @@ export const StudentClient: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        toast.success('Successfully joined the queue!');  
+      }).catch((error) => {
+        console.error(error);
+        toast.error('Failed to join the queue.');  
       });
+
 
     setQueue([...queue, { name }]);
     setName("");
