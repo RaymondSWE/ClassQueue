@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "./Navbar.css";
-import { faUser, faTools, faProjectDiagram, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faTools,
+  faProjectDiagram,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface NavbarProps {
@@ -16,7 +21,9 @@ const Navbar: React.FC<NavbarProps> = ({ role }) => {
         <a href="#hero" className="navbar-container-navbar-logo">
           Queue System
         </a>
-        <ul className={`navbar-container-navbar-menu ${active ? "active" : ""}`}>
+        <ul
+          className={`navbar-container-navbar-menu ${active ? "active" : ""}`}
+        >
           {(role === "STUDENT" || role === "ALL") && (
             <li className="navbar-container-navbar-item">
               <a href="#about" className="navbar-container-navbar-links">

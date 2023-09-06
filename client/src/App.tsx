@@ -1,13 +1,13 @@
-import React from 'react';
-import './App.css';
-import Navbar from './components/Navbar/Navbar';
-import { StudentClient } from './components/StudentClient/StudentClient';
-import { Login } from './components/Login/Login';
+import React from "react";
+import "./App.css";
+import Navbar from "./components/Navbar/Navbar";
+import { StudentClient } from "./components/StudentClient/StudentClient";
+import { Login } from "./components/Login/Login";
 
 function App() {
   return (
-    < >
-      <Navbar role="STUDENT"/>
+    <>
+      <Navbar role="STUDENT" />
       {/* <Login /> */}
       <StudentClient />
     </>
