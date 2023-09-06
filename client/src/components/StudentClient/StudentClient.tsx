@@ -26,7 +26,7 @@ export const StudentClient: React.FC = () => {
     // Use a random client ID for the example, but you'd use something unique
     const clientId = Math.random().toString(36).substring(7);
   
-    fetch("/joinQueue", {
+    fetch("http://localhost:8080/joinQueue", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,11 +38,9 @@ export const StudentClient: React.FC = () => {
     })
     .then(response => response.json())
     .then(data => {
-      // Process server response, for now, let's just log it
       console.log(data);
     });
   
-    // Update state
     setQueue([...queue, { name }]);
     setName('');
   };
