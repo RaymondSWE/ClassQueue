@@ -23,10 +23,30 @@ export const StudentClient: React.FC = () => {
   };
 
   const handleJoinQueue = () => {
+    // Use a random client ID for the example, but you'd use something unique
+    const clientId = Math.random().toString(36).substring(7);
+  
+    fetch("/joinQueue", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: name,
+        clientId: clientId,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Process server response, for now, let's just log it
+      console.log(data);
+    });
+  
+    // Update state
     setQueue([...queue, { name }]);
     setName('');
-    
   };
+  
 
   return (
     <div className="student-client">
@@ -37,7 +57,7 @@ export const StudentClient: React.FC = () => {
           value={name} 
           onChange={handleNameChange} 
         />
-        <Button text= "Join Queue" />
+        <Button text= "Join Queue" onClick={handleJoinQueue} />
       </div>
       <div className="queue-section">
         <h2>Students in Queue:</h2>
