@@ -8,8 +8,8 @@ function App() {
   return (
     < >
       <Navbar role="STUDENT"/>
-      <Login />
-      {/* <StudentClient /> */}
+      {/* <Login /> */}
+      <StudentClient />
     </>
   );
 }
