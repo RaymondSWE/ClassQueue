@@ -3,14 +3,12 @@ import "./StudentClient.css";
 import { Button } from "../Button/Button";
 import { v4 as uuidv4 } from 'uuid'; 
 import { toast } from 'react-hot-toast';
+import { User } from '../../types/User';
 
-interface Student {
-  name: string;
-}
 
 export const StudentClient: React.FC = () => {
   const [name, setName] = useState<string>("");
-  const [queue, setQueue] = useState<Student[]>([]);
+  const [queue, setQueue] = useState<User[]>([]);
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState<number>(1);
   const indexOfLastStudent = currentPage * ITEMS_PER_PAGE;
@@ -55,7 +53,6 @@ export const StudentClient: React.FC = () => {
   };
 
   const handleJoinQueue = () => {
-    // Use a random client ID for the example, but you'd use something unique
     const clientId = uuidv4();
 
     fetch("http://localhost:8080/joinQueue", {
