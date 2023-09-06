@@ -5,10 +5,42 @@
   max-width: 400px;
   transform: translate(-50%, -50%);
   padding: 20px;
-  background: rgba(0,0,0,.5);
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
-  color: white; 
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.queue-section .queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-controls button {
+  background: transparent;
+  border: 1px solid #fff;
+  padding: 5px 10px;
+  margin: 0 3px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.pagination-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .input-section {
@@ -16,27 +48,48 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding: 15px 0;
 }
 
 .input-section input {
   padding: 8px 12px;
   border: none;
-  border-bottom: 1px solid #fff; 
+  border-bottom: 1px solid #fff;
   background: transparent;
-  color: white; 
+  color: white;
   outline: none;
   flex: 1;
   margin-right: 10px;
+  font-size: medium;
 }
 
+.queue-button {
+  background: linear-gradient(90deg, #00b09b, #96c93d);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
 
+.queue-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.queue-button:active {
+  transform: scale(0.95);
+}
 
 .queue-section h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #fff;
-  padding-bottom: 10px;
-  font-weight: normal;
-  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0 15px;
 }
 
 .queue-section ul {
@@ -48,4 +101,13 @@
 .queue-section li {
   padding: 5px 0;
   text-align: center;
+}
+
+.queue-section li:nth-child(odd) {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.05
+  ); /* Slightly darker for odd items */
 }

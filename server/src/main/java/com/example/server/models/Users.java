@@ -33,16 +33,17 @@ public class Users {
     @Size(max = 100)
     private String email;
 
-    public Users(Long id, String username, String password, String mobilenummer, String email) {
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Role role;
+
+    public Users(Long id, String username, String password, String mobilenummer, String email, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.mobilenummer = mobilenummer;
         this.email = email;
-    }
-
-    public Users() {
-
+        this.role = role;
     }
 
     public Long getId() {
@@ -85,17 +86,25 @@ public class Users {
         this.email = email;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Users users = (Users) o;
-        return Objects.equals(id, users.id) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(mobilenummer, users.mobilenummer) && Objects.equals(email, users.email);
+        return Objects.equals(id, users.id) && Objects.equals(username, users.username) && Objects.equals(password, users.password) && Objects.equals(mobilenummer, users.mobilenummer) && Objects.equals(email, users.email) && role == users.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, mobilenummer, email);
+        return Objects.hash(id, username, password, mobilenummer, email, role);
     }
 
     @Override
@@ -106,7 +115,7 @@ public class Users {
                 ", password='" + password + '\'' +
                 ", mobilenummer='" + mobilenummer + '\'' +
                 ", email='" + email + '\'' +
+                ", role=" + role +
                 '}';
     }
-
 }

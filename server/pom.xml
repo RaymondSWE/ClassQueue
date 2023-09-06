@@ -29,12 +29,13 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- MySQL Connector -->
+		<!-- MySQL Connector
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.26</version>
 		</dependency>
+		-->
 
 		<!-- Security -->
 		<dependency>
@@ -67,6 +68,7 @@
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-zeromq</artifactId>
+
 		</dependency>
 
 		<!-- Spring Boot Starter pack -->
@@ -74,6 +76,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+
+		<!-- JeroMQ https://www.baeldung.com/java-jeromq-zeromq -->
+		<dependency>
+			<groupId>org.zeromq</groupId>
+			<artifactId>jeromq</artifactId>
+			<version>0.5.3</version>
+		</dependency>
+
+
 
 		<!-- add comments whenever u add new dependency -->
 
