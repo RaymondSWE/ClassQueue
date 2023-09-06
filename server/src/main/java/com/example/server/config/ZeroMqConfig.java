@@ -15,7 +15,7 @@ public class ZeroMqConfig {
     public ZMQ.Socket zmqSubscriberSocket(ZMQ.Context context) {
         ZMQ.Socket subscriber = context.socket(ZMQ.SUB);
         subscriber.connect("tcp://ds.iit.his.se:5555");
-        subscriber.subscribe(""); // Empty string to receive all messages.
+        subscriber.subscribe(""); // receive all messages.
         return subscriber;
     }
 
