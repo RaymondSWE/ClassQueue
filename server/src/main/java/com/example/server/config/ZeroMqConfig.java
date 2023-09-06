@@ -1,36 +1,28 @@
 package com.example.server.config;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.zeromq.channel.SubscribableZmqChannel;
-import org.springframework.integration.zeromq.inbound.ZmqMessageDrivenChannelAdapter;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHandler;
+import org.zeromq.ZMQ;
 
 @Configuration
 public class ZeroMqConfig {
 
     @Bean
-    public SubscribableZmqChannel zmqChannel() {
-        return new SubscribableZmqChannel("tcp://ds.iit.his.se:5555", "sub");
+    public ZMQ.Context zmqContext() {
+        return ZMQ.context(1);
     }
 
     @Bean
-    public ZmqMessageDrivenChannelAdapter messageDrivenChannelAdapter() {
-        ZmqMessageDrivenChannelAdapter adapter = new ZmqMessageDrivenChannelAdapter(zmqChannel());
-        adapter.setOutputChannelName("outputChannel");
-        return adapter;
+    public ZMQ.Socket zmqSubscriberSocket(ZMQ.Context context) {
+        ZMQ.Socket subscriber = context.socket(ZMQ.SUB);
+        subscriber.connect("tcp://ds.iit.his.se:5555");
+        subscriber.subscribe(""); // Empty string to receive all messages.
+        return subscriber;
     }
 
     @Bean
-    public MessageHandler outboundAdapter() {
-        return new MessageHandler() {
-
-            @Override
-            public void handleMessage(Message<?> message) throws Exception {
-                // Handle incoming message from ZeroMQ subscription here.
-                System.out.println("Received: " + message.getPayload());
-            }
-        };
+    public ZMQ.Socket zmqRequestSocket(ZMQ.Context context) {
+        ZMQ.Socket requester = context.socket(ZMQ.REQ);
+        requester.connect("tcp://ds.iit.his.se:5556");
+        return requester;
     }
 }
