@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './StudentClient.css'
+import './StudentClient.css';
 import { Button } from '../Button/Button';
 import { Student, Supervisor } from '../../types/StudentClientTypes';
 import { createZmqSubscriber } from './reqSubscriber';
-
-
 
 export const StudentClient: React.FC = () => {
   const [name, setName] = useState<string>('');
@@ -19,47 +17,19 @@ export const StudentClient: React.FC = () => {
     ];
     setQueue(initialQueue);
   }, []);
-  useEffect(() => {
-    if (!name) return;  // Guard clauses
 
-    const subscriber = createZmqSubscriber(name, setQueue, setNotification);
-    console.log("ZMQ subscriber created:", subscriber);
-
-    return () => {
-        // Clean up the subscriber when the component unmounts.
-        subscriber.disconnect("tcp://ds.iit.his.se:5555");
-        subscriber.close();
-    };
-}, [name]);
-
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-
-  const handleJoinQueue = () => {
-    setQueue([...queue, { name }]);
-    setName('');
-    
-  };
 
   return (
     <div className="student-client">
     <div className="input-section">
       <div className="input-group">  
-        <input
-          type="text"
-          placeholder="Server:Port"
-        />
         <input 
           type="text" 
           placeholder="Enter your name" 
           value={name} 
-          onChange={handleNameChange} 
         />
       </div>
-      <Button text="Join Queue" className='queue-button' onClick={handleJoinQueue} />
+      <Button text="Join Queue" className='queue-button' />
     </div>
       <div className="queue-section">
         <h2>Students in Queue:</h2>
