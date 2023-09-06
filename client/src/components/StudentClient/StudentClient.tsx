@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './StudentClient.css'
 import { Button } from '../Button/Button';
 import { Student, Supervisor } from '../../types/StudentClientTypes';
+import { createZmqSubscriber } from './reqSubscriber';
+
 
 
 export const StudentClient: React.FC = () => {
@@ -17,6 +19,19 @@ export const StudentClient: React.FC = () => {
     ];
     setQueue(initialQueue);
   }, []);
+  useEffect(() => {
+    if (!name) return;  // Guard clauses
+
+    const subscriber = createZmqSubscriber(name, setQueue, setNotification);
+    console.log("ZMQ subscriber created:", subscriber);
+
+    return () => {
+        // Clean up the subscriber when the component unmounts.
+        subscriber.disconnect("tcp://ds.iit.his.se:5555");
+        subscriber.close();
+    };
+}, [name]);
+
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
