@@ -1,7 +1,6 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
-const zmq = require('zeromq');
 
 const windowsConfigurations = {
     mainMenu: {
@@ -50,22 +49,9 @@ function createWindow(config) {
 
     if (isDev) win.webContents.openDevTools({ mode: 'detach' });
 
-    if (config.zmqConfig) {
-        setupZmqListeners(win);
-    }
 }
 
-function setupZmqListeners(win) {
-    const subscriber = zmq.socket('sub');
-    subscriber.connect('tcp://ds.iit.his.se:5555');
-    subscriber.subscribe('');
-    subscriber.on('message', message => {
-        win.webContents.send('zmq-message', message.toString());
-    });
 
-    const requester = zmq.socket('req');
-    requester.connect('tcp://ds.iit.his.se:5556');
-}
 
 app.whenReady().then(() => {
     createWindow(windowsConfigurations.mainMenu);
