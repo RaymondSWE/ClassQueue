@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
+const zmq = require('zeromq');
 
 function createMainMenuWindow() {
     const win = new BrowserWindow({
@@ -20,6 +21,19 @@ function createMainMenuWindow() {
     );
 
     if (isDev) win.webContents.openDevTools({ mode: 'detach' });
+
+        // Setup ZMQ subscriber socket
+        const subscriber = zmq.socket('sub');
+        subscriber.connect('tcp://ds.iit.his.se:5555');
+        subscriber.subscribe('');
+        subscriber.on('message', (message) => {
+            win?.webContents.send('zmq-message', message.toString());
+        });
+    
+        // Setup ZMQ request socket (this is simplified, you'd use it when you need it)
+        const requester = zmq.socket('req');
+        requester.connect('tcp://ds.iit.his.se:5556');
+        // Example usage: requester.send('some request');
 }
 
 function createStudentWindow() {
