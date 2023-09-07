@@ -1,4 +1,3 @@
-// hooks/useZmqListener.ts
 import { useState, useEffect } from "react";
 const { ipcRenderer } = window.require('electron');
 
