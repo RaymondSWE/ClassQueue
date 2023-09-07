@@ -4,22 +4,16 @@ import Navbar from "./components/Navbar/Navbar";
 import { StudentClient } from "./components/StudentClient/StudentClient";
 import { Login } from "./components/Login/Login";
 import { Toaster, toast } from 'react-hot-toast';
-const { ipcRenderer } = window.require('electron');
+import useZmqListener from './hooks/useZmqListener';
 
 function App() {
-  const [zmqMessages, setZmqMessages] = useState<string[]>([]);
+  const zmqMessages = useZmqListener();
 
   useEffect(() => {
-    ipcRenderer.on('zmq-message', (_event: any, message: string) => {
-      setZmqMessages(prev => [...prev, message]);
-      // Notifying via toast
-      toast(`New ZMQ message: ${message}`);
-    });
-
-    return () => {
-      ipcRenderer.removeAllListeners('zmq-message');
-    };
-  }, []);
+      zmqMessages.forEach(message => {
+          toast(`New ZMQ message: ${message}`);
+      });
+  }, [zmqMessages]);
 
   return (
     <>
