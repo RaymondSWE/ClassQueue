@@ -1,0 +1,45 @@
+.zmq-messages {
+    position: absolute;
+    top: 20%; 
+    left: 50%;
+    max-width: 400px;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: auto; 
+    max-height: 30%; 
+  }
+  
+  .zmq-messages h3 {
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    margin-bottom: 15px;
+  }
+  
+  .zmq-messages ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .zmq-messages li {
+    padding: 5px 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+  }
+  
+  .zmq-messages li:last-child {
+    border-bottom: none;
+  }
+  
+  .zmq-messages li:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.05); 
+  }
+  
