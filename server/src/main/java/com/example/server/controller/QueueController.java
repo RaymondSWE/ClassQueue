@@ -11,14 +11,14 @@ import org.zeromq.ZMQ;
 public class QueueController {
 
     @Autowired
-    private ZMQ.Socket zmqRequestSocket;
+    private ZMQ.Socket zmqResponseSocket;
 
     @PostMapping("/joinQueue")
     public String joinQueue(@RequestBody Users user) {
         String message = String.format("{\"enterQueue\":true,\"name\":\"%s\",\"clientId\":\"someUniqueId\"}", user.getUsername());
-        zmqRequestSocket.send(message);
+        zmqResponseSocket.send(message);
 
-        String response = zmqRequestSocket.recvStr();
+        String response = zmqResponseSocket.recvStr();
 
         return response;
     }
