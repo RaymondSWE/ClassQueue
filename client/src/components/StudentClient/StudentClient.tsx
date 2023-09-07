@@ -4,8 +4,6 @@ import { Button } from "../Button/Button";
 import { v4 as uuidv4 } from 'uuid'; 
 import { toast } from 'react-hot-toast';
 import { User } from '../../types/User';
-const electron = window.require('electron');
-const ipcRenderer = electron.ipcRenderer;
 
 
 export const StudentClient: React.FC = () => {
@@ -23,8 +21,6 @@ export const StudentClient: React.FC = () => {
     }
   };
 
-  
-
   const handlePrev = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -36,6 +32,18 @@ export const StudentClient: React.FC = () => {
     const initialQueue = [
       { name: "Raman" },
       { name: "Nibar" },
+      { name: "test2" },
+      { name: "test4" },
+      { name: "tes6" },
+      { name: "dsdas" },
+      { name: "zxzxz" },
+      { name: "bvbv" },
+      { name: "tyt" },
+      { name: "Nibar" },
+      { name: "hghg" },
+      { name: "Nibar" },
+      { name: "nbnb" },
+      { name: "Nibar" },
     ];
     setQueue(initialQueue);
   }, []);
@@ -44,22 +52,32 @@ export const StudentClient: React.FC = () => {
     setName(e.target.value);
   };
 
-  
-
   const handleJoinQueue = () => {
     const clientId = uuidv4();
-    console.log("[Renderer] Join Queue Button Clicked - Name:", name, "ClientID:", clientId);
 
-    
-    ipcRenderer.send('join-queue', {
-      enterQueue: true,
-      name: name,
-      clientId: clientId
-      
-    });
+    fetch("http://localhost:8080/joinQueue", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: name,
+        clientId: clientId,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        toast.success('Successfully joined the queue!');  
+      }).catch((error) => {
+        console.error(error);
+        toast.error('Failed to join the queue.');  
+      });
+
+
+    setQueue([...queue, { name }]);
+    setName("");
   };
-  
-
 
   return (
     <div className="student-client">

@@ -1,4 +1,3 @@
-import { setupZmqListeners } from './services/zmqService';
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
@@ -50,9 +49,6 @@ function createWindow(config) {
 
     if (isDev) win.webContents.openDevTools({ mode: 'detach' });
 
-    if (config.zmqConfig) {
-        setupZmqListeners(win);
-    }
 }
 
 

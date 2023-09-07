@@ -1,11 +1,10 @@
 import zmq
 import tkinter as tk
-from tkinter import ttk, messagebox, Listbox
+from tkinter import ttk, simpledialog, messagebox, Listbox
 import json
 import uuid
 
 context = zmq.Context()
-
 # Subscriber socket to listen for queue updates
 sub_socket = context.socket(zmq.SUB)
 sub_socket.setsockopt_string(zmq.SUBSCRIBE, 'queue')
@@ -47,9 +46,9 @@ class QueueClient(tk.Tk):
         self.queue_listbox = Listbox(self.queue_section, height=10)
         self.queue_listbox.grid(row=1, column=0, columnspan=2)
 
-        # Listen for messages and send heartbeats
+        # Listen for messages
         self.after(1000, self.listen_for_updates)
-        self.after(3000, self.send_heartbeat)  # Send heartbeat every 3 seconds
+        self.after(3000, self.send_heartbeat)
 
     def join_queue(self):
         name = self.name_entry.get()
