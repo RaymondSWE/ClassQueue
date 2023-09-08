@@ -20,23 +20,24 @@ public class QueueController {
     private ZMQ.Socket zmqPublisherSocket;
 
     private List<Users> queue = new ArrayList<>();
-/*
-    @PostMapping("/joinQueue")
-    public String joinQueue(@RequestBody Users user) {
-        String message = String.format("{\"enterQueue\":true,\"name\":\"%s\",\"clientId\":\"someUniqueId\"}", user.getUsername());
-        zmqResponseSocket.send(message);
 
-        String response = zmqResponseSocket.recvStr();
+    @PostMapping("/joinQueue")
+    public void joinQueue(@RequestBody Users user) {
+
+        String message = String.format("{\"enterQueue\":true,\"name\":\"%s\",\"clientId\":\"someUniqueId\"}", user.getUsername());
+        while(!Thread.currentThread().interrupted())
+        {
+                                    String reply = zmqResponseSocket.recvStr();
+        zmqResponseSocket.send(message.getBytes(zmq.ZMQ.CHARSET), 0);
 
         queue.add(user);
 
         // Broadcast queue status
         broadcastQueueStatus();
-
-        return response;
+        }
     }
-*/
-/* 
+
+
     private void broadcastQueueStatus() {
         String queueStatus = "[";
 
@@ -51,5 +52,5 @@ public class QueueController {
 
         zmqPublisherSocket.send("queue " + queueStatus);
     }
- */
+ 
 }
