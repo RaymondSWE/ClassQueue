@@ -1,8 +1,6 @@
 import uuid
 from tkinter import messagebox
-from network.zmq_handler import ZMQHandler
-
-
+from config.zmq_handler import ZMQHandler
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
