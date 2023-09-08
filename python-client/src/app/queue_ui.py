@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Listbox, messagebox
+from tkinter import ttk, Listbox
 
 
 class QueueUI(tk.Tk):
