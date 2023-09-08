@@ -21,7 +21,7 @@ class ZMQHandler:
         self.srvReqSocket.connect("tcp://localhost:5600")
         self.srvSubSocket.connect("tcp://localhost:5500")
 
-    def send_request(self, data):
+    def send_request(self, data, socket):
         self.req_socket.send_json(data)
         return self.req_socket.recv_json()
 

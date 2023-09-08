@@ -20,7 +20,7 @@ class QueueLogic:
             "enterQueue": True,
             "name": name,
             "clientId": self.client_id
-        })
+        }, self.zmq_handler.req_socket)
 
         ticket = response.get('ticket', None)
         if ticket:
@@ -32,7 +32,7 @@ class QueueLogic:
         response = self.zmq_handler.send_request({
             "name": self.ui.name_entry.get(),
             "clientId": self.client_id
-        })
+        }, self.zmq_handler.req_socket)
         error = response.get('error', None)
         if error:
             messagebox.showerror("Server Error", response['msg'])
