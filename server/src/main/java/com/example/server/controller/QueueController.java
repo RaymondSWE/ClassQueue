@@ -32,13 +32,13 @@ public class QueueController {
 
         queue.add(user);
 
-        // Broadcast queue status
-        broadcastQueueStatus();
+        // Broadcast queue status. note it's a hard coded value for now for testing purposes.
+        broadcastQueueStatus("queue");
         }
     }
 
 
-    private void broadcastQueueStatus() {
+    private void broadcastQueueStatus(String topic) {
         String queueStatus = "[";
 
         for (int i = 0; i < queue.size(); i++) {
@@ -49,7 +49,7 @@ public class QueueController {
         }
 
         queueStatus += "]";
-
+        zmqPublisherSocket.sendMore(topic);
         zmqPublisherSocket.send("queue " + queueStatus);
     }
  
