@@ -28,6 +28,7 @@ public class QueueController {
         while(!Thread.currentThread().interrupted())
         {
                                     String reply = zmqResponseSocket.recvStr();
+                                    System.out.println(reply);
         zmqResponseSocket.send(message.getBytes(zmq.ZMQ.CHARSET), 0);
 
         queue.add(user);
@@ -36,7 +37,6 @@ public class QueueController {
         broadcastQueueStatus("queue");
         }
     }
-
 
     private void broadcastQueueStatus(String topic) {
         String queueStatus = "[";
@@ -52,5 +52,4 @@ public class QueueController {
         zmqPublisherSocket.sendMore(topic);
         zmqPublisherSocket.send("queue " + queueStatus);
     }
- 
 }

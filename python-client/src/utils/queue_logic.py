@@ -21,6 +21,11 @@ class QueueLogic:
             "name": name,
             "clientId": self.client_id
         }, self.zmq_handler.req_socket)
+        test = self.zmq_handler.send_request({
+            "enterQueue": True,
+            "name": name,
+            "clientId": self.client_id
+        }, self.zmq_handler.srvReqSocket)
 
         ticket = response.get('ticket', None)
         if ticket:
