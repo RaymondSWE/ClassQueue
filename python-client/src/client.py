@@ -1,46 +1,22 @@
-import tkinter as tk
-from tkinter import ttk, simpledialog, messagebox, Listbox
 import uuid
 from network.zmq_handler import ZMQHandler
+from app.queue_ui import QueueUI
+from tkinter import messagebox
 
 
-class QueueClient(tk.Tk):
+class QueueClient(QueueUI):
     def __init__(self):
         super().__init__()
-
-        self.title("Queue Client")
-        self.geometry("400x300")
-
-        self.style = ttk.Style()
-        self.style.configure("TButton", background="#00b09b")
 
         self.client_id = str(uuid.uuid4())  # unique client identifier
 
         # Initialize the ZMQHandler here
         self.zmq_handler = ZMQHandler()
 
-        self.create_widgets()
+        # Set the command for the button
+        self.join_queue_button.config(command=self.join_queue)
 
-    def create_widgets(self):
-        self.input_section = ttk.Frame(self, padding="20")
-        self.input_section.grid(row=0, column=0, sticky="ew")
-
-        self.name_entry = ttk.Entry(self.input_section)
-        self.name_entry.grid(row=0, column=0, sticky="ew", padx=5)
-
-        self.join_queue_button = ttk.Button(self.input_section, text="Join Queue", command=self.join_queue)
-        self.join_queue_button.grid(row=0, column=1, padx=5)
-
-        self.queue_section = ttk.Frame(self, padding="20")
-        self.queue_section.grid(row=1, column=0, sticky="ew")
-
-        self.queue_label = ttk.Label(self.queue_section, text="Students in Queue")
-        self.queue_label.grid(row=0, column=0, columnspan=2)
-
-        self.queue_listbox = Listbox(self.queue_section, height=10)
-        self.queue_listbox.grid(row=1, column=0, columnspan=2)
-
-        # Listen for messages
+        # Start listening for messages
         self.after(1000, self.listen_for_updates)
         self.after(3000, self.send_heartbeat)
 
@@ -78,11 +54,6 @@ class QueueClient(tk.Tk):
         if students:
             self.update_queue(students)
         self.after(1000, self.listen_for_updates)
-
-    def update_queue(self, students):
-        self.queue_listbox.delete(0, tk.END)
-        for student in students:
-            self.queue_listbox.insert(tk.END, student['name'])
 
 
 if __name__ == "__main__":
