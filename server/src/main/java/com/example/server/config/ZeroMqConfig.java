@@ -12,16 +12,17 @@ public class ZeroMqConfig {
     }
 
     @Bean
-    public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
-        ZMQ.Socket publisher = context.socket(ZMQ.PUB);
-        publisher.connect("tcp://ds.iit.his.se:5555");
-        return publisher;
+    public ZMQ.Socket zmqSubscriberSocket(ZMQ.Context context) {
+        ZMQ.Socket subscriber = context.socket(ZMQ.SUB);
+        subscriber.connect("tcp://ds.iit.his.se:5555");
+        subscriber.subscribe(""); // receive all messages.
+        return subscriber;
     }
 
     @Bean
-    public ZMQ.Socket zmqResponseSocket(ZMQ.Context context) {
-        ZMQ.Socket responseSocket = context.socket(ZMQ.REP);
-        responseSocket.connect("tcp://ds.iit.his.se:5556");
-        return responseSocket;
+    public ZMQ.Socket zmqRequestSocket(ZMQ.Context context) {
+        ZMQ.Socket requester = context.socket(ZMQ.REQ);
+        requester.connect("tcp://ds.iit.his.se:5556");
+        return requester;
     }
 }
