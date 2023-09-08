@@ -43,17 +43,7 @@ export const StudentClient: React.FC = () => {
 
   const handleJoinQueue = () => {
     const clientId = uuidv4();
-  //   ipcRenderer.send('join-queue', { name, clientId });
-  // };
 
-  // useEffect(() => {
-  //   ipcRenderer.on('update-queue', (event: any, students: User[]) => {
-  //       setQueue(students);
-  //   });
-
-  //   return () => {
-  //       ipcRenderer.removeAllListeners('update-queue');
-  //   };
   };
 
 
