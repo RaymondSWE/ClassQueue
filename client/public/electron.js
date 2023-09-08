@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const path = require('path');
+const zmq = require('zeromq');
 
+let mainWindow; // Declare mainWindow variable at the top of your file
 const windowsConfigurations = {
     mainMenu: {
         title: "Main Menu",
@@ -30,6 +32,43 @@ const windowsConfigurations = {
     }
 };
 
+// Create a ZeroMQ Subscriber socket
+let subSocket = zmq.socket('sub');
+subSocket.subscribe('queue');
+subSocket.connect('tcp://ds.iit.his.se:5555');
+
+// Create a ZeroMQ Request socket
+let reqSocket = zmq.socket('req');
+reqSocket.connect('tcp://ds.iit.his.se:5556');
+
+
+// Listen for 'join-queue' event from React
+ipcMain.on('join-queue', (event, { name, clientId }) => {
+    reqSocket.send(JSON.stringify({
+        enterQueue: true,
+        name: name,
+        clientId: clientId
+    }));
+
+    reqSocket.on('message', (response) => {
+        response = JSON.parse(response);
+        let ticket = response.ticket;
+        if (ticket) {
+            // Send response to React component
+            event.reply('update-queue', ticket);
+        } else {
+            // Handle error
+        }
+    });
+});
+
+subSocket.on('message', (topic, message) => {
+    let students = JSON.parse(message);
+    mainWindow.webContents.send('update-queue', students);
+});
+
+
+
 function createWindow(config) {
     const win = new BrowserWindow({
         title: config.title,
@@ -37,7 +76,9 @@ function createWindow(config) {
         height: config.height,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
+            enableRemoteModule: true // also set this to true
+
         }
     });
 

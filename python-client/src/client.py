@@ -1,18 +1,8 @@
-import zmq
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox, Listbox
-import json
 import uuid
+from network.zmq_handler import ZMQHandler
 
-context = zmq.Context()
-# Subscriber socket to listen for queue updates
-sub_socket = context.socket(zmq.SUB)
-sub_socket.setsockopt_string(zmq.SUBSCRIBE, 'queue')
-sub_socket.connect('tcp://ds.iit.his.se:5555')
-
-# Request socket to send commands and receive responses
-req_socket = context.socket(zmq.REQ)
-req_socket.connect('tcp://ds.iit.his.se:5556')
 
 class QueueClient(tk.Tk):
     def __init__(self):
@@ -25,6 +15,10 @@ class QueueClient(tk.Tk):
         self.style.configure("TButton", background="#00b09b")
 
         self.client_id = str(uuid.uuid4())  # unique client identifier
+
+        # Initialize the ZMQHandler here
+        self.zmq_handler = ZMQHandler()
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -57,14 +51,12 @@ class QueueClient(tk.Tk):
             return
         print("Joining queue with name:", name)
 
-        # Send request to join the queue
-        req_socket.send_json({
+        response = self.zmq_handler.send_request({
             "enterQueue": True,
             "name": name,
             "clientId": self.client_id
         })
-        # Get the response from the server
-        response = req_socket.recv_json()
+
         ticket = response.get('ticket', None)
         if ticket:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
@@ -72,24 +64,19 @@ class QueueClient(tk.Tk):
             messagebox.showerror("Error", "Failed to join the queue.")
 
     def send_heartbeat(self):
-        req_socket.send_json({
+        response = self.zmq_handler.send_request({
             "name": self.name_entry.get(),
             "clientId": self.client_id
         })
-        response = req_socket.recv_json()
         error = response.get('error', None)
         if error:
             messagebox.showerror("Server Error", response['msg'])
         self.after(3000, self.send_heartbeat)
 
     def listen_for_updates(self):
-        try:
-            # Check for new messages
-            topic, msg = sub_socket.recv_multipart(zmq.NOBLOCK)
-            students = json.loads(msg.decode())
+        students = self.zmq_handler.check_for_updates()
+        if students:
             self.update_queue(students)
-        except zmq.Again:
-            pass
         self.after(1000, self.listen_for_updates)
 
     def update_queue(self, students):

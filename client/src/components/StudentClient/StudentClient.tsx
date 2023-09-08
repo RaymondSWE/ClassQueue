@@ -32,18 +32,7 @@ export const StudentClient: React.FC = () => {
     const initialQueue = [
       { name: "Raman" },
       { name: "Nibar" },
-      { name: "test2" },
-      { name: "test4" },
-      { name: "tes6" },
-      { name: "dsdas" },
-      { name: "zxzxz" },
-      { name: "bvbv" },
-      { name: "tyt" },
-      { name: "Nibar" },
-      { name: "hghg" },
-      { name: "Nibar" },
-      { name: "nbnb" },
-      { name: "Nibar" },
+
     ];
     setQueue(initialQueue);
   }, []);
@@ -54,30 +43,19 @@ export const StudentClient: React.FC = () => {
 
   const handleJoinQueue = () => {
     const clientId = uuidv4();
+  //   ipcRenderer.send('join-queue', { name, clientId });
+  // };
 
-    fetch("http://localhost:8080/joinQueue", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: name,
-        clientId: clientId,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        toast.success('Successfully joined the queue!');  
-      }).catch((error) => {
-        console.error(error);
-        toast.error('Failed to join the queue.');  
-      });
+  // useEffect(() => {
+  //   ipcRenderer.on('update-queue', (event: any, students: User[]) => {
+  //       setQueue(students);
+  //   });
 
-
-    setQueue([...queue, { name }]);
-    setName("");
+  //   return () => {
+  //       ipcRenderer.removeAllListeners('update-queue');
+  //   };
   };
+
 
   return (
     <div className="student-client">
