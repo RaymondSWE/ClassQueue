@@ -14,14 +14,31 @@ public class ZeroMqConfig {
     @Bean
     public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
         ZMQ.Socket publisher = context.socket(ZMQ.PUB);
-        publisher.connect("tcp://ds.iit.his.se:5555");
+    publisher.bind("tcp://*:5555");
         return publisher;
     }
 
     @Bean
     public ZMQ.Socket zmqResponseSocket(ZMQ.Context context) {
         ZMQ.Socket responseSocket = context.socket(ZMQ.REP);
-        responseSocket.connect("tcp://ds.iit.his.se:5556");
+        responseSocket.bind("tcp://*:5556");
+        new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    byte[] reply = responseSocket.recv(0);
+                    System.out.println("Received: [" + new String(reply, ZMQ.CHARSET) + "]");
+    
+                    // Do some 'work' here
+                    Thread.sleep(1000);
+    
+                    String response = "world";
+                    responseSocket.send(response.getBytes(ZMQ.CHARSET), 0);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }).start();
         return responseSocket;
     }
 }
