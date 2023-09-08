@@ -1,0 +1,20 @@
+# Ignore JetBrains IDE settings
+.idea/
+
+# Ignore Node.js modules
+node_modules/
+
+# Ignore compiled Python files
+*.pyc
+
+# Ignore compiled TypeScript files
+*.js
+*.js.map
+
+# Ignore compiled Electron build output (if applicable)
+/build/
+
+# Ignore compiled Spring Boot build output (if applicable)
+/target/
+/bin/
+/out/
