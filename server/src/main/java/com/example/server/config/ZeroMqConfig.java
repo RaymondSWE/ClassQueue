@@ -19,15 +19,15 @@ public class ZeroMqConfig {
 
     @Bean
     public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
-        ZMQ.Socket publisher = context.socket(ZMQ.PUB);
+        ZMQ.Socket publisherSocket = context.socket(ZMQ.PUB);
         try {
-            publisher.bind("tcp://*:5500");
+            publisherSocket.bind("tcp://*:5500");
             logger.info("Publisher socket bound successfully to tcp://*:5500");
         } catch (Exception e) {
             logger.error("Error binding the publisher socket", e);
             throw new SocketBindingException("Error binding the publisher socket: " + e.getMessage());
         }
-        return publisher;
+        return publisherSocket;
     }
 
     @Bean
@@ -42,4 +42,7 @@ public class ZeroMqConfig {
         }
         return responseSocket;
     }
+
+
+
 }
