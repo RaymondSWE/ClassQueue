@@ -11,6 +11,7 @@ import org.zeromq.ZMQ;
 public class TinyQueueApiConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(TinyQueueApiConfig.class);
+    // This tinyQueueSubscriberSocket listens for broadcasted updates from the TinyQueue API.
 
     @Bean
     public ZMQ.Socket tinyQueueSubscriberSocket(ZMQ.Context zmqContext) {
@@ -25,6 +26,7 @@ public class TinyQueueApiConfig {
         }
         return subscriberSocket;
     }
+    // This tinyQueueRequesterSocket sends individual requests to TinyQueue API and receives responses.
 
     @Bean
     public ZMQ.Socket tinyQueueRequesterSocket(ZMQ.Context zmqContext) {

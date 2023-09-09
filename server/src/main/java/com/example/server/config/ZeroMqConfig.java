@@ -17,6 +17,8 @@ public class ZeroMqConfig {
         return ZMQ.context(1);
     }
 
+
+    // This zmqPublisherSocket broadcasts messages to all connected clients.
     @Bean
     public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
         ZMQ.Socket publisherSocket = context.socket(ZMQ.PUB);
@@ -29,6 +31,7 @@ public class ZeroMqConfig {
         }
         return publisherSocket;
     }
+    // This zmqResponseSocket listens for client requests and sends back individual replies.
 
     @Bean
     public ZMQ.Socket zmqResponseSocket(ZMQ.Context context) {
