@@ -15,13 +15,8 @@ class ZMQHandler:
         # Request socket to send commands and receive responses
         self.req_socket = self.context.socket(zmq.REQ)
         self.req_socket.connect('tcp://ds.iit.his.se:5556')
-        self.srvReqSocket=self.context.socket(zmq.REQ)
-        self.srvSubSocket=self.context.socket(zmq.SUB)
-        self.srvSubSocket.setsockopt_string(zmq.SUBSCRIBE, 'queue')
-        self.srvReqSocket.connect("tcp://localhost:5600")
-        self.srvSubSocket.connect("tcp://localhost:5500")
 
-    def send_request(self, data, socket):
+    def send_request(self, data):
         self.req_socket.send_json(data)
         return self.req_socket.recv_json()
 
