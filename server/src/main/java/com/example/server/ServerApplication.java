@@ -13,15 +13,15 @@ import javax.annotation.PostConstruct;
 public class ServerApplication {
 
 	@Autowired
-	private QueueMessageService tinyQueueSubscriberService;
+	private QueueMessageService queueMessageService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
 
 	@PostConstruct
-	public void startSubscriberThread() {
-		Thread subscriberThread = new Thread(tinyQueueSubscriberService);
-		subscriberThread.start();
+	public void startQueueThread() {
+		Thread queueThread = new Thread(queueMessageService);
+		queueThread.start();
 	}
 }

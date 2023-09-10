@@ -14,10 +14,10 @@ public class QueueMessageService implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(QueueMessageService.class);
     private final QueueService queueService;
 
-    private final ZMQ.Socket subscriberSocket;
+    private final ZMQ.Socket responseSocket;
 
-    public QueueMessageService(ZMQ.Socket tinyQueueSubscriberSocket, QueueService queueService) {
-        this.subscriberSocket = tinyQueueSubscriberSocket;
+    public QueueMessageService(ZMQ.Socket responseSocket, QueueService queueService) {
+        this.responseSocket = responseSocket;
         this.queueService = queueService;
     }
 
@@ -25,7 +25,7 @@ public class QueueMessageService implements Runnable {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                String msg = new String(subscriberSocket.recv(), ZMQ.CHARSET);
+                String msg = new String(responseSocket.recv(), ZMQ.CHARSET);
                 System.out.println(msg);
             } catch (Exception e) {
                 logger.error("Error receiving message from the client", e);
