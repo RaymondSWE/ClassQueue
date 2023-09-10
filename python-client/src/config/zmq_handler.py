@@ -32,3 +32,11 @@ class ZMQHandler:
             return json.loads(msg.decode())
         except zmq.Again:
             return None
+    def check_for_SERVER_updates(self):
+        try:
+            # Check for new messages
+            topic, msg = self.srvSubSocket.recv_multipart(zmq.NOBLOCK)
+            print(json.loads(msg.decode()))
+            return json.loads(msg.decode())
+        except zmq.Again:
+            return None

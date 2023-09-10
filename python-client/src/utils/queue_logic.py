@@ -12,7 +12,6 @@ class QueueLogic:
         if not name:
             messagebox.showerror("Error", "Name cannot be empty!")
             return
-        print("Joining queue with name:", name)
 
         response = self.zmq_handler.send_request({
             "enterQueue": True,
@@ -41,6 +40,7 @@ class QueueLogic:
             messagebox.showerror("Server Error", response['msg'])
 
     def listen_for_updates(self):
+        serverUpdates=self.zmq_handler.check_for_SERVER_updates()
         students = self.zmq_handler.check_for_updates()
         if students:
             self.ui.update_queue(students)
