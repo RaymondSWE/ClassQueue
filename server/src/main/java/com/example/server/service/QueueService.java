@@ -21,7 +21,6 @@ public class QueueService {
             logger.info("Student added: " + student.getName());
         }
     }
-
     public void removeStudentByName(String name) {
         queue.removeIf(student -> student.getName().equals(name));
         logger.info("Student removed: " + name);
