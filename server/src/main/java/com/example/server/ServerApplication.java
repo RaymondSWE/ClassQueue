@@ -1,6 +1,6 @@
 package com.example.server;
 
-import com.example.server.service.TinyQueueSubscriberService;
+import com.example.server.service.QueueMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 public class ServerApplication {
 
 	@Autowired
-	private TinyQueueSubscriberService tinyQueueSubscriberService;
+	private QueueMessageService tinyQueueSubscriberService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);

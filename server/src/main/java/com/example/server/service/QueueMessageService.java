@@ -9,14 +9,14 @@ import org.zeromq.ZMQ;
 import java.util.ArrayList;
 
 @Service
-public class TinyQueueSubscriberService implements Runnable {
+public class QueueMessageService implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(TinyQueueSubscriberService.class);
+    private static final Logger logger = LoggerFactory.getLogger(QueueMessageService.class);
     private final QueueService queueService;
 
     private final ZMQ.Socket subscriberSocket;
 
-    public TinyQueueSubscriberService(ZMQ.Socket tinyQueueSubscriberSocket, QueueService queueService) {
+    public QueueMessageService(ZMQ.Socket tinyQueueSubscriberSocket, QueueService queueService) {
         this.subscriberSocket = tinyQueueSubscriberSocket;
         this.queueService = queueService;
     }
@@ -28,7 +28,7 @@ public class TinyQueueSubscriberService implements Runnable {
                 String msg = new String(subscriberSocket.recv(), ZMQ.CHARSET);
                 System.out.println(msg);
             } catch (Exception e) {
-                logger.error("Error receiving message from Tinyqueue API", e);
+                logger.error("Error receiving message from the client", e);
             }
         }
     }
