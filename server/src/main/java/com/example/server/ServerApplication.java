@@ -18,10 +18,11 @@ public class ServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
-
+	/*
 	@PostConstruct
 	public void startQueueThread() {
 		Thread queueThread = new Thread(queueMessageService);
 		queueThread.start();
 	}
+	 */
 }
