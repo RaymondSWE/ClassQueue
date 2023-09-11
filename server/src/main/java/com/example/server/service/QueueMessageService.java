@@ -29,9 +29,10 @@ public class QueueMessageService implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 String msg = new String(responseSocket.recv(), ZMQ.CHARSET);
-                System.out.println(msg);
+                logger.info(msg);
+                responseSocket.send("b");
             } catch (Exception e) {
-                logger.error("Error receiving message from the client", e);
+//                logger.error("Error receiving message from the client", e);
             }
         }
     }
