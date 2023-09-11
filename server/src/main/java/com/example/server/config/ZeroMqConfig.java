@@ -20,7 +20,7 @@ public class ZeroMqConfig {
 
     // This zmqPublisherSocket broadcasts messages to all connected clients.
     @Bean
-    public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
+    public ZMQ.Socket publisherSocket(ZMQ.Context context) {
         ZMQ.Socket publisherSocket = context.socket(ZMQ.PUB);
         try {
             publisherSocket.bind("tcp://localhost:5500");
@@ -33,7 +33,7 @@ public class ZeroMqConfig {
     }
     // This zmqResponseSocket listens for client requests and sends back individual replies.
     @Bean
-    public ZMQ.Socket zmqResponseSocket(ZMQ.Context context) {
+    public ZMQ.Socket responseSocket(ZMQ.Context context) {
         ZMQ.Socket responseSocket = context.socket(ZMQ.REP);
         try {
             responseSocket.bind("tcp://localhost:5600");
