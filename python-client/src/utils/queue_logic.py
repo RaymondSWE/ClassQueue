@@ -8,7 +8,7 @@ class QueueLogic:
         self.ui = ui
         self.client_id = str(uuid.uuid4())  # unique client identifier
         self.zmq_handler = ZMQHandler()
-        self.server_handler = serverHandler()  # Initialize the server handler
+        self.server_handler = serverHandler()
 
     def join_queue(self):
         name = self.ui.name_entry.get()
@@ -39,7 +39,7 @@ class QueueLogic:
             messagebox.showerror("Error", "Server response error.")
             return
 
-        # For demonstration, we only show the API's response. Modify as needed.
+
         ticket = api_response.get('ticket', None)
         if ticket:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
@@ -59,7 +59,7 @@ class QueueLogic:
             "clientId": self.client_id
         }, self.server_handler.req_socket)
 
-        # Check error in API response (Modify this if you want to check the server response too)
+        # Check error in API response
         error = api_response.get('error', None)
         if error:
             messagebox.showerror("Server Error", api_response['msg'])

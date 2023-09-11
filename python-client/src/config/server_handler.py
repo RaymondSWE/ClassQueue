@@ -5,11 +5,11 @@ class serverHandler:
     def __init__(self):
         self.context = zmq.Context()
 
-        # Connect to server response socket
+        # response socket
         self.req_socket = self.context.socket(zmq.REQ)
         self.req_socket.connect("tcp://localhost:5600")
 
-        # This seems to be another request socket in your code. Configure it similarly.
+        # request socket
         self.srvReqSocket = self.context.socket(zmq.REQ)
         self.srvReqSocket.connect("tcp://localhost:5600")
 
