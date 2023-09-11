@@ -15,11 +15,6 @@ class ZMQHandler:
         # Request socket to send commands and receive responses
         self.req_socket = self.context.socket(zmq.REQ)
         self.req_socket.connect('tcp://ds.iit.his.se:5556')
-        self.srvReqSocket=self.context.socket(zmq.REQ)
-        self.srvSubSocket=self.context.socket(zmq.SUB)
-        self.srvSubSocket.setsockopt_string(zmq.SUBSCRIBE, 'queue')
-        self.srvReqSocket.connect("tcp://localhost:5600")
-        self.srvSubSocket.connect("tcp://localhost:5500")
 
     def send_request(self, data, socket):
         self.req_socket.send_json(data)
@@ -29,14 +24,6 @@ class ZMQHandler:
         try:
             # Check for new messages
             topic, msg = self.sub_socket.recv_multipart(zmq.NOBLOCK)
-            return json.loads(msg.decode())
-        except zmq.Again:
-            return None
-    def check_for_SERVER_updates(self):
-        try:
-            # Check for new messages
-            topic, msg = self.srvSubSocket.recv_multipart(zmq.NOBLOCK)
-            print(json.loads(msg.decode()))
             return json.loads(msg.decode())
         except zmq.Again:
             return None
