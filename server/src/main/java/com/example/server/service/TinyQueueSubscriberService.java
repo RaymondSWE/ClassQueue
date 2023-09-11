@@ -26,7 +26,7 @@ public class TinyQueueSubscriberService implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 String msg = new String(subscriberSocket.recv(), ZMQ.CHARSET);
-                System.out.println(msg);
+                logger.info(msg);
             } catch (Exception e) {
                 logger.error("Error receiving message from Tinyqueue API", e);
             }
