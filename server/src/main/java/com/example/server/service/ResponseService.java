@@ -11,7 +11,6 @@ import org.zeromq.ZMQ.Socket;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class ResponseService implements Runnable {
 
@@ -20,6 +19,7 @@ public class ResponseService implements Runnable {
 
     @Autowired
     private Socket zmqResponseSocket;
+
     @Autowired
     private QueueService queueService;
 
@@ -35,40 +35,22 @@ public class ResponseService implements Runnable {
             String clientRequest = zmqResponseSocket.recvStr();
             logger.info("Received request from client: {}", clientRequest);
 
-            String response = processRequest(clientRequest);
+            String response = processClientRequest(clientRequest);
             logger.info("Sending response to client: {}", response);
 
             zmqResponseSocket.send(response);
         }
     }
 
-    private String processRequest(String request) {
+    private String processClientRequest(String request) {
         try {
             JSONObject json = new JSONObject(request);
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
-            // Check if student already exists in the queue
-            Student existingStudent = queueService.getQueue().stream()
-                    .filter(s -> s.getName().equals(name))
-                    .findFirst()
-                    .orElse(null);
-
-            if (existingStudent == null) {
-                // If student is not in the queue, add them with the new clientId
-                List<String> clientIds = new ArrayList<>();
-                clientIds.add(clientId);
-                Student newStudent = new Student(name, clientIds);
-                queueService.addStudent(newStudent);
-            } else {
-                // If student is already in the queue, just add the new clientId
-                if(!existingStudent.getClientIds().contains(clientId)) {
-                    existingStudent.getClientIds().add(clientId);
-                }
-            }
+            queueService.manageStudent(name, clientId);
 
             logger.info("Current queue: {}", queueService.getQueue());
-
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
         }

@@ -33,15 +33,4 @@ public class TinyQueueSubscriberService implements Runnable {
         }
     }
 
-    private void handleReceivedMessage(String message) {
-        String[] parts = message.split(":");
-        String action = parts[0];
-        String studentName = parts[1];
-
-        if ("ADD".equalsIgnoreCase(action)) {
-            queueService.addStudent(new Student(studentName, new ArrayList<>()));
-        } else if ("REMOVE".equalsIgnoreCase(action)) {
-            queueService.removeStudentByName(studentName);
-        }
-    }
 }
