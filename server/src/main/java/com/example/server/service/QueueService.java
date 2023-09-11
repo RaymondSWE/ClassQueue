@@ -14,7 +14,7 @@ public class QueueService {
 
     private static final Logger logger = LoggerFactory.getLogger(QueueService.class);
 
-    private final LinkedList<Student> queue = new LinkedList<>();
+    private final List<Student> queue = new ArrayList<>();
 
     public void manageStudent(String name, String clientId) {
         Student existingStudent = queue.stream()
@@ -46,8 +46,9 @@ public class QueueService {
 
     // Handle inactvice users dont know how though, function should be below.
 
-    public LinkedList<Student> getQueue() {
-        return new LinkedList<>(queue);
+    public List<Student> getQueue() {
+        return new ArrayList<>(queue);
     }
+
 }
 
