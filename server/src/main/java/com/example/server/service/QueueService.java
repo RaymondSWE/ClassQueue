@@ -5,17 +5,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class QueueService {
 
     private static final Logger logger = LoggerFactory.getLogger(QueueService.class);
 
-    // A queue to maintain FIFO order of students
     private final LinkedList<Student> queue = new LinkedList<>();
 
-    public void addStudent(Student student) {
+    public void manageStudent(String name, String clientId) {
+        Student existingStudent = queue.stream()
+                .filter(s -> s.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+
+        if (existingStudent == null) {
+            List<String> clientIds = new ArrayList<>();
+            clientIds.add(clientId);
+            Student newStudent = new Student(name, clientIds);
+            addStudent(newStudent);
+        } else if(!existingStudent.getClientIds().contains(clientId)) {
+            existingStudent.getClientIds().add(clientId);
+        }
+    }
+
+    private void addStudent(Student student) {
         if(!queue.contains(student)) {
             queue.add(student);
             logger.info("Student added: " + student.getName());
@@ -26,7 +43,10 @@ public class QueueService {
         logger.info("Student removed: " + name);
     }
 
+    // Handle inactvice users dont know how though, function should be below.
+
     public LinkedList<Student> getQueue() {
-        return queue;
+        return new LinkedList<>(queue);
     }
 }
+

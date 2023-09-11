@@ -23,7 +23,7 @@ public class ZeroMqConfig {
     public ZMQ.Socket publisherSocket(ZMQ.Context context) {
         ZMQ.Socket publisherSocket = context.socket(ZMQ.PUB);
         try {
-            publisherSocket.bind("tcp://*:5500");
+            publisherSocket.bind("tcp://localhost:5500");
             logger.info("Publisher socket bound successfully to tcp://*:5500");
         } catch (Exception e) {
             logger.error("Error binding the publisher socket", e);
@@ -32,13 +32,12 @@ public class ZeroMqConfig {
         return publisherSocket;
     }
     // This zmqResponseSocket listens for client requests and sends back individual replies.
-
     @Bean
     public ZMQ.Socket responseSocket(ZMQ.Context context) {
         ZMQ.Socket responseSocket = context.socket(ZMQ.REP);
         try {
-            responseSocket.bind("tcp://*:5600");
-            logger.info("Response socket bound successfully to tcp://*:5600");
+            responseSocket.bind("tcp://localhost:5600");
+            logger.info("Response socket bound successfully to tcp://localhost:5600");
         } catch (Exception e) {
             logger.error("Error binding the response socket", e);
             throw new SocketBindingException("Error binding the response socket: " + e.getMessage());

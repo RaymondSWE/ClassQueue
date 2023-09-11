@@ -1,6 +1,7 @@
 package com.example.server;
 
-import com.example.server.service.QueueMessageService;
+import com.example.server.service.TinyQueueSubscriberService;
+import com.example.server.service.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,16 +14,21 @@ import javax.annotation.PostConstruct;
 public class ServerApplication {
 
 	@Autowired
-	private QueueMessageService queueMessageService;
+	private TinyQueueSubscriberService tinyQueueSubscriberService;
+
+	@Autowired
+	private ResponseService responseService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
-	/*
+
 	@PostConstruct
-	public void startQueueThread() {
-		Thread queueThread = new Thread(queueMessageService);
-		queueThread.start();
+	public void startSubscriberThread() {
+		//Thread subscriberThread = new Thread(tinyQueueSubscriberService);
+		// subscriberThread.start();
+
+		Thread responseThread = new Thread(responseService);
+		responseThread.start();
 	}
-	 */
 }
