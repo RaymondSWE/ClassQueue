@@ -16,20 +16,33 @@ public class QueueService {
 
     private final List<Student> queue = new ArrayList<>();
 
-    public void manageStudent(String name, String clientId) {
+    public int manageStudent(String name, String clientId) {
         Student existingStudent = queue.stream()
                 .filter(s -> s.getName().equals(name))
                 .findFirst()
                 .orElse(null);
-
+                logger.info(existingStudent.getName());
+int ticket=-1;
         if (existingStudent == null) {
             List<String> clientIds = new ArrayList<>();
             clientIds.add(clientId);
             Student newStudent = new Student(name, clientIds);
             addStudent(newStudent);
+             ticket=queue.size()-1;
+             logger.info("came to where we added soemthing to queue");
         } else if(!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
+            logger.info("existing");
+            for(int i=0; i<queue.size(); i++)
+            {
+                if(queue.get(i).getName().equals(existingStudent.getName()))
+                {
+                ticket=i;
+                break;
+                }
+            }
         }
+        return ticket;
     }
 
     private void addStudent(Student student) {
