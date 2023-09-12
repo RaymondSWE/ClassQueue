@@ -1,6 +1,5 @@
 package com.example.server;
 
-import com.example.server.service.TinyQueueSubscriberService;
 import com.example.server.service.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -13,8 +12,6 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class ServerApplication {
 
-	@Autowired
-	private TinyQueueSubscriberService tinyQueueSubscriberService;
 
 	@Autowired
 	private ResponseService responseService;
@@ -25,8 +22,6 @@ public class ServerApplication {
 
 	@PostConstruct
 	public void startSubscriberThread() {
-		//Thread subscriberThread = new Thread(tinyQueueSubscriberService);
-		// subscriberThread.start();
 
 		Thread responseThread = new Thread(responseService);
 		responseThread.start();
