@@ -15,7 +15,6 @@ import java.util.List;
 public class ResponseService implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseService.class);
-    private static final String PROCESSED_RESPONSE = "{\"message\": \"Your processed response\"}";
 
     @Autowired
     private Socket zmqResponseSocket;
@@ -49,7 +48,8 @@ public class ResponseService implements Runnable {
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
-            int ticket=queueService.manageStudent(name, clientId);
+            queueService.manageStudent(name, clientId);
+            int ticket=queueService.getTicket();
             //get the ticket of the last user added to the queue
             JSONObject responseJson=new JSONObject();            
             responseJson.put("ticket", ticket);
