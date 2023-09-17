@@ -1,14 +1,15 @@
 import uuid
 from tkinter import messagebox
 from config.zmq_handler import ZMQHandler
-from config.server_handler import serverHandler  # Ensure correct import path
+from config.server_handler import ServerHandler
+
 
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
         self.client_id = str(uuid.uuid4())  # unique client identifier
         self.zmq_handler = ZMQHandler()
-        self.server_handler = serverHandler()
+        self.server_handler = ServerHandler()
 
     def join_queue(self):
         name = self.ui.name_entry.get()
@@ -38,7 +39,6 @@ class QueueLogic:
         if not server_response:
             messagebox.showerror("Error", "Server response error.")
             return
-
 
         ticket = api_response.get('ticket', None)
         if ticket:
