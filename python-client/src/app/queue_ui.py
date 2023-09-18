@@ -47,6 +47,13 @@ class QueueUI(ThemedTk):
         for student in students:
             self.queue_listbox.insert(tk.END, student['name'])
 
+    def start_heartbeat(self):
+        self.send_heartbeat()
+
+    def send_heartbeat(self):
+        self.logic.send_heartbeat()
+        self.after(3000, self.send_heartbeat)
+
 if __name__ == "__main__":
     app = QueueUI()
     app.mainloop()
