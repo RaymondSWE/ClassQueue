@@ -8,7 +8,7 @@ class QueueUI(ThemedTk):
 
         self.set_theme("adapta")
         self.title("Student Client")
-        self.geometry("600x450")
+        self.geometry("600x500")
 
         # frame
         content_frame = ttk.Frame(self)
@@ -21,7 +21,7 @@ class QueueUI(ThemedTk):
         # Input section
         input_section = ttk.Frame(outer_frame)
         input_section.grid(row=0, column=0, sticky="ew", pady=20)
-
+        ## Update later from Arial to poppins font
         ttk.Label(input_section, text="Name:", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=10)
         self.name_entry = ttk.Entry(input_section, font=("Arial", 12), width=30)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10)
