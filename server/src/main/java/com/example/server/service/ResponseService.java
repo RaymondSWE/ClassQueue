@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import com.example.server.models.Student;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,6 +21,10 @@ public class ResponseService implements Runnable {
     private Socket zmqResponseSocket;
 
     @Autowired
+    private Socket zmqPublisherSocket;
+
+
+    @Autowired
     private QueueService queueService;
 
     private volatile boolean keepRunning = true;
@@ -29,6 +34,35 @@ public class ResponseService implements Runnable {
         handleClientRequest();
     }
 
+    /**
+     * Broadcasts the current state of the queue to all connected clients.
+     * @param queue
+     */
+    public void broadcastQueue(List<Student> queue) {
+        zmqPublisherSocket.sendMore("queue");
+        zmqPublisherSocket.send(convertQueueToJson(queue));
+    }
+
+    /**
+     *
+     * @param queue, list of students in the queue.
+     * @return a JSON string of the current queue
+     */
+
+    private String convertQueueToJson(List<Student> queue) {
+        JSONArray jsonArray = new JSONArray();
+        for (Student student : queue) {
+            JSONObject studentJson = new JSONObject();
+            studentJson.put("name", student.getName());
+            studentJson.put("clientIds", student.getClientIds());
+            jsonArray.put(studentJson);
+        }
+        return jsonArray.toString();
+    }
+
+    /**
+     * listens for and processes client requests.
+     */
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
@@ -38,29 +72,39 @@ public class ResponseService implements Runnable {
             logger.info("Sending response to client: {}", response);
 
             zmqResponseSocket.send(response);
+            broadcastQueue(queueService.getQueue());
+
         }
     }
 
+    /**
+     *
+     * @param request The client's request in JSON format.
+     * @return A JSON string containing the client's ticket number and name.
+     */
+
     private String processClientRequest(String request) {
-        String response="bad response";
         try {
             JSONObject json = new JSONObject(request);
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
             queueService.manageStudent(name, clientId);
-            int ticket=queueService.getTicket();
-            //get the ticket of the last user added to the queue
-            JSONObject responseJson=new JSONObject();            
+            int ticket = queueService.getTicket();
+
+            // Create a response JSON with the ticket number and name for the client
+            JSONObject responseJson = new JSONObject();
             responseJson.put("ticket", ticket);
-                        responseJson.put("name", name);
-                         response=responseJson.toString();
-            logger.info("Current queue: {}", queueService.getQueue());
+            responseJson.put("name", name);
+
+            logger.info("Processed client request. Current queue: {}", queueService.getQueue());
+            return responseJson.toString();
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
+            return "bad response";
         }
-        return response;
     }
+
 
     public void stop() {
         this.keepRunning = false;
