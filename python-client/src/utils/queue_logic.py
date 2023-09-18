@@ -54,6 +54,6 @@ class QueueLogic:
             messagebox.showerror("Error", "Empty response received from the server.")
 
     def listen_for_updates(self):
-        students = self.server_handler.check_for_updates()
-        if students:
-            self.ui.update_queue(students)
+        queue_data = self.server_handler.check_for_updates()
+        if queue_data:
+            self.ui.update_queue(queue_data)
