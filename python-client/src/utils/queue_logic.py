@@ -2,7 +2,7 @@ import uuid
 from tkinter import messagebox
 from config.zmq_handler import ZMQHandler
 from config.server_handler import ServerHandler
-
+from error.connection_exceptions import EmptyResponseError
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
@@ -47,22 +47,21 @@ class QueueLogic:
             messagebox.showerror("Error", "Failed to join the queue.")
 
     def send_heartbeat(self):
-        # Send heartbeat to ZMQHandler (API)
-        api_response = self.zmq_handler.send_request({
-            "name": self.ui.name_entry.get(),
-            "clientId": self.client_id
-        }, self.zmq_handler.req_socket)
+        try:
+            # Send heartbeat to ZMQHandler (API)
+            api_response = self.zmq_handler.send_request({
+                "name": self.ui.name_entry.get(),
+                "clientId": self.client_id
+            }, self.zmq_handler.req_socket)
 
-        # Send heartbeat to serverHandler (Local server)
-        server_response = self.server_handler.send_request({
-            "name": self.ui.name_entry.get(),
-            "clientId": self.client_id
-        }, self.server_handler.req_socket)
+            # Send heartbeat to serverHandler (Local server)
+            server_response = self.server_handler.send_request({
+                "name": self.ui.name_entry.get(),
+                "clientId": self.client_id
+            }, self.server_handler.req_socket)
 
-        # Check error in API response
-        error = api_response.get('error', None)
-        if error:
-            messagebox.showerror("Server Error", api_response['msg'])
+        except EmptyResponseError:
+            messagebox.showerror("Error", "Empty response received from the server.")
 
     def listen_for_updates(self):
         students = self.zmq_handler.check_for_updates()

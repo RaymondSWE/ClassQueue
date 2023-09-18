@@ -2,7 +2,8 @@ import json
 
 import zmq
 
-ConnectionError
+from error.connection_exceptions import EmptyResponseError, DeserializationError,  ConnectionError, InvalidResponseError, SendMessageError
+
 
 class ZMQHandler:
     def __init__(self):
@@ -20,8 +21,20 @@ class ZMQHandler:
             raise ConnectionError("Error: No connection to TinyQueue API (╯°□°)╯︵ ┻━┻")
 
     def send_request(self, data, socket):
-        self.req_socket.send_json(data)
-        return self.req_socket.recv_json()
+        try:
+            self.req_socket.send_json(data)
+            response = self.req_socket.recv_json()
+
+            # Check if the response is empty and if the request was a heartbeat
+            if not response and "clientId" in data:
+                return {}
+            if not response:
+                raise EmptyResponseError()
+            return response
+        except zmq.ZMQError:
+            raise SendMessageError("Error: sending message to TinyQueue API (╯°□°)╯︵ ┻━┻")
+        except json.JSONDecodeError:
+            raise DeserializationError("Error: deserializing the response from TinyQueue API (╯°□°)╯︵ ┻━┻")
 
     def check_for_updates(self):
         try:
