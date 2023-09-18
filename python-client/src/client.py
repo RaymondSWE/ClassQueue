@@ -26,6 +26,8 @@ class QueueClient(QueueUI):
         self.after(5000, self.schedule_health_check)  # Check every 5 seconds
 
 
+
+
 if __name__ == "__main__":
     app = QueueClient()
     app.mainloop()

@@ -3,7 +3,6 @@ from tkinter import messagebox
 from config.zmq_handler import ZMQHandler
 from config.server_handler import ServerHandler
 
-
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
@@ -40,13 +39,12 @@ class QueueLogic:
             messagebox.showerror("Error", "Server response error.")
             return
 
+
         ticket = api_response.get('ticket', None)
         if ticket:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
         else:
             messagebox.showerror("Error", "Failed to join the queue.")
-
-
 
     def send_heartbeat(self):
         # Send heartbeat to ZMQHandler (API)
@@ -64,11 +62,9 @@ class QueueLogic:
         # Check error in API response
         error = api_response.get('error', None)
         if error:
-            messagebox.showerror("Server Error", api_response.get('Server issues', 'API unresponsive'))
+            messagebox.showerror("Server Error", api_response['msg'])
 
     def listen_for_updates(self):
         students = self.zmq_handler.check_for_updates()
         if students:
             self.ui.update_queue(students)
-
-
