@@ -92,11 +92,12 @@ public class ResponseService implements Runnable {
             JSONObject jsonRequest = new JSONObject(clientRequest);
 
             // startup message
-            if (jsonRequest.has("type") && "startup".equals(jsonRequest.getString("type"))) {
-                logger.info("Startup message from client: {}", jsonRequest.getString("message"));
-                zmqResponseSocket.send("Acknowledged startup");
+            if ("startup".equals(jsonRequest.optString("type"))) {
+                handleStartupMessage(jsonRequest);
                 continue;
             }
+
+
 
             // regular client request
             String response = processClientRequest(clientRequest);
@@ -105,6 +106,17 @@ public class ResponseService implements Runnable {
             zmqResponseSocket.send(response);
             broadcastQueue(queueService.getQueue());
         }
+    }
+
+    private void handleStartupMessage(JSONObject jsonRequest) {
+        int clientNumber = jsonRequest.optInt("client_number", -1);
+        clientNumber++;
+        if (clientNumber != -1) {
+            logger.info("Received startup message from client number: {}  ", clientNumber);
+        } else {
+            logger.info("Received startup message from client.");
+        }
+        zmqResponseSocket.send("Acknowledged startup");
     }
 
 
