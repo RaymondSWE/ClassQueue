@@ -1,17 +1,17 @@
 import zmq
 import json
+from error.connection_exceptions import ConnectionError
 
-class serverHandler:
+
+class ServerHandler:
     def __init__(self):
         self.context = zmq.Context()
-
-        # response socket
-        self.req_socket = self.context.socket(zmq.REQ)
-        self.req_socket.connect("tcp://localhost:5600")
-
-        # request socket
-        self.srvReqSocket = self.context.socket(zmq.REQ)
-        self.srvReqSocket.connect("tcp://localhost:5600")
+        try:
+            # request socket
+            self.req_socket = self.context.socket(zmq.REQ)
+            self.req_socket.connect("tcp://localhost:5600")
+        except zmq.ZMQError:
+            raise ConnectionError("Error connecting to server")
 
     def send_request(self, message, socket):
         socket.send_json(message)

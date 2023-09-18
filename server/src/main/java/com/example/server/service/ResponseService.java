@@ -15,7 +15,6 @@ import java.util.List;
 public class ResponseService implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseService.class);
-    private static final String PROCESSED_RESPONSE = "{\"message\": \"Your processed response\"}";
 
     @Autowired
     private Socket zmqResponseSocket;
@@ -43,18 +42,24 @@ public class ResponseService implements Runnable {
     }
 
     private String processClientRequest(String request) {
+        String response="bad response";
         try {
             JSONObject json = new JSONObject(request);
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
             queueService.manageStudent(name, clientId);
-
+            int ticket=queueService.getTicket();
+            //get the ticket of the last user added to the queue
+            JSONObject responseJson=new JSONObject();            
+            responseJson.put("ticket", ticket);
+                        responseJson.put("name", name);
+                         response=responseJson.toString();
             logger.info("Current queue: {}", queueService.getQueue());
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
         }
-        return PROCESSED_RESPONSE;
+        return response;
     }
 
     public void stop() {

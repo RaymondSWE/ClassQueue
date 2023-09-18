@@ -15,13 +15,29 @@ public class QueueService {
     private static final Logger logger = LoggerFactory.getLogger(QueueService.class);
 
     private final List<Student> queue = new ArrayList<>();
+private String name;
+private int ticket=-1;
+
+
+public int getTicket() {
+                for(int i=0; i<queue.size(); i++)
+            {
+                if(queue.get(i).getName().equals(this.name))
+                {
+                this.ticket=i;
+                break;
+                }
+            }
+
+    return ticket;
+}
 
     public void manageStudent(String name, String clientId) {
+        this.name=name;
         Student existingStudent = queue.stream()
                 .filter(s -> s.getName().equals(name))
                 .findFirst()
                 .orElse(null);
-
         if (existingStudent == null) {
             List<String> clientIds = new ArrayList<>();
             clientIds.add(clientId);
