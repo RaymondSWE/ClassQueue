@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zeromq.ZMQ.Socket;
 
-import java.util.ArrayList;
 import java.util.List;
 @Service
 public class ResponseService implements Runnable {
@@ -44,6 +43,8 @@ public class ResponseService implements Runnable {
     public void broadcastQueue(List<Student> queue) {
         zmqPublisherSocket.sendMore("queue");
         zmqPublisherSocket.send(convertQueueToJson(queue));
+        logger.info("Queue updated. Current queue: {}", queue);
+
     }
 
 
@@ -52,9 +53,8 @@ public class ResponseService implements Runnable {
         new Thread(() -> {
             while (keepRunning) {
                 try {
-                    Thread.sleep(1000);  // Dunno if we would have break between checks but without this it will make the PC very slow
+                    Thread.sleep(5000);  // Dunno if we would have break between checks but without this it will make the PC very slow
                     broadcastQueue(queueService.getQueue());
-                    logger.info("Broadcasting thread of queue: " + queueService.getQueue().toString());
                 } catch (InterruptedException e) {
                     logger.error("Broadcasting thread interrupted", e);
                 }
@@ -80,22 +80,33 @@ public class ResponseService implements Runnable {
         return jsonArray.toString();
     }
 
+
     /**
      * listens for and processes client requests.
      */
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
-            logger.info("Received request from client: {}", clientRequest);
 
+            // Convert the received string to a JSON object
+            JSONObject jsonRequest = new JSONObject(clientRequest);
+
+            // startup message
+            if (jsonRequest.has("type") && "startup".equals(jsonRequest.getString("type"))) {
+                logger.info("Startup message from client: {}", jsonRequest.getString("message"));
+                zmqResponseSocket.send("Acknowledged startup");
+                continue;
+            }
+
+            // regular client request
             String response = processClientRequest(clientRequest);
             logger.info("Sending response to client: {}", response);
 
             zmqResponseSocket.send(response);
             broadcastQueue(queueService.getQueue());
-
         }
     }
+
 
     /**
      *
