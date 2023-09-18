@@ -43,6 +43,7 @@ public int getTicket() {
             clientIds.add(clientId);
             Student newStudent = new Student(name, clientIds);
             addStudent(newStudent);
+            logger.info("New student joined: {}", name);
         } else if(!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
         }
@@ -51,7 +52,6 @@ public int getTicket() {
     private void addStudent(Student student) {
         if(!queue.contains(student)) {
             queue.add(student);
-            logger.info("Student added: " + student.getName());
         }
     }
     public void removeStudentByName(String name) {
