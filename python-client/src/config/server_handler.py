@@ -5,6 +5,8 @@ from error.connection_exceptions import (ConnectionError, EmptyResponseError,
 
 
 class ServerHandler:
+    client_number = 1
+
     def __init__(self):
         self.context = zmq.Context()
         try:
@@ -55,7 +57,8 @@ class ServerHandler:
 
     def send_startup_message(self):
         try:
-            self.req_socket.send_json({"type": "startup", "message": "Client started up"})
+            self.req_socket.send_json({"type": "startup", "client_number": ServerHandler.client_number})
+            ServerHandler.client_number += 1
             reply = self.req_socket.recv()
             print("startup message:", reply)
         except zmq.ZMQError:
