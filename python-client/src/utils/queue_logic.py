@@ -48,11 +48,6 @@ class QueueLogic:
 
     def send_heartbeat(self):
         try:
-            # Send heartbeat to ZMQHandler (API)
-            api_response = self.zmq_handler.send_request({
-                "name": self.ui.name_entry.get(),
-                "clientId": self.client_id
-            }, self.zmq_handler.req_socket)
 
             # Send heartbeat to serverHandler (Local server)
             server_response = self.server_handler.send_request({
