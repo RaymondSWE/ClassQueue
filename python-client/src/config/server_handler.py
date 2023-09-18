@@ -1,6 +1,7 @@
-import zmq
 import json
-from error.connection_exceptions import ConnectionError
+import zmq
+from error.connection_exceptions import (ConnectionError, EmptyResponseError,
+                                         DeserializationError, SendMessageError, InvalidResponseError)
 
 
 class ServerHandler:
@@ -10,26 +11,44 @@ class ServerHandler:
             # request socket
             self.req_socket = self.context.socket(zmq.REQ)
             self.req_socket.connect("tcp://localhost:5600")
+
+            # subscriber socket
+            self.sub_socket = self.context.socket(zmq.SUB)
+            self.sub_socket.connect("tcp://localhost:5500")
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
         except zmq.ZMQError:
             raise ConnectionError("Error connecting to server")
 
-    def send_request(self, message, socket):
-        socket.send_json(message)
-        response_data = socket.recv()
+    def check_for_updates(self):
+        try:
+            # Check for new messages
+            msg = self.sub_socket.recv_string(zmq.NOBLOCK)
 
-        # Check for Empty Responses
-        if not response_data.strip():
-            print("Received empty data")
-            return None
-
-        # Check if it's valid JSON
-        if response_data.startswith(b'{') and response_data.endswith(b'}'):
-            try:
-                return json.loads(response_data)
-            except json.JSONDecodeError:
-                print("Error decoding JSON:", response_data)
+            # Check if the message is empty or not valid JSON
+            if not msg or not (msg.startswith('{') or msg.startswith('[')):
                 return None
-        else:
-            # Handle plain string responses here, if needed
-            print("Received non-JSON response:", response_data)
+
+            return json.loads(msg)
+        except zmq.Again:
             return None
+        except json.JSONDecodeError:
+            raise DeserializationError("Error decoding JSON from server.")
+
+    def send_request(self, message, socket):
+        try:
+            socket.send_json(message)
+            response_data = socket.recv()
+
+            # Check for Empty Responses
+            if not response_data.strip():
+                raise EmptyResponseError("Received empty data from server.")
+
+            # Check if it's valid JSON
+            if response_data.startswith(b'{') and response_data.endswith(b'}'):
+                return json.loads(response_data)
+            else:
+                raise InvalidResponseError("Received non-JSON response from server.")
+        except zmq.ZMQError:
+            raise SendMessageError("Error sending message to server.")
+        except json.JSONDecodeError:
+            raise DeserializationError("Error decoding JSON from server.")

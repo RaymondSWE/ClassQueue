@@ -49,9 +49,9 @@ class QueueUI(ThemedTk):
         outer_frame.rowconfigure(0, weight=1)
         outer_frame.rowconfigure(1, weight=3)
 
-    def update_queue(self, students):
+    def update_queue(self, queue_data):
         self.queue_listbox.delete(0, tk.END)
-        for student in students:
+        for student in queue_data:
             self.queue_listbox.insert(tk.END, student['name'])
 
     def start_heartbeat(self):

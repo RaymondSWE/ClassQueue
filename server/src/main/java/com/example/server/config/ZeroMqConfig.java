@@ -18,7 +18,8 @@ public class ZeroMqConfig {
     }
 
 
-    // This zmqPublisherSocket broadcasts messages to all connected clients.
+    // This zmqPublisherSocket
+    // broadcasts messages to all connected clients.
     @Bean
     public ZMQ.Socket zmqPublisherSocket(ZMQ.Context context) {
         ZMQ.Socket publisherSocket = context.socket(ZMQ.PUB);
