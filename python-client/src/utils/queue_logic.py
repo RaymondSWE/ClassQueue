@@ -46,6 +46,8 @@ class QueueLogic:
         else:
             messagebox.showerror("Error", "Failed to join the queue.")
 
+
+
     def send_heartbeat(self):
         # Send heartbeat to ZMQHandler (API)
         api_response = self.zmq_handler.send_request({

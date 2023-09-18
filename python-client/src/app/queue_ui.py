@@ -8,7 +8,7 @@ class QueueUI(ThemedTk):
 
         self.set_theme("plastik")
         self.title("Queue Client")
-        self.geometry("400x300")
+        self.geometry("500x400")
 
         # Create a frame for the content
         content_frame = ttk.Frame(self)

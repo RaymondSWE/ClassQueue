@@ -27,7 +27,8 @@ class ZMQHandler:
             raise SendMessageError("Error sending data to TinyQueue API")
 
         try:
-            # The NOBLOCK, if the api is down it will not make the client wait indefinitely. Docs: https://pyzmq.readthedocs.io/en/latest/api/zmq.html
+            # The NOBLOCK, if the api is down it will not make the client wait indefinitely. Docs:
+            # https://pyzmq.readthedocs.io/en/latest/api/zmq.html
             reply = self.req_socket.recv_json(flags=zmq.NOBLOCK)
         except zmq.Again:
             return {"error": "Error no response from TinyQueue API."}
