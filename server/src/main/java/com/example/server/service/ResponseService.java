@@ -110,7 +110,6 @@ public class ResponseService implements Runnable {
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
-        clientNumber++;
         if (clientNumber != -1) {
             logger.info("Received startup message from client number: {}  ", clientNumber);
         } else {
