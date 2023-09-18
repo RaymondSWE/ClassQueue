@@ -6,8 +6,8 @@ class QueueUI(ThemedTk):
     def __init__(self):
         super().__init__()
 
-        self.set_theme("plastik")
-        self.title("Queue Client")
+        self.set_theme("adapta")
+        self.title("Student Client")
         self.geometry("500x400")
 
         # Create a frame for the content

@@ -64,9 +64,11 @@ class QueueLogic:
         # Check error in API response
         error = api_response.get('error', None)
         if error:
-            messagebox.showerror("Server Error", api_response['msg'])
+            messagebox.showerror("Server Error", api_response.get('Server issues', 'API unresponsive'))
 
     def listen_for_updates(self):
         students = self.zmq_handler.check_for_updates()
         if students:
             self.ui.update_queue(students)
+
+

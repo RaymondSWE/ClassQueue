@@ -21,6 +21,11 @@ class QueueClient(QueueUI):
         self.logic.listen_for_updates()
         self.after(1000, self.listen_for_updates)
 
+    def schedule_health_check(self):
+        self.logic.check_api_health()
+        self.after(5000, self.schedule_health_check)  # Check every 5 seconds
+
+
 if __name__ == "__main__":
     app = QueueClient()
     app.mainloop()
