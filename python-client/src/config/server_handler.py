@@ -12,17 +12,23 @@ class ServerHandler:
             self.req_socket = self.context.socket(zmq.REQ)
             self.req_socket.connect("tcp://localhost:5600")
 
-            # reply socket
-            self.rep_socket = self.context.socket(zmq.REP)
-            self.rep_socket.connect("tcp://localhost:5500")
+            # subscriber socket
+            self.sub_socket = self.context.socket(zmq.SUB)
+            self.sub_socket.connect("tcp://localhost:5500")
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
         except zmq.ZMQError:
             raise ConnectionError("Error connecting to server")
 
     def check_for_updates(self):
         try:
             # Check for new messages
-            topic, msg = self.rep_socket.recv_multipart(zmq.NOBLOCK)
-            return json.loads(msg.decode())
+            msg = self.sub_socket.recv_string(zmq.NOBLOCK)
+
+            # Check if the message is empty or not valid JSON
+            if not msg or not (msg.startswith('{') or msg.startswith('[')):
+                return None
+
+            return json.loads(msg)
         except zmq.Again:
             return None
         except json.JSONDecodeError:
