@@ -5,7 +5,7 @@ from error.connection_exceptions import (ConnectionError, EmptyResponseError,
 
 
 class ServerHandler:
-    client_number = 0
+    client_number = 1
 
     def __init__(self):
         self.context = zmq.Context()
