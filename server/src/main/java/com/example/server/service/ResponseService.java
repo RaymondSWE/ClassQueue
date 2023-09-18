@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import com.example.server.models.Student;
+import jakarta.annotation.PostConstruct;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +30,8 @@ public class ResponseService implements Runnable {
 
     private volatile boolean keepRunning = true;
 
+
+
     @Override
     public void run() {
         handleClientRequest();
@@ -42,6 +45,23 @@ public class ResponseService implements Runnable {
         zmqPublisherSocket.sendMore("queue");
         zmqPublisherSocket.send(convertQueueToJson(queue));
     }
+
+
+    @PostConstruct
+    public void startBroadcastingThread() {
+        new Thread(() -> {
+            while (keepRunning) {
+                try {
+                    Thread.sleep(1000);  // Dunno if we would have break between checks but without this it will make the PC very slow
+                    broadcastQueue(queueService.getQueue());
+                    logger.info("Broadcasting thread of queue: " + queueService.getQueue().toString());
+                } catch (InterruptedException e) {
+                    logger.error("Broadcasting thread interrupted", e);
+                }
+            }
+        }).start();
+    }
+
 
     /**
      *
