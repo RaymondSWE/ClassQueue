@@ -58,7 +58,11 @@ public int getTicket() {
         queue.removeIf(student -> student.getName().equals(name));
         logger.info("Student removed: " + name);
     }
-
+//remove the first student in queue
+public Student removeFirstStudent()
+{
+    return queue.remove(0);
+}
     // Handle inactvice users dont know how though, function should be below.
 
     public List<Student> getQueue() {
