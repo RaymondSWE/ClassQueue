@@ -39,7 +39,7 @@ String message=json.getString("message");
 this.message=message;
 Student student=queueService.removeFirstStudent();
 JSONObject response=new JSONObject();
-response.put("ticket", student.getName());
+response.put("name", student.getName());
 return response.toString();
 
 }
