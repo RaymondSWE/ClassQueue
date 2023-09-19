@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 
 import java.util.List;
@@ -105,8 +106,9 @@ public class ResponseService implements Runnable {
 
             zmqResponseSocket.send(response);
             broadcastQueue(queueService.getQueue());
+            }
         }
-    }
+    
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
@@ -141,9 +143,10 @@ public class ResponseService implements Runnable {
 
             logger.info("Processed client request. Current queue: {}", queueService.getQueue());
             return responseJson.toString();
+            
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
-            return "bad response";
+                                return "bad response";
         }
     }
 

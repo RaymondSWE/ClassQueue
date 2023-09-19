@@ -1,6 +1,8 @@
 package com.example.server;
 
 import com.example.server.service.ResponseService;
+import com.example.server.service.SupervisorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,8 @@ public class ServerApplication {
 
 	@Autowired
 	private ResponseService responseService;
+@Autowired
+private SupervisorService supervisorService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
@@ -26,5 +30,12 @@ public class ServerApplication {
 
 		Thread responseThread = new Thread(responseService);
 		responseThread.start();
+	}
+	@PostConstruct
+	public void startSupervisorThread()
+	{
+		Thread superVisorThread=new Thread(supervisorService);
+		superVisorThread.start();
+
 	}
 }
