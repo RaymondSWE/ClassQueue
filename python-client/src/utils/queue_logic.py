@@ -20,7 +20,6 @@ class QueueLogic:
             "enterQueue": True,
             "name": name,
             "clientId": self.client_id, 
-"requestType":"queue"
         }
 
         # Send request to serverHandler (Local server)
