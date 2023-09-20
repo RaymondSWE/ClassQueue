@@ -30,7 +30,7 @@ private volatile boolean keepRunning=true;
 private String message;
 //processes client request
 
-private String processClientRequest(String request)
+public String processSupervisorRequest(String request)
 {
 try
 {
@@ -50,7 +50,7 @@ return "bad response";
 }
 
 //handles incoming requests from the supervisor
-
+/* 
 private void handleClientRequest()
 {
     
@@ -70,15 +70,16 @@ zmqResponseSocket.send(response);
 }
 
 }
-
+*/
 @Override
 public void run() {
     // TODO Auto-generated method stub
     //handleClientRequest();
 }
+/* 
 public void stop()
 {
     this.keepRunning=false;
 }
-
+*/
 }

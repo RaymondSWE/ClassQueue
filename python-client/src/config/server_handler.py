@@ -48,8 +48,6 @@ class ServerHandler:
             # Check if it's valid JSON
             if response_data.startswith(b'{') and response_data.endswith(b'}'):
                 return json.loads(response_data)
-            if(response_data=="bad response"):
-                return "bad response"
             else:
                 raise InvalidResponseError("Received non-JSON response from server.")
         except zmq.ZMQError:
