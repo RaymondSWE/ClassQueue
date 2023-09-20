@@ -54,7 +54,7 @@ private SupervisorService supervisorService;
         new Thread(() -> {
             while (keepRunning) {
                 try {
-                    Thread.sleep(5000);  // Dunno if we would have break between checks but without this it will make the PC very slow
+                    Thread.sleep(1000);  // Dunno if we would have break between checks but without this it will make the PC very slow
                     broadcastQueue(queueService.getQueue());
                 } catch (InterruptedException e) {
                     logger.error("Broadcasting thread interrupted", e);
@@ -97,13 +97,13 @@ private SupervisorService supervisorService;
                 handleStartupMessage(jsonRequest);
                 continue;
             }
-if(jsonRequest.optString("type").equals("supervisor"))
-{
-    String supervisorResponse=supervisorService.processSupervisorRequest(clientRequest);
-    logger.info("sending response to supervisor", supervisorResponse);
-    zmqResponseSocket.send(supervisorResponse);
-    continue;
-}
+            if(jsonRequest.optString("type").equals("supervisor"))
+            {
+                String supervisorResponse=supervisorService.processSupervisorRequest(clientRequest);
+                logger.info("sending response to supervisor", supervisorResponse);
+                zmqResponseSocket.send(supervisorResponse);
+                continue;
+            }
 
 
             // regular client request
