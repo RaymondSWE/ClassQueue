@@ -29,8 +29,8 @@ public class ResponseService implements Runnable {
     private QueueService queueService;
 
     private volatile boolean keepRunning = true;
-
-
+@Autowired
+private SupervisorService supervisorService;
 
     @Override
     public void run() {
@@ -97,7 +97,13 @@ public class ResponseService implements Runnable {
                 handleStartupMessage(jsonRequest);
                 continue;
             }
-
+if(jsonRequest.optString("type").equals("supervisor"))
+{
+    String supervisorResponse=supervisorService.processSupervisorRequest(clientRequest);
+    logger.info("sending response to supervisor", supervisorResponse);
+    zmqResponseSocket.send(supervisorResponse);
+    continue;
+}
 
 
             // regular client request

@@ -18,8 +18,6 @@ public class ServerApplication {
 
 	@Autowired
 	private ResponseService responseService;
-@Autowired
-private SupervisorService supervisorService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
@@ -31,11 +29,4 @@ private SupervisorService supervisorService;
 		Thread responseThread = new Thread(responseService);
 		responseThread.start();
 	}
-	@PostConstruct
-	public void startSupervisorThread()
-	{
-		Thread superVisorThread=new Thread(supervisorService);
-		superVisorThread.start();
-
 	}
-}

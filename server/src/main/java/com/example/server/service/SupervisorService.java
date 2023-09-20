@@ -29,8 +29,8 @@ private List<Supervisor> supervisors=new ArrayList<>();
 private volatile boolean keepRunning=true;
 private String message;
 //processes client request
-/* 
-private String processClientRequest(String request)
+
+public String processSupervisorRequest(String request)
 {
 try
 {
@@ -39,9 +39,8 @@ String message=json.getString("message");
 this.message=message;
 Student student=queueService.removeFirstStudent();
 JSONObject response=new JSONObject();
-response.put("ticket", student.getName());
+response.put("name", student.getName());
 return response.toString();
-
 }
 catch(JSONException e)
 {
@@ -49,12 +48,12 @@ logger.error("error parsing supervisor request", e);
 return "bad response";
 }
 }
-*/
-//handles incoming requests from the supervisor
 
+//handles incoming requests from the supervisor
+/* 
 private void handleClientRequest()
 {
-    /* 
+    
 while(keepRunning)
 {
      
@@ -62,22 +61,25 @@ while(keepRunning)
     if(request!=null)
     {
 String response=processClientRequest(request);
-logger.info("iii", response);
+//if(response.equals("bad response"))
+//continue;
+logger.info("request processed");
 zmqResponseSocket.send(response);
     }
     
 }
-*/
-}
 
+}
+*/
 @Override
 public void run() {
     // TODO Auto-generated method stub
-    handleClientRequest();
+    //handleClientRequest();
 }
+/* 
 public void stop()
 {
     this.keepRunning=false;
 }
-
+*/
 }
