@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Listbox
 from ttkthemes import ThemedTk
-
+from  utils.supervisor_logic import SupervisorLogic
 class SupervisorUI(ThemedTk):
     def __init__(self):
         super().__init__()
@@ -32,6 +32,9 @@ class SupervisorUI(ThemedTk):
         self.queue_listbox = self._create_listbox(content_frame, "Students in Queue", row=2, column=0, columnspan=2)
         self.supervisor_listbox = self._create_listbox(content_frame, "Connected Supervisors", row=2, column=2, columnspan=2)
 
+        self.logic = SupervisorLogic(self)
+        self.listen_for_updates()
+
     def _create_listbox(self, parent, title, row, column, columnspan=1):
         ttk.Label(parent, text=title, font=("Arial", 14, "bold")).grid(row=row, column=column, columnspan=columnspan, pady=10)
         listbox = Listbox(parent, height=15, width=40, bg="#f5f5f5", fg="black",
@@ -39,6 +42,15 @@ class SupervisorUI(ThemedTk):
                           highlightthickness=0, font=("Arial", 12))
         listbox.grid(row=row+1, column=column, padx=10, pady=10, columnspan=columnspan)
         return listbox
+
+    def update_queue(self, queue_data):
+        self.queue_listbox.delete(0, tk.END)
+        for student in queue_data:
+            self.queue_listbox.insert(tk.END, student['name'])
+
+    def listen_for_updates(self):
+        self.logic.listen_for_updates()
+        self.after(100, self.listen_for_updates)
 
 
     def attend_student(self):

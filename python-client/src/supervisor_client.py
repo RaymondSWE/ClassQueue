@@ -7,6 +7,9 @@ class SupervisorClient(SupervisorUI):
 
         self.connect_button.config(command=self.connect_to_server)
 
+        self.logic.listen_for_updates()
+
+
     def connect_to_server(self):
         supervisor_name = self.name_entry.get()
 

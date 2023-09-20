@@ -43,8 +43,7 @@ class QueueLogic:
 
     def send_heartbeat(self):
         try:
-
-            # Send heartbeat to serverHandler (Local server)
+            # Send heartbeat
             server_response = self.server_handler.send_request({
                 "name": self.ui.name_entry.get(),
                 "clientId": self.client_id
