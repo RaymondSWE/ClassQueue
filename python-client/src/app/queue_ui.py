@@ -6,7 +6,7 @@ class QueueUI(ThemedTk):
     def __init__(self):
         super().__init__()
 
-        self.set_theme("radiance")
+        self.set_theme("adapta")
         self.title("Student Client")
         self.geometry("700x550")
 

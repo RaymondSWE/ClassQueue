@@ -19,12 +19,12 @@ class QueueLogic:
         data = {
             "enterQueue": True,
             "name": name,
-            "clientId": self.client_id
+            "clientId": self.client_id, 
+
         }
 
         # Send request to serverHandler (Local server)
         server_response = self.server_handler.send_request(data, self.server_handler.req_socket)
-
         # Handle None response
         if not server_response:
             messagebox.showerror("Error", "API response error.")
@@ -43,8 +43,7 @@ class QueueLogic:
 
     def send_heartbeat(self):
         try:
-
-            # Send heartbeat to serverHandler (Local server)
+            # Send heartbeat
             server_response = self.server_handler.send_request({
                 "name": self.ui.name_entry.get(),
                 "clientId": self.client_id

@@ -1,12 +1,12 @@
 from app.queue_ui import QueueUI
 from utils.queue_logic import QueueLogic
 
+
 class QueueClient(QueueUI):
     def __init__(self):
         super().__init__()
         self.logic = QueueLogic(self)
         self.logic.server_handler.send_startup_message()
-
 
         # Set the command for the button
         self.join_queue_button.config(command=self.logic.join_queue)

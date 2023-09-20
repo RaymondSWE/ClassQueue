@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -41,7 +40,7 @@ public int getTicket() {
         if (existingStudent == null) {
             List<String> clientIds = new ArrayList<>();
             clientIds.add(clientId);
-            Student newStudent = new Student(name, clientIds);
+                Student newStudent = new Student(name, clientIds);
             addStudent(newStudent);
             logger.info("New student joined: {}", name);
         } else if(!existingStudent.getClientIds().contains(clientId)) {
@@ -58,7 +57,11 @@ public int getTicket() {
         queue.removeIf(student -> student.getName().equals(name));
         logger.info("Student removed: " + name);
     }
-
+//remove the first student in queue
+public Student removeFirstStudent()
+{
+    return queue.remove(0);
+}
     // Handle inactvice users dont know how though, function should be below.
 
     public List<Student> getQueue() {
