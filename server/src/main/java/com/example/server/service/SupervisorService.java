@@ -28,8 +28,20 @@ private Socket zmqResponseSocket;
 private List<Supervisor> supervisors=new ArrayList<>();
 private volatile boolean keepRunning=true;
 private String message;
-//processes client request
+//sends a message to the user currently being attended. 
+private void broadcastMessage(String supervisorName, String message, String topic)
+{
+    JSONObject json=new JSONObject();
+    json.put("supervisor", supervisorName);
+json.put("message", message);
+String broadcastMessage=json.toString();
+logger.info("sending broadcast message: ", broadcastMessage);
+zmqPublisherSocket.sendMore(topic);
+zmqPublisherSocket.send(broadcastMessage);
+}
 
+
+//processes client request
 public String processSupervisorRequest(String request)
 {
 try
@@ -40,6 +52,7 @@ this.message=message;
 Student student=queueService.removeFirstStudent();
 JSONObject response=new JSONObject();
 response.put("name", student.getName());
+broadcastMessage(json.getString("supervisorName"), message, student.getName());
 return response.toString();
 }
 catch(JSONException e)
