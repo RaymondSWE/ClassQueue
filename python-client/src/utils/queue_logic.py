@@ -25,6 +25,8 @@ class QueueLogic:
 
         # Send request to serverHandler (Local server)
         server_response = self.server_handler.send_request(data, self.server_handler.req_socket)
+        if server_response=="bad response":
+            return
         # Handle None response
         if not server_response:
             messagebox.showerror("Error", "API response error.")
