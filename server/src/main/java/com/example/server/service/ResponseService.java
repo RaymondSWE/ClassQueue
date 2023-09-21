@@ -29,8 +29,8 @@ public class ResponseService implements Runnable {
     private QueueService queueService;
 
     private volatile boolean keepRunning = true;
-@Autowired
-private SupervisorService supervisorService;
+    @Autowired
+    private SupervisorService supervisorService;
 
     @Override
     public void run() {
@@ -112,9 +112,9 @@ private SupervisorService supervisorService;
 
             zmqResponseSocket.send(response);
             broadcastQueue(queueService.getQueue());
-            }
         }
-    
+    }
+
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
@@ -149,10 +149,10 @@ private SupervisorService supervisorService;
 
             logger.info("Processed client request. Current queue: {}", queueService.getQueue());
             return responseJson.toString();
-            
+
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
-                                return "bad response";
+            return "bad response";
         }
     }
 

@@ -15,6 +15,7 @@ class QueueLogic:
         if not name:
             messagebox.showerror("Error", "Name cannot be empty!")
             return
+        self.server_handler.subscribe(name)
 
         data = {
             "enterQueue": True,
@@ -22,6 +23,7 @@ class QueueLogic:
             "clientId": self.client_id, 
 
         }
+
 
         # Send request to serverHandler (Local server)
         server_response = self.server_handler.send_request(data, self.server_handler.req_socket)
@@ -54,5 +56,5 @@ class QueueLogic:
 
     def listen_for_updates(self):
         queue_data = self.server_handler.check_for_updates()
-        if queue_data:
+        if queue_data and "supervisorName" not in queue_data:
             self.ui.update_queue(queue_data)
