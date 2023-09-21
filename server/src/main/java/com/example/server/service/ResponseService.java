@@ -29,8 +29,8 @@ public class ResponseService implements Runnable {
     private QueueService queueService;
 
     private volatile boolean keepRunning = true;
-@Autowired
-private SupervisorService supervisorService;
+    @Autowired
+    private SupervisorService supervisorService;
 
     @Override
     public void run() {
@@ -97,13 +97,13 @@ private SupervisorService supervisorService;
                 handleStartupMessage(jsonRequest);
                 continue;
             }
-if(jsonRequest.optString("type").equals("supervisor"))
-{
-    String supervisorResponse=supervisorService.processSupervisorRequest(clientRequest);
-    logger.info("sending response to supervisor", supervisorResponse);
-    zmqResponseSocket.send(supervisorResponse);
-    continue;
-}
+            if(jsonRequest.optString("type").equals("supervisor"))
+            {
+                String supervisorResponse=supervisorService.processSupervisorRequest(clientRequest);
+                logger.info("sending response to supervisor", supervisorResponse);
+                zmqResponseSocket.send(supervisorResponse);
+                continue;
+            }
 
 
             // regular client request
@@ -112,9 +112,9 @@ if(jsonRequest.optString("type").equals("supervisor"))
 
             zmqResponseSocket.send(response);
             broadcastQueue(queueService.getQueue());
-            }
         }
-    
+    }
+
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
@@ -149,10 +149,10 @@ if(jsonRequest.optString("type").equals("supervisor"))
 
             logger.info("Processed client request. Current queue: {}", queueService.getQueue());
             return responseJson.toString();
-            
+
         } catch (JSONException e) {
             logger.error("Error parsing client request.", e);
-                                return "bad response";
+            return "bad response";
         }
     }
 
