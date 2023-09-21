@@ -35,7 +35,7 @@ public class SupervisorService implements Runnable{
         json.put("supervisor", supervisorName);
         json.put("message", message);
         String broadcastMessage=json.toString();
-        logger.info("sending broadcast message: ", broadcastMessage);
+        logger.info("sending broadcast message: {} ", broadcastMessage);
         zmqPublisherSocket.sendMore(topic);
         zmqPublisherSocket.send(broadcastMessage);
     }
