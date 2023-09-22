@@ -4,14 +4,14 @@ import java.util.Objects;
 
 public class Supervisor {
     private String name;
-    private String status; // should be able to change from, pending, available and busy
+    private SupervisorStatus supervisorStatus; // should be able to change from, pending, available and busy
     private Student attendingStudent;
     private String messageFromSupervisor;
 
 
-    public Supervisor(String name, String status, Student attendingStudent, String messageFromSupervisor) {
+    public Supervisor(String name, SupervisorStatus supervisorStatus, Student attendingStudent, String messageFromSupervisor) {
         this.name = name;
-        this.status = status;
+        this.supervisorStatus = supervisorStatus;
         this.attendingStudent = attendingStudent;
         this.messageFromSupervisor = messageFromSupervisor;
     }
@@ -24,12 +24,12 @@ public class Supervisor {
         this.name = name;
     }
 
-    public String getStatus() {
-        return status;
+    public SupervisorStatus getSupervisorStatus() {
+        return supervisorStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setSupervisorStatus(SupervisorStatus supervisorStatus) {
+        this.supervisorStatus = supervisorStatus;
     }
 
     public Student getAttendingStudent() {
@@ -53,21 +53,11 @@ public class Supervisor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Supervisor that = (Supervisor) o;
-        return Objects.equals(name, that.name) && Objects.equals(status, that.status) && Objects.equals(attendingStudent, that.attendingStudent) && Objects.equals(messageFromSupervisor, that.messageFromSupervisor);
+        return Objects.equals(name, that.name) && supervisorStatus == that.supervisorStatus && Objects.equals(attendingStudent, that.attendingStudent) && Objects.equals(messageFromSupervisor, that.messageFromSupervisor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, status, attendingStudent, messageFromSupervisor);
-    }
-
-    @Override
-    public String toString() {
-        return "Supervisor{" +
-                "name='" + name + '\'' +
-                ", status='" + status + '\'' +
-                ", attendingStudent=" + attendingStudent +
-                ", messageFromSupervisor='" + messageFromSupervisor + '\'' +
-                '}';
+        return Objects.hash(name, supervisorStatus, attendingStudent, messageFromSupervisor);
     }
 }

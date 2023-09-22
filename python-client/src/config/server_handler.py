@@ -20,6 +20,9 @@ class ServerHandler:
             self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
         except zmq.ZMQError:
             raise ConnectionError("Error connecting to server")
+        #subscribe to aditional topics
+    def subscribe(self, topic):
+        self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)
 
     def check_for_updates(self):
         try:
