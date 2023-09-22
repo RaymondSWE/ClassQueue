@@ -94,18 +94,6 @@ public class ResponderWorker implements Runnable {
         }
     }
 
-    /*
-    private String convertQueueToJson(List<Student> queue) {
-        JSONArray jsonArray = new JSONArray();
-        for (Student student : queue) {
-            JSONObject studentJson = new JSONObject();
-            studentJson.put("name", student.getName());
-            studentJson.put("clientIds", student.getClientIds());
-            jsonArray.put(studentJson);
-        }
-        return jsonArray.toString();
-    }
-     */
 
     private void broadcastQueue(List<Student> queue) {
         // Yet to be implemented
