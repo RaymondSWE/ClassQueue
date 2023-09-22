@@ -1,7 +1,7 @@
 package com.example.server;
 
-import com.example.server.service.ResponseService;
-import com.example.server.service.SupervisorService;
+import com.example.server.worker.ResponderWorker;
+import com.example.server.worker.PublisherWorker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -12,21 +12,24 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-
 public class ServerApplication {
 
+	@Autowired
+	private ResponderWorker responderWorker;
 
 	@Autowired
-	private ResponseService responseService;
+	private PublisherWorker publisherWorker;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
 
 	@PostConstruct
-	public void startSubscriberThread() {
+	public void startWorkerThreads() {
+		Thread responderThread = new Thread(responderWorker);
+		responderThread.start();
 
-		Thread responseThread = new Thread(responseService);
-		responseThread.start();
+		Thread publisherThread = new Thread(publisherWorker);
+		publisherThread.start();
 	}
-	}
+}
