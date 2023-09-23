@@ -2,16 +2,19 @@ import json
 import zmq
 from error.connection_exceptions import (ConnectionError, EmptyResponseError,
                                          DeserializationError, SendMessageError, InvalidResponseError)
-
+import time
 
 class ServerHandler:
     client_number = 1
 
     def __init__(self):
+        self.timeout=4000 #in ms
+        self.servers=0
+        self.sequence=0
         self.context = zmq.Context()
         try:
             # request socket
-            self.req_socket = self.context.socket(zmq.REQ)
+            self.req_socket = self.context.socket(zmq.DEALER)
             self.req_socket.connect("tcp://localhost:5600")
 
             # subscriber socket
@@ -61,9 +64,26 @@ class ServerHandler:
 
     def send_startup_message(self):
         try:
-            self.req_socket.send_json({"type": "startup", "client_number": ServerHandler.client_number})
+            data={"type": "startup", "client_number": ServerHandler.client_number, "sequence":self.sequence}
+            self.req_socket.send_json(data)
             ServerHandler.client_number += 1
-            reply = self.req_socket.recv()
-            print("startup message:", reply)
+
+            #print("startup message:", reply)
         except zmq.ZMQError:
             print("Error sending startup message to server.")
+    def connect(self, endpoint):
+        self.req_socket.connect(endpoint)
+        self.servers+=1
+        for i in range(self.servers):
+            self.send_startup_message()
+        poll=zmq.Poller()
+        poll.register(self.req_socket, zmq.POLLIN)
+        response=None
+        endtime=time.time()+self.timeout/1000
+        while time.time()<endtime:
+            sockets=dict(poll.poll((endtime-time.time())*1000))
+            if(sockets.get(self.req_socket)==zmq.POLLIN):
+                response=self.req_socket.recv_json()
+                jsonResponse=json.loads(response)
+                if jsonResponse.get("sequence")==self.sequence:
+                    return jsonResponse
