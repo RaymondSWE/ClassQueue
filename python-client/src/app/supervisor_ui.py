@@ -25,7 +25,7 @@ class SupervisorUI(ThemedTk):
         ttk.Label(content_frame, text="Message:", font=("Arial", 14)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
         self.message_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
         self.message_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=2)
-        self.attend_student_button = ttk.Button(content_frame, text="Attend Student", command=self.attend_student)
+        self.attend_student_button = ttk.Button(content_frame, text="Attend Student")
         self.attend_student_button.grid(row=1, column=3, padx=10, pady=10)
 
         # Queue and supervisors
@@ -33,7 +33,6 @@ class SupervisorUI(ThemedTk):
         self.supervisor_listbox = self._create_listbox(content_frame, "Connected Supervisors", row=2, column=2, columnspan=2)
 
         self.logic = SupervisorLogic(self)
-        self.listen_for_updates()
 
     def _create_listbox(self, parent, title, row, column, columnspan=1):
         ttk.Label(parent, text=title, font=("Arial", 14, "bold")).grid(row=row, column=column, columnspan=columnspan, pady=10)
@@ -43,23 +42,12 @@ class SupervisorUI(ThemedTk):
         listbox.grid(row=row+1, column=column, padx=10, pady=10, columnspan=columnspan)
         return listbox
 
-    def update_queue(self, queue_data):
-        self.queue_listbox.delete(0, tk.END)
-        for student in queue_data:
-            self.queue_listbox.insert(tk.END, student['name'])
-
-    def listen_for_updates(self):
-        self.logic.listen_for_updates()
-        self.after(100, self.listen_for_updates)
 
     def connect_as_supervisor(self):
         supervisor_name = self.name_entry.get()
         if supervisor_name:
             self.logic.connect_as_supervisor(supervisor_name)
 
-    def attend_student(self):
-        # logic to be written, for attendance
-        pass
 
 if __name__ == "__main__":
     app = SupervisorUI()
