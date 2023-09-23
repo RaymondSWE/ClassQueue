@@ -3,7 +3,6 @@ package com.example.server.worker;
 import com.example.server.models.Student;
 import com.example.server.service.QueueService;
 import com.example.server.service.SupervisorService;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +44,15 @@ public class ResponderWorker implements Runnable {
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
 
-            if ("startup".equals(jsonRequest.optString("type"))) {
+            if ("supervisor".equals(jsonRequest.optString("type"))) {
+                handleSupervisorRequest(jsonRequest);
+            } else if ("startup".equals(jsonRequest.optString("type"))) {
                 handleStartupMessage(jsonRequest);
-            } else if (jsonRequest.optString("type").equals("supervisor")) {
-                String supervisorResponse = supervisorService.processSupervisorRequest(clientRequest);
-                logger.info("sending response to supervisor", supervisorResponse);
-                zmqResponseSocket.send(supervisorResponse);
             } else {
                 // regular client request
                 String response = processClientRequest(clientRequest);
                 logger.info("Sending response to client: {}", response);
                 zmqResponseSocket.send(response);
-                // assuming there is a broadcastQueue method similar to the one in ResponseService
                 broadcastQueue(queueService.getQueue());
             }
         }
@@ -70,6 +66,15 @@ public class ResponderWorker implements Runnable {
             logger.info("Received startup message from client.");
         }
         zmqResponseSocket.send("Acknowledged startup");
+    }
+
+    private void handleSupervisorRequest(JSONObject jsonRequest) {
+        // Here you would handle the supervisor-specific requests, for example:
+        if (jsonRequest.has("addSupervisor")) {
+            supervisorService.addSupervisor(jsonRequest.getString("supervisorName"));
+        } else if (jsonRequest.has("attendStudent")) {
+            supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
+        }
     }
 
     private String processClientRequest(String request) {
@@ -97,8 +102,11 @@ public class ResponderWorker implements Runnable {
 
     private void broadcastQueue(List<Student> queue) {
         // Yet to be implemented
-
     }
+
+
+
+
 
     public void stop() {
         this.keepRunning = false;

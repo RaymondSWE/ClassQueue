@@ -1,98 +1,102 @@
 package com.example.server.service;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
+import com.example.server.models.Student;
+import com.example.server.models.Supervisor;
+import com.example.server.models.SupervisorStatus;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Socket;
 
-import com.example.server.models.Student;
-import com.example.server.models.Supervisor;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
-public class SupervisorService implements Runnable{
-    private static final org.slf4j.Logger logger=LoggerFactory.getLogger(SupervisorService.class);
+public class SupervisorService implements Runnable {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
+
     @Autowired
     private QueueService queueService;
     @Autowired
-    private Socket zmqPublisherSocket;
-    @Autowired
-    private Socket zmqResponseSocket;
-    //we need to keep track of all the supervisors that are currently connected.
-    private List<Supervisor> supervisors=new ArrayList<>();
-    private volatile boolean keepRunning=true;
-    private String message;
-    //sends a message to the user currently being attended.
-    private void broadcastMessage(String supervisorName, String message, String topic)
-    {
-        JSONObject json=new JSONObject();
+    private ZMQ.Socket zmqPublisherSocket;
+
+    private final List<Supervisor> supervisors = new ArrayList<>();
+
+    private volatile boolean keepRunning = true;
+
+    // Method to add a new supervisor
+    public void addSupervisor(String supervisorName) {
+        Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
+        supervisors.add(supervisor);
+        logger.info("Supervisor {} connected", supervisorName);
+        broadcastSupervisorsStatus();
+    }
+
+    // List all students in the queue
+    public List<String> listAllStudentsInQueue() {
+        return queueService.getQueue().stream()
+                .map(Student::getName)
+                .collect(Collectors.toList());
+    }
+
+    // Display info about all supervisors currently connected
+    public List<Supervisor> displayAllConnectedSupervisors() {
+        return new ArrayList<>(supervisors);
+    }
+
+    // Attend to the first student in the queue
+    public void attendStudent(String supervisorName, String message) {
+        Supervisor supervisor = supervisors.stream()
+                .filter(s -> Objects.equals(s.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
+
+        if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
+            Student student = queueService.removeFirstStudent();
+            if (student != null) {
+                supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
+                supervisor.setAttendingStudent(student);
+                supervisor.setMessageFromSupervisor(message);
+                sendUserMessage(supervisorName, student.getName(), message);
+                broadcastSupervisorsStatus();
+            } else {
+                logger.info("No students in the queue");
+            }
+        } else {
+            logger.info("Supervisor not available or not found");
+        }
+    }
+
+    // Send a message to a specific user
+    private void sendUserMessage(String supervisorName, String userName, String message) {
+        JSONObject json = new JSONObject();
         json.put("supervisor", supervisorName);
         json.put("message", message);
-        String broadcastMessage=json.toString();
-        logger.info("sending broadcast message: {} ", broadcastMessage);
-        zmqPublisherSocket.sendMore(topic);
-        zmqPublisherSocket.send(broadcastMessage);
+        zmqPublisherSocket.sendMore(userName);
+        zmqPublisherSocket.send(json.toString());
+        logger.info("Sending user message to {}: {}", userName, json.toString());
     }
 
-
-    //processes client request
-    public String processSupervisorRequest(String request)
-    {
-        try
-        {
-            JSONObject json=new JSONObject(request);
-            String message=json.getString("message");
-            this.message=message;
-            Student student=queueService.removeFirstStudent();
-            JSONObject response=new JSONObject();
-            response.put("name", student.getName());
-            broadcastMessage(json.getString("supervisorName"), message, student.getName());
-            return response.toString();
-        }
-        catch(JSONException e)
-        {
-            logger.error("error parsing supervisor request", e);
-            return "bad response";
-        }
+    // Broadcast the status of all connected supervisors
+    private void broadcastSupervisorsStatus() {
+        List<JSONObject> supervisorsStatus = supervisors.stream().map(supervisor -> {
+            JSONObject json = new JSONObject();
+            json.put("name", supervisor.getName());
+            json.put("status", supervisor.getSupervisorStatus().toString().toLowerCase());
+            json.put("client", supervisor.getAttendingStudent() != null ?
+                    supervisor.getAttendingStudent().getName() : null);
+            return json;
+        }).collect(Collectors.toList());
+        zmqPublisherSocket.sendMore("supervisors");
+        zmqPublisherSocket.send(supervisorsStatus.toString());
+        logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
     }
 
-    //handles incoming requests from the supervisor
-/* 
-private void handleClientRequest()
-{
-    
-while(keepRunning)
-{
-     
-    String request=zmqResponseSocket.recvStr();
-    if(request!=null)
-    {
-String response=processClientRequest(request);
-//if(response.equals("bad response"))
-//continue;
-logger.info("request processed");
-zmqResponseSocket.send(response);
-    }
-    
-}
-
-}
-*/
     @Override
     public void run() {
         // TODO Auto-generated method stub
-        //handleClientRequest();
     }
-/* 
-public void stop()
-{
-    this.keepRunning=false;
-}
-*/
 }
