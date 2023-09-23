@@ -47,7 +47,7 @@ public class PublisherWorker implements Runnable {
     }
 
     private void scheduleBroadcastSupervisorStatus () {
-        // Call the SupervisorService's method to get the status and then broadcast it
+        // Call the SupervisorService's method to get the status and then broadcast
         List<JSONObject> supervisorStatus = supervisorService.displayAllConnectedSupervisors().stream()
                 .map(supervisor -> {
                     JSONObject json = new JSONObject();
