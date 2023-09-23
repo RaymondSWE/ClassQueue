@@ -35,12 +35,6 @@ public class SupervisorService implements Runnable {
         broadcastSupervisorsStatus();
     }
 
-    // List all students in the queue
-    public List<String> listAllStudentsInQueue() {
-        return queueService.getQueue().stream()
-                .map(Student::getName)
-                .collect(Collectors.toList());
-    }
 
     // Display info about all supervisors currently connected
     public List<Supervisor> displayAllConnectedSupervisors() {
