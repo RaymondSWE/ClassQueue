@@ -37,7 +37,7 @@ class QueueLogic:
             return
 
         ticket = server_response.get('ticket', None)
-        if ticket:
+        if ticket is not None:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
             self.ui.start_heartbeat()  # Heartbeats should be sent after it has joined the queue (I think)
         else:
