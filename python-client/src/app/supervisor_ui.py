@@ -18,7 +18,7 @@ class SupervisorUI(ThemedTk):
         ttk.Label(content_frame, text="Supervisor Name:", font=("Arial", 14)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
         self.name_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10, columnspan=2)
-        self.connect_button = ttk.Button(content_frame, text="Connect")
+        self.connect_button = ttk.Button(content_frame, text="Connect", command=self.connect_as_supervisor)
         self.connect_button.grid(row=0, column=3, padx=10, pady=10)
 
         # Message entry and action
@@ -52,6 +52,10 @@ class SupervisorUI(ThemedTk):
         self.logic.listen_for_updates()
         self.after(100, self.listen_for_updates)
 
+    def connect_as_supervisor(self):
+        supervisor_name = self.name_entry.get()
+        if supervisor_name:
+            self.logic.connect_as_supervisor(supervisor_name)
 
     def attend_student(self):
         # logic to be written, for attendance
