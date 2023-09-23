@@ -74,7 +74,7 @@ public class SupervisorService implements Runnable {
         logger.info("Sending user message to {}: {}", userName, json.toString());
     }
 
-    // Broadcast the status of all connected supervisors
+    // Broadcast the status of all connected supervisors, using it currently for debugging
     private void broadcastSupervisorsStatus() {
         List<JSONObject> supervisorsStatus = supervisors.stream().map(supervisor -> {
             JSONObject json = new JSONObject();

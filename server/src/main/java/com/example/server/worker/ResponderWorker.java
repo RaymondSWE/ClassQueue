@@ -69,7 +69,7 @@ public class ResponderWorker implements Runnable {
     }
 
     private void handleSupervisorRequest(JSONObject jsonRequest) {
-        // Here you would handle the supervisor-specific requests, for example:
+        logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
             supervisorService.addSupervisor(jsonRequest.getString("supervisorName"));
         } else if (jsonRequest.has("attendStudent")) {
