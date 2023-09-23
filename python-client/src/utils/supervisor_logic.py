@@ -9,3 +9,4 @@ class SupervisorLogic:
         queue_data = self.server_handler.check_for_updates()
         if queue_data:
             self.ui.update_queue(queue_data)
+
