@@ -39,14 +39,14 @@ public class PublisherWorker implements Runnable {
                 Thread.sleep(5000);
                 List<Student> queue = queueService.getQueue();
                 broadcastQueue(queue);
-                broadcastSupervisorStatus();
+                scheduleBroadcastSupervisorStatus ();
             } catch (InterruptedException e) {
                 logger.error("Broadcasting thread interrupted", e);
             }
         }
     }
 
-    private void broadcastSupervisorStatus() {
+    private void scheduleBroadcastSupervisorStatus () {
         // Call the SupervisorService's method to get the status and then broadcast it
         List<JSONObject> supervisorStatus = supervisorService.displayAllConnectedSupervisors().stream()
                 .map(supervisor -> {

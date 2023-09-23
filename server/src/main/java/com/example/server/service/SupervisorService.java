@@ -35,12 +35,6 @@ public class SupervisorService implements Runnable {
         broadcastSupervisorsStatus();
     }
 
-    // List all students in the queue
-    public List<String> listAllStudentsInQueue() {
-        return queueService.getQueue().stream()
-                .map(Student::getName)
-                .collect(Collectors.toList());
-    }
 
     // Display info about all supervisors currently connected
     public List<Supervisor> displayAllConnectedSupervisors() {
@@ -80,7 +74,7 @@ public class SupervisorService implements Runnable {
         logger.info("Sending user message to {}: {}", userName, json.toString());
     }
 
-    // Broadcast the status of all connected supervisors
+    // Broadcast the status of all connected supervisors, using it currently for debugging
     private void broadcastSupervisorsStatus() {
         List<JSONObject> supervisorsStatus = supervisors.stream().map(supervisor -> {
             JSONObject json = new JSONObject();
