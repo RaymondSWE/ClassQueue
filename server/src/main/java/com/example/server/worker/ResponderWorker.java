@@ -72,10 +72,22 @@ public class ResponderWorker implements Runnable {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
             supervisorService.addSupervisor(jsonRequest.getString("supervisorName"));
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("status", "success");
+            jsonResponse.put("message", "Supervisor added successfully");
+            zmqResponseSocket.send(jsonResponse.toString());
         } else if (jsonRequest.has("attendStudent")) {
             supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
+            // add appropiate json and logic here
+        } else {
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "Invalid supervisor request");
+            zmqResponseSocket.send(jsonResponse.toString());
         }
+
     }
+
 
     private String processClientRequest(String request) {
         try {
