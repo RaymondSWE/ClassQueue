@@ -3,7 +3,7 @@ import logging
 
 from config.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
-
+from tkinter import messagebox
 class SupervisorLogic:
     def __init__(self, ui):
         self.ui = ui
@@ -11,8 +11,9 @@ class SupervisorLogic:
         logging.basicConfig(level=logging.INFO)
 
     ## Kinda spagetti code in connect_as supervisor fix it in the future
-    def connect_as_supervisor(self, supervisor_name):
-        message = {"type": "supervisor", "supervisorName": supervisor_name, "addSupervisor": True}
+    def connect_as_supervisor(self):
+        self.supervisorName=self.ui.name_entry.get()
+        message = {"type": "supervisor", "supervisorName": self.supervisorName, "addSupervisor": True}
         try:
             response = self.server_handler.send_request(message, self.server_handler.req_socket)
             jsonResponse = response if isinstance(response, dict) else json.loads(response)
@@ -22,4 +23,14 @@ class SupervisorLogic:
         except EmptyResponseError as se:
             logging.error("Specific error occurred while connecting as supervisor: %s", se)
         except Exception as e:
-            logging.error("Unexpected error occurred while connecting as supervisor: %s", e)
+            logging.error("Unexpected error occurred while connecting as supervisor: %s", e)#attend the queue
+        #attend the queue
+    def attendQueue(self):
+        message=self.ui.message_entry.get()
+        request={"message":message, "type":"supervisor", "attendStudent":True, "supervisorName":self.supervisorName}
+        response=self.server_handler.send_request(request, self.server_handler.req_socket)
+        logging.info("attend request sent")
+        if response.get("status")=="error":
+            messagebox.showerror(response.get("message"))
+        else:
+            messagebox.showinfo(response.get("message"))

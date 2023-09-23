@@ -25,7 +25,7 @@ class SupervisorUI(ThemedTk):
         ttk.Label(content_frame, text="Message:", font=("Arial", 14)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
         self.message_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
         self.message_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=2)
-        self.attend_student_button = ttk.Button(content_frame, text="Attend Student")
+        self.attend_student_button = ttk.Button(content_frame, text="Attend Student", command=self.attendQueue)
         self.attend_student_button.grid(row=1, column=3, padx=10, pady=10)
 
         # Queue and supervisors
@@ -44,10 +44,9 @@ class SupervisorUI(ThemedTk):
 
 
     def connect_as_supervisor(self):
-        supervisor_name = self.name_entry.get()
-        if supervisor_name:
-            self.logic.connect_as_supervisor(supervisor_name)
-
+            self.logic.connect_as_supervisor()
+    def attendQueue(self):
+        self.logic.attendQueue()
 
 if __name__ == "__main__":
     app = SupervisorUI()

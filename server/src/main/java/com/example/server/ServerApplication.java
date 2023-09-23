@@ -1,7 +1,7 @@
 package com.example.server;
 
-import com.example.server.worker.ResponderWorker;
 import com.example.server.worker.PublisherWorker;
+import com.example.server.worker.ResponderWorker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +16,6 @@ public class ServerApplication {
 
 	@Autowired
 	private ResponderWorker responderWorker;
-
 	@Autowired
 	private PublisherWorker publisherWorker;
 
