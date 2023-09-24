@@ -19,6 +19,7 @@ public class ServerApplication {
 	@Autowired
 	private PublisherWorker publisherWorker;
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}
