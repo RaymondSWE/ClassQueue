@@ -11,6 +11,7 @@ class QueueUI(ThemedTk):
         self.title("Student Client")
         self.geometry("700x550")
 
+
         # frame
         content_frame = ttk.Frame(self)
         content_frame.pack(fill=tk.BOTH, expand=True, padx=30, pady=30)
@@ -63,6 +64,13 @@ class QueueUI(ThemedTk):
         self.logic.send_heartbeat()
         self.after(3000, self.send_heartbeat)
 
+    def update_supervisors(self, supervisors_data):
+        self.supervisor_listbox.delete(0, tk.END)
+        for supervisor in supervisors_data:
+            name = supervisor.get('name', '')
+            status = supervisor.get('status', '')
+            client = supervisor.get('client', '')
+            self.supervisor_listbox.insert(tk.END, f"{name} - {status} - {client}")
 
 if __name__ == "__main__":
     app = QueueUI()

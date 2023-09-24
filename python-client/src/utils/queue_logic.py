@@ -54,3 +54,5 @@ class QueueLogic:
             topic, data = update
             if topic == "queue":
                 self.ui.update_queue(data)
+            elif topic == "supervisors":
+                self.ui.update_supervisors(data)
