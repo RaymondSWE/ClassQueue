@@ -28,17 +28,24 @@ class SupervisorLogic:
             logging.error("Unexpected error occurred while connecting as supervisor: %s", e)  # attend the queue
         # attend the queue
 
-    def attendQueue(self):
+    def attend_queue(self):
         message = self.ui.message_entry.get()
-        request = {"message": message, "type": "supervisor", "attendStudent": True,
-                   "supervisorName": self.supervisorName}
+        request = {
+            "message": message,
+            "type": "supervisor",
+            "attendStudent": True,
+            "supervisorName": self.supervisorName
+        }
         response = self.server_handler.send_request(request, self.server_handler.req_socket)
-        logging.info("attend request sent")
-        if response.get("status") == "error":
-            messagebox.showerror(response.get("message"))
+        logging.info("Attend request sent")
+
+        status = response.get("status")
+        message = response.get("message")
+
+        if status == "error":
+            messagebox.showerror("Error", message)
         else:
-            messagebox.showinfo(response.get("message"))
-            logging.error("Unexpected error occurred while connecting as supervisor: %s", e)
+            messagebox.showinfo("Success", message)
 
     def listen_for_updates(self):
         update = self.server_handler.check_for_updates()
