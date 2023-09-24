@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class QueueService {
@@ -16,6 +18,10 @@ public class QueueService {
     private final List<Student> queue = new ArrayList<>();
     private String name;
     private int ticket = -1;
+
+    private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
+
+
 
 
     public int getTicket() {
@@ -44,6 +50,7 @@ public class QueueService {
         } else if (!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
         }
+
     }
 
     private void addStudent(Student student) {
@@ -56,6 +63,11 @@ public class QueueService {
         queue.removeIf(student -> student.getName().equals(name));
         logger.info("Student removed: " + name);
     }
+
+    public void updateClientHeartbeat(String clientId) {
+        lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
+    }
+
 
     //remove the first student in queue
     public Student removeFirstStudent() {
