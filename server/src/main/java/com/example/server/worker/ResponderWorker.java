@@ -50,7 +50,6 @@ public class ResponderWorker implements Runnable {
             String type = jsonRequest.optString("type");
             switch (type) {
                 case "heartbeat":
-                    // Handle Heartbeat - possibly update the last received heartbeat time for this client
                     handleHeartbeat(jsonRequest);
                     break;
                 case "supervisor":
