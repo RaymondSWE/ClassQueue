@@ -1,5 +1,7 @@
 import json
+
 import zmq
+
 from error.connection_exceptions import (ConnectionError, EmptyResponseError,
                                          DeserializationError, SendMessageError, InvalidResponseError)
 
