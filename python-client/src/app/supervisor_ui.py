@@ -64,6 +64,12 @@ class SupervisorUI(ThemedTk):
             display_text = f"{supervisor['name']} - {supervisor['status']}"
             self.supervisor_listbox.insert(tk.END, display_text)
 
+    def update_queue(self, queue_data):
+        self.queue_listbox.delete(0, tk.END)
+        for student in queue_data:
+            display_text = f"{student['name']}"
+            self.queue_listbox.insert(tk.END, display_text)
+
 
 if __name__ == "__main__":
     app = SupervisorUI()
