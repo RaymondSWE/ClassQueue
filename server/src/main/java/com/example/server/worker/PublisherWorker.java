@@ -80,6 +80,8 @@ public class PublisherWorker implements Runnable {
         return jsonArray.toString();
     }
 
+
+
     public void stop() {
         this.keepRunning = false;
     }
