@@ -47,7 +47,7 @@ public class PublisherWorker implements Runnable {
     }
 
     private void scheduleBroadcastSupervisorStatus () {
-        // Call the SupervisorService's method to get the status and then broadcast it
+        // Call the SupervisorService's method to get the status and then broadcast
         List<JSONObject> supervisorStatus = supervisorService.displayAllConnectedSupervisors().stream()
                 .map(supervisor -> {
                     JSONObject json = new JSONObject();
@@ -57,6 +57,7 @@ public class PublisherWorker implements Runnable {
                             supervisor.getAttendingStudent().getName() : null);
                     return json;
                 }).collect(Collectors.toList());
+
         zmqPublisherSocket.sendMore("supervisors");
         zmqPublisherSocket.send(supervisorStatus.toString());
         logger.info("Broadcasting supervisors status: {}", supervisorStatus.toString());
@@ -65,7 +66,7 @@ public class PublisherWorker implements Runnable {
     public void broadcastQueue(List<Student> queue) {
         zmqPublisherSocket.sendMore("queue");
         zmqPublisherSocket.send(convertQueueToJson(queue));
-        logger.info("Queue updated. Current queue: {}", queue);
+        logger.info("Queue updated. Current student queue: {}", queue);
     }
 
     private String convertQueueToJson(List<Student> queue) {
