@@ -73,7 +73,6 @@ public class QueueService {
     public Student removeFirstStudent() {
         return queue.remove(0);
     }
-    // Handle inactvice users dont know how though, function should be below.
 
     public List<Student> getQueue() {
         return new ArrayList<>(queue);

@@ -50,7 +50,7 @@ public class SupervisorService {
 
         if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
             Student student = queueService.getQueue().stream()
-                    .findFirst() // Assuming you want to attend the first student in the queue
+                    .findFirst()
                     .orElse(null);
             if (student != null) {
                 supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
