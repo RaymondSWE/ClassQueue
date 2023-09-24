@@ -55,6 +55,8 @@ class QueueLogic:
             messagebox.showerror("Error", "Empty response received from the server.")
 
     def listen_for_updates(self):
-        queue_data = self.server_handler.check_for_updates()
-        if queue_data and "supervisorName" not in queue_data:
-            self.ui.update_queue(queue_data)
+        update = self.server_handler.check_for_updates()
+        if update:
+            topic, data = update
+            if topic == "queue":
+                self.ui.update_queue(data)

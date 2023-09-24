@@ -61,14 +61,7 @@ class QueueUI(ThemedTk):
         self.logic.send_heartbeat()
         self.after(3000, self.send_heartbeat)
 
-    def update_supervisor(self, supervisors):
-        self.supervisor_listbox.delete(0, tk.END)
-        for supervisor in supervisors:
-            if supervisor["student"]:
-                display_text = f"{supervisor['name']} - {supervisor['status']} (Helping: {supervisor['student']})"
-            else:
-                display_text = f"{supervisor['name']} - {supervisor['status']}"
-            self.supervisor_listbox.insert(tk.END, display_text)
+
 
 
 if __name__ == "__main__":

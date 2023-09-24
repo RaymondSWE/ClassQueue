@@ -25,7 +25,8 @@ class SupervisorLogic:
             logging.error("Unexpected error occurred while connecting as supervisor: %s", e)
 
     def listen_for_updates(self):
-        supervisor_data = self.server_handler.check_for_updates()
-        if supervisor_data:
-            logging.info("Received Supervisor Data: %s", supervisor_data)
-            self.ui.update_supervisor_queue(supervisor_data)
+        update = self.server_handler.check_for_updates()
+        if update:
+            topic, data = update
+            if topic == "supervisors":
+                self.ui.update_supervisor_queue(data)

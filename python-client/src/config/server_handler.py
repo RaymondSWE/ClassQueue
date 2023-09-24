@@ -30,13 +30,14 @@ class ServerHandler:
     def check_for_updates(self):
         try:
             # Check for new messages
-            msg = self.sub_socket.recv_string(zmq.NOBLOCK)
+            topic = self.sub_socket.recv_string(flags=zmq.NOBLOCK)
+            msg = self.sub_socket.recv_string(flags=zmq.NOBLOCK)
 
             # Check if the message is empty or not valid JSON
             if not msg or not (msg.startswith('{') or msg.startswith('[')):
                 return None
 
-            return json.loads(msg)
+            return (topic, json.loads(msg))
         except zmq.Again:
             return None
         except json.JSONDecodeError:
