@@ -42,7 +42,7 @@ public class SupervisorService {
     }
 
     // Attend to the first student in the queue
-    public void attendStudent(String supervisorName, String message) {
+    public String attendStudent(String supervisorName, String message) {
         Supervisor supervisor = supervisors.stream()
                 .filter(s -> Objects.equals(s.getName(), supervisorName))
                 .findFirst()
@@ -56,12 +56,14 @@ public class SupervisorService {
                 supervisor.setMessageFromSupervisor(message);
                 sendUserMessage(supervisorName, student.getName(), message);
                 broadcastSupervisorsStatus();
+                return student.getName();
             } else {
                 logger.info("No students in the queue");
             }
         } else {
             logger.info("Supervisor not available or not found");
         }
+        return "";
     }
 
     // Send a message to a specific user
