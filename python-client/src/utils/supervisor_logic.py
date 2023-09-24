@@ -23,3 +23,10 @@ class SupervisorLogic:
             logging.error("Specific error occurred while connecting as supervisor: %s", se)
         except Exception as e:
             logging.error("Unexpected error occurred while connecting as supervisor: %s", e)
+
+    def listen_for_updates(self):
+        update = self.server_handler.check_for_updates()
+        if update:
+            topic, data = update
+            if topic == "supervisors":
+                self.ui.update_supervisor_queue(data)

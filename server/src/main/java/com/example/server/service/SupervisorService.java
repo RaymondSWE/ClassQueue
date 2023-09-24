@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-public class SupervisorService implements Runnable {
+public class SupervisorService {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
 
     @Autowired
@@ -89,8 +89,4 @@ public class SupervisorService implements Runnable {
         logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
     }
 
-    @Override
-    public void run() {
-        // TODO Auto-generated method stub
-    }
 }

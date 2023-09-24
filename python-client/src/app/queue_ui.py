@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, Listbox
 from ttkthemes import ThemedTk
 
+
 class QueueUI(ThemedTk):
     def __init__(self):
         super().__init__()
@@ -39,7 +40,8 @@ class QueueUI(ThemedTk):
         # Supervisor section
         supervisor_section = ttk.Frame(outer_frame)
         supervisor_section.grid(row=1, column=1, sticky="nsew", pady=20)
-        ttk.Label(supervisor_section, text="Available Supervisors", font=("Poppins", 14, "bold")).grid(row=0, column=0, pady=10)
+        ttk.Label(supervisor_section, text="Available Supervisors", font=("Poppins", 14, "bold")).grid(row=0, column=0,
+                                                                                                       pady=10)
         self.supervisor_listbox = Listbox(supervisor_section, height=10, width=35, bg="#f5f5f5", fg="black",
                                           selectbackground="#00b09b", selectforeground="white", borderwidth=1,
                                           highlightthickness=0, font=("Poppins", 12))
@@ -60,15 +62,6 @@ class QueueUI(ThemedTk):
     def send_heartbeat(self):
         self.logic.send_heartbeat()
         self.after(3000, self.send_heartbeat)
-
-    def update_supervisor(self, supervisors):
-        self.supervisor_listbox.delete(0, tk.END)
-        for supervisor in supervisors:
-            if supervisor["student"]:
-                display_text = f"{supervisor['name']} - {supervisor['status']} (Helping: {supervisor['student']})"
-            else:
-                display_text = f"{supervisor['name']} - {supervisor['status']}"
-            self.supervisor_listbox.insert(tk.END, display_text)
 
 
 if __name__ == "__main__":
