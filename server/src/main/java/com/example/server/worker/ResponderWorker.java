@@ -43,10 +43,10 @@ public class ResponderWorker implements Runnable {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
-
             if ("supervisor".equals(jsonRequest.optString("type"))) {
                 handleSupervisorRequest(jsonRequest);
             } else if ("startup".equals(jsonRequest.optString("type"))) {
+//                            logger.info("recieved request: {}", clientRequest);
                 handleStartupMessage(jsonRequest);
             } else {
                 // regular client request
@@ -60,12 +60,15 @@ public class ResponderWorker implements Runnable {
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
+        int sequence=jsonRequest.optInt("sequence", -2);
         if (clientNumber != -1) {
             logger.info("Received startup message from client number: {}  ", clientNumber);
         } else {
             logger.info("Received startup message from client.");
         }
-        zmqResponseSocket.send("Acknowledged startup");
+        JSONObject response=new JSONObject();
+        response.put("sequence", sequence);
+        zmqResponseSocket.send(response.toString());
     }
 
     private void handleSupervisorRequest(JSONObject jsonRequest) {

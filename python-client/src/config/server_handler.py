@@ -3,7 +3,7 @@ import zmq
 from error.connection_exceptions import (ConnectionError, EmptyResponseError,
                                          DeserializationError, SendMessageError, InvalidResponseError)
 import time
-
+import logging
 class ServerHandler:
     client_number = 1
 
@@ -15,7 +15,7 @@ class ServerHandler:
         try:
             # request socket
             self.req_socket = self.context.socket(zmq.DEALER)
-            self.req_socket.connect("tcp://localhost:5600")
+            #self.req_socket.connect("tcp://localhost:5600")
 
             # subscriber socket
             self.sub_socket = self.context.socket(zmq.SUB)
@@ -66,14 +66,12 @@ class ServerHandler:
         try:
             data={"type": "startup", "client_number": ServerHandler.client_number, "sequence":self.sequence}
             self.req_socket.send_json(data)
-            ServerHandler.client_number += 1
-
-            #print("startup message:", reply)
         except zmq.ZMQError:
             print("Error sending startup message to server.")
     def connect(self, endpoint):
         self.req_socket.connect(endpoint)
         self.servers+=1
+        self.sequence+=1
         for i in range(self.servers):
             self.send_startup_message()
         poll=zmq.Poller()
