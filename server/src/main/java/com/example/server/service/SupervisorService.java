@@ -95,4 +95,21 @@ public class SupervisorService {
         logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
     }
 
+    // Method to make a supervisor available again
+    public void makeSupervisorAvailable(String supervisorName) {
+        Supervisor supervisor = supervisors.stream()
+                .filter(s -> Objects.equals(s.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
+
+        if (supervisor != null) {
+            supervisor.setSupervisorStatus(SupervisorStatus.AVAILABLE);
+            supervisor.setAttendingStudent(null);
+            supervisor.setMessageFromSupervisor(null);
+            broadcastSupervisorsStatus();
+        } else {
+            logger.info("Supervisor not found");
+        }
+    }
+
 }
