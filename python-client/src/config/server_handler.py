@@ -70,6 +70,7 @@ class ServerHandler:
     def send_startup_message(self):
         try:
             data={"type": "startup", "client_number": ServerHandler.client_number, "sequence":self.sequence}
+            print(data)
             self.req_socket.send_json(data)
         except zmq.ZMQError:
             print("Error sending startup message to server.")

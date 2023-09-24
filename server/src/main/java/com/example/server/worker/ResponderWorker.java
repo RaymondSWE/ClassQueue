@@ -42,6 +42,7 @@ public class ResponderWorker implements Runnable {
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
+            logger.info("recieved request: {}", clientRequest);
             JSONObject jsonRequest = new JSONObject(clientRequest);
             if ("supervisor".equals(jsonRequest.optString("type"))) {
                 handleSupervisorRequest(jsonRequest);
