@@ -39,7 +39,7 @@ public class ResponderWorker implements Runnable {
         new Thread(this).start();
     }
 
-    // Update to swith case instead of if/else
+    // Update to switch case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
