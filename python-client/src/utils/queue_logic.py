@@ -20,24 +20,18 @@ class QueueLogic:
         data = {
             "enterQueue": True,
             "name": name,
-            "clientId": self.client_id, 
+            "clientId": self.client_id,
 
         }
 
-
         # Send request to serverHandler (Local server)
         server_response = self.server_handler.send_request(data, self.server_handler.req_socket)
-        # Handle None response
-        if not server_response:
-            messagebox.showerror("Error", "API response error.")
-            return
-
         if not server_response:
             messagebox.showerror("Error", "Server response error.")
             return
 
         ticket = server_response.get('ticket', None)
-        if ticket:
+        if ticket is not None:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
             self.ui.start_heartbeat()  # Heartbeats should be sent after it has joined the queue (I think)
         else:
@@ -55,6 +49,10 @@ class QueueLogic:
             messagebox.showerror("Error", "Empty response received from the server.")
 
     def listen_for_updates(self):
-        queue_data = self.server_handler.check_for_updates()
-        if queue_data and "supervisorName" not in queue_data:
-            self.ui.update_queue(queue_data)
+        update = self.server_handler.check_for_updates()
+        if update:
+            topic, data = update
+            if topic == "queue":
+                self.ui.update_queue(data)
+            elif topic == "supervisors":
+                self.ui.update_supervisors(data)

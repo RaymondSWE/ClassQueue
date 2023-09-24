@@ -80,8 +80,18 @@ public class ResponderWorker implements Runnable {
             jsonResponse.put("message", "Supervisor added successfully");
             zmqResponseSocket.send(jsonResponse.toString());
         } else if (jsonRequest.has("attendStudent")) {
-            supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
-            // add appropiate json and logic here
+            String studentName = supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
+            if (!studentName.equals("")) {
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("message", "attending" + studentName);
+                jsonResponse.put("status", "success");
+                zmqResponseSocket.send(jsonResponse.toString());
+            } else {
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "failed to attend students");
+                zmqResponseSocket.send(jsonResponse.toString());
+            }
         } else {
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("status", "error");
@@ -118,9 +128,6 @@ public class ResponderWorker implements Runnable {
     private void broadcastQueue(List<Student> queue) {
         // Yet to be implemented
     }
-
-
-
 
 
     public void stop() {
