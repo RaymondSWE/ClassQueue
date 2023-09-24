@@ -41,10 +41,10 @@ class QueueLogic:
         try:
             # Send heartbeat
             server_response = self.server_handler.send_request({
+                "type": "heartbeat",
                 "name": self.ui.name_entry.get(),
                 "clientId": self.client_id
             }, self.server_handler.req_socket)
-
         except EmptyResponseError:
             messagebox.showerror("Error", "Empty response received from the server.")
 
