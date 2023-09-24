@@ -56,3 +56,10 @@ class QueueLogic:
                 self.ui.update_queue(data)
             elif topic == "supervisors":
                 self.ui.update_supervisors(data)
+            elif topic == self.ui.name_entry.get():
+                self.display_user_message(data)
+
+    def display_user_message(self, data):
+        supervisor_name = data.get("supervisor")
+        message = data.get("message")
+        messagebox.showinfo("Supervisor Message", f"Message from {supervisor_name}: {message}")

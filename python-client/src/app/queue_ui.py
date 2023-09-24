@@ -9,7 +9,7 @@ class QueueUI(ThemedTk):
 
         self.set_theme("adapta")
         self.title("Student Client")
-        self.geometry("700x550")
+        self.geometry("700x500")
 
 
         # frame

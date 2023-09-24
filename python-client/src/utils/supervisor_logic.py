@@ -55,3 +55,20 @@ class SupervisorLogic:
                 self.ui.update_supervisor_queue(data)
             elif topic == "queue":
                 self.ui.update_queue(data)
+
+    def make_supervisor_available(self):
+        request = {
+            "type": "supervisor",
+            "makeAvailable": True,
+            "supervisorName": self.supervisorName
+        }
+        response = self.server_handler.send_request(request, self.server_handler.req_socket)
+        logging.info("Make available request sent")
+
+        status = response.get("status")
+        message = response.get("message")
+
+        if status == "error":
+            messagebox.showerror("Error", message)
+        else:
+            messagebox.showinfo("Success", message)
