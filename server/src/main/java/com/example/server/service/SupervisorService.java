@@ -49,12 +49,15 @@ public class SupervisorService {
                 .orElse(null);
 
         if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
-            Student student = queueService.removeFirstStudent();
+            Student student = queueService.getQueue().stream()
+                    .findFirst() // Assuming you want to attend the first student in the queue
+                    .orElse(null);
             if (student != null) {
                 supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
                 supervisor.setAttendingStudent(student);
                 supervisor.setMessageFromSupervisor(message);
                 sendUserMessage(supervisorName, student.getName(), message);
+                queueService.removeStudentByName(student.getName());
                 broadcastSupervisorsStatus();
                 return student.getName();
             } else {
@@ -65,6 +68,7 @@ public class SupervisorService {
         }
         return "";
     }
+
 
     // Send a message to a specific user
     private void sendUserMessage(String supervisorName, String userName, String message) {

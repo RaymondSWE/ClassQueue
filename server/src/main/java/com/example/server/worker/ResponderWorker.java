@@ -12,7 +12,9 @@ import org.zeromq.ZMQ.Socket;
 
 import jakarta.annotation.PostConstruct;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ResponderWorker implements Runnable {
@@ -40,23 +42,42 @@ public class ResponderWorker implements Runnable {
     }
 
     // Update to switch case instead of if/else
+// Update to switch case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
-
-            if ("supervisor".equals(jsonRequest.optString("type"))) {
-                handleSupervisorRequest(jsonRequest);
-            } else if ("startup".equals(jsonRequest.optString("type"))) {
-                handleStartupMessage(jsonRequest);
-            } else {
-                // regular client request
-                String response = processClientRequest(clientRequest);
-                zmqResponseSocket.send(response);
-                broadcastQueue(queueService.getQueue());
+            String type = jsonRequest.optString("type");
+            switch (type) {
+                case "heartbeat":
+                    // Handle Heartbeat - possibly update the last received heartbeat time for this client
+                    handleHeartbeat(jsonRequest);
+                    break;
+                case "supervisor":
+                    handleSupervisorRequest(jsonRequest);
+                    break;
+                case "startup":
+                    handleStartupMessage(jsonRequest);
+                    break;
+                default:
+                    // Regular client request
+                    String response = processClientRequest(clientRequest);
+                    zmqResponseSocket.send(response);
+                    broadcastQueue(queueService.getQueue());
+                    break;
             }
         }
     }
+
+    private void handleHeartbeat(JSONObject jsonRequest) {
+        String clientId = jsonRequest.getString("clientId");
+        logger.info("Received heartbeat from clientId: {}", clientId);
+        queueService.updateClientHeartbeat(clientId);
+        zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
+    }
+
+
+
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
