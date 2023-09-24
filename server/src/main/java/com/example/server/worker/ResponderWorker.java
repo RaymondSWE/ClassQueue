@@ -39,6 +39,7 @@ public class ResponderWorker implements Runnable {
         new Thread(this).start();
     }
 
+    // Update to swith case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
             String clientRequest = zmqResponseSocket.recvStr();
@@ -79,7 +80,7 @@ public class ResponderWorker implements Runnable {
             String studentName = supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
             if (!studentName.equals("")) {
                 JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("message", "attending" + studentName);
+                jsonResponse.put("message", "attending: " + studentName);
                 jsonResponse.put("status", "success");
                 zmqResponseSocket.send(jsonResponse.toString());
             } else {
