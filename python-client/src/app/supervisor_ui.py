@@ -30,7 +30,7 @@ class SupervisorUI(ThemedTk):
                                                                            sticky="e")
         self.message_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
         self.message_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=2)
-        self.attend_student_button = ttk.Button(content_frame, text="Attend Student", command=self.attendQueue)
+        self.attend_student_button = ttk.Button(content_frame, text="Attend Student", command=self.attend_queue)
         self.attend_student_button.grid(row=1, column=3, padx=10, pady=10)
 
         # Queue and supervisors
@@ -52,11 +52,8 @@ class SupervisorUI(ThemedTk):
     def connect_as_supervisor(self):
         self.logic.connect_as_supervisor()
 
-    def attendQueue(self):
-        self.logic.attendQueue()
-        supervisor_name = self.name_entry.get()
-        if supervisor_name:
-            self.logic.connect_as_supervisor(supervisor_name)
+    def attend_queue(self):
+        self.logic.attend_queue()
 
     def update_supervisor_queue(self, supervisor_data):
         self.supervisor_listbox.delete(0, tk.END)
