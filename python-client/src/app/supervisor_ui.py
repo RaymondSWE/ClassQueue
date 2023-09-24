@@ -50,8 +50,8 @@ class SupervisorUI(ThemedTk):
         return listbox
 
     def connect_as_supervisor(self):
-            self.logic.connect_as_supervisor()
-        
+        self.logic.connect_as_supervisor()
+
     def attendQueue(self):
         self.logic.attendQueue()
         supervisor_name = self.name_entry.get()

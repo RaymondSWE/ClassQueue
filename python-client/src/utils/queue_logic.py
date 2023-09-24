@@ -20,10 +20,9 @@ class QueueLogic:
         data = {
             "enterQueue": True,
             "name": name,
-            "clientId": self.client_id, 
+            "clientId": self.client_id,
 
         }
-
 
         # Send request to serverHandler (Local server)
         server_response = self.server_handler.send_request(data, self.server_handler.req_socket)
