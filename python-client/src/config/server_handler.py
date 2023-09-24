@@ -18,6 +18,8 @@ class ServerHandler:
             self.sub_socket = self.context.socket(zmq.SUB)
             self.sub_socket.connect("tcp://localhost:5500")
             self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
+
         except zmq.ZMQError:
             raise ConnectionError("Error connecting to server")
         # subscribe to aditional topics

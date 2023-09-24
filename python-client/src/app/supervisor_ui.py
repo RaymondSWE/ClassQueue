@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk, Listbox
 from ttkthemes import ThemedTk
@@ -47,6 +48,12 @@ class SupervisorUI(ThemedTk):
         supervisor_name = self.name_entry.get()
         if supervisor_name:
             self.logic.connect_as_supervisor(supervisor_name)
+
+    def update_supervisor_queue(self, supervisor_data):
+        self.supervisor_listbox.delete(0, tk.END)
+        for supervisor in supervisor_data:
+            display_text = f"{supervisor['name']} - {supervisor['status']}"
+            self.supervisor_listbox.insert(tk.END, display_text)
 
 
 if __name__ == "__main__":
