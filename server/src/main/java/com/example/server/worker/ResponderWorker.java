@@ -51,7 +51,6 @@ public class ResponderWorker implements Runnable {
             } else {
                 // regular client request
                 String response = processClientRequest(clientRequest);
-                logger.info("Sending response to client: {}", response);
                 zmqResponseSocket.send(response);
                 broadcastQueue(queueService.getQueue());
             }
@@ -112,7 +111,6 @@ public class ResponderWorker implements Runnable {
             responseJson.put("ticket", ticket);
             responseJson.put("name", name);
 
-            logger.info("Processed client request. Current queue: {}", queueService.getQueue());
             return responseJson.toString();
 
         } catch (Exception e) {
