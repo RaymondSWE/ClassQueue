@@ -57,8 +57,7 @@ class ServerHandler:
             # Check if it's valid JSON
             if response_data.startswith(b'{') and response_data.endswith(b'}'):
                 return json.loads(response_data)
-            else:
-                raise InvalidResponseError("Received non-JSON response from server.")
+            raise InvalidResponseError("Received non-JSON response from server.")
         except zmq.ZMQError:
             raise SendMessageError("Error sending message to server.")
         except json.JSONDecodeError:
