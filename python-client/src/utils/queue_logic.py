@@ -9,6 +9,7 @@ class QueueLogic:
         self.ui = ui
         self.client_id = str(uuid.uuid4())  # unique client identifier
         self.server_handler = ServerHandler()
+        self.send_heartbeat_flag = True
 
     def join_queue(self):
         name = self.ui.name_entry.get()
@@ -38,6 +39,8 @@ class QueueLogic:
             messagebox.showerror("Error", "Failed to join the queue.")
 
     def send_heartbeat(self):
+        if not self.send_heartbeat_flag:  # Check the flag before sending heartbeat
+            return
         try:
             # Send heartbeat
             server_response = self.server_handler.send_request({
@@ -47,6 +50,9 @@ class QueueLogic:
             }, self.server_handler.req_socket)
         except EmptyResponseError:
             messagebox.showerror("Error", "Empty response received from the server.")
+
+    def stop_heartbeat(self):
+        self.send_heartbeat_flag = False
 
     def listen_for_updates(self):
         update = self.server_handler.check_for_updates()
@@ -63,3 +69,4 @@ class QueueLogic:
         supervisor_name = data.get("supervisor")
         message = data.get("message")
         messagebox.showinfo("Supervisor Message", f"Message from {supervisor_name}: {message}")
+        self.stop_heartbeat()
