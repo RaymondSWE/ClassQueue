@@ -84,7 +84,7 @@ public class PublisherWorker implements Runnable {
             json.put("client", supervisor.getAttendingStudent() != null ?
                     supervisor.getAttendingStudent().getName() : null);
             return json;
-        }).collect(Collectors.toList());
+        }).toList();
         zmqPublisherSocket.sendMore("supervisors");
         zmqPublisherSocket.send(supervisorsStatus.toString());
         logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
