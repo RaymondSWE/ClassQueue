@@ -71,7 +71,8 @@ public class ResponderWorker implements Runnable {
 
     private void handleHeartbeat(JSONObject jsonRequest) {
         String name = jsonRequest.getString("name");
-        logger.info("Received heartbeat from clientId: {}", name);
+        String clientId = jsonRequest.getString("clientId");
+        logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
         queueService.updateClientHeartbeat(name);
         zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
     }
