@@ -1,11 +1,12 @@
 package com.example.server.listener;
 
-import com.example.server.event.NewStudentEvent;
-import com.example.server.service.StudentService;
-import com.example.server.worker.PublisherWorker;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
+        import com.example.server.event.NewStudentEvent;
+        import com.example.server.event.StudentDeletedEvent;
+        import com.example.server.service.StudentService;
+        import com.example.server.worker.PublisherWorker;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.context.event.EventListener;
+        import org.springframework.stereotype.Component;
 
 @Component
 public class StudentEventListener {
@@ -21,6 +22,12 @@ public class StudentEventListener {
 
     @EventListener
     public void handleNewStudentEvent(NewStudentEvent event) {
+        publisherWorker.broadcastQueue(studentService.getQueue());
+    }
+
+    @EventListener
+    public void handleStudentDeletedEvent(StudentDeletedEvent event) {
+        // Handle the student deleted event and broadcast the updated queue.
         publisherWorker.broadcastQueue(studentService.getQueue());
     }
 }

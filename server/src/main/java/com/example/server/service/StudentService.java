@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import com.example.server.event.NewStudentEvent;
+import com.example.server.event.StudentDeletedEvent;
 import com.example.server.models.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,13 @@ public class StudentService {
     }
 
     public void removeStudentByName(String name) {
-        queue.removeIf(student -> student.getName().equals(name));
+        queue.removeIf(student -> {
+            if (student.getName().equals(name)) {
+                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
+                return true;
+            }
+            return false;
+        });
     }
 
     public void updateClientHeartbeat(String clientId) {
