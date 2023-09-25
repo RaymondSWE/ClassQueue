@@ -11,10 +11,9 @@ class QueueUI(ThemedTk):
         self.title("Student Client")
         self.geometry("700x500")
 
-
         # frame
         content_frame = ttk.Frame(self)
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=30, pady=30)
+        content_frame.pack(fill=tk.BOTH, expand=True)
 
         # outer frame
         outer_frame = ttk.Frame(content_frame)
@@ -71,6 +70,7 @@ class QueueUI(ThemedTk):
             status = supervisor.get('status', '')
             client = supervisor.get('client', '')
             self.supervisor_listbox.insert(tk.END, f"{name} - {status} - {client}")
+
 
 if __name__ == "__main__":
     app = QueueUI()

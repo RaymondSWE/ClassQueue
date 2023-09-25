@@ -1,7 +1,7 @@
 package com.example.server.worker;
 
 import com.example.server.models.Student;
-import com.example.server.service.QueueService;
+import com.example.server.service.StudentService;
 import com.example.server.service.SupervisorService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -12,9 +12,7 @@ import org.zeromq.ZMQ.Socket;
 
 import jakarta.annotation.PostConstruct;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class ResponderWorker implements Runnable {
@@ -24,7 +22,7 @@ public class ResponderWorker implements Runnable {
     private Socket zmqResponseSocket;
 
     @Autowired
-    private QueueService queueService;
+    private StudentService studentService;
 
     @Autowired
     private SupervisorService supervisorService;
@@ -41,11 +39,8 @@ public class ResponderWorker implements Runnable {
         new Thread(this).start();
     }
 
-    // Update to switch case instead of if/else
-// Update to switch case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
-            //queueService.removeInactiveStudents();
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
             String type = jsonRequest.optString("type");
@@ -60,10 +55,8 @@ public class ResponderWorker implements Runnable {
                     handleStartupMessage(jsonRequest);
                     break;
                 default:
-                    // Regular client request
                     String response = processClientRequest(clientRequest);
                     zmqResponseSocket.send(response);
-                    broadcastQueue(queueService.getQueue());
                     break;
             }
         }
@@ -73,7 +66,7 @@ public class ResponderWorker implements Runnable {
         String name = jsonRequest.getString("name");
         String clientId = jsonRequest.getString("clientId");
         logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
-        queueService.updateClientHeartbeat(name);
+        studentService.updateClientHeartbeat(name);
         zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
     }
 
@@ -87,7 +80,8 @@ public class ResponderWorker implements Runnable {
         }
         zmqResponseSocket.send("Acknowledged startup");
     }
-
+        //TODO::Add a method to disconnect as supervisor, would be cool.
+        // Also really ugly ass code, switch to switch
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
@@ -132,8 +126,8 @@ public class ResponderWorker implements Runnable {
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
-            queueService.manageStudent(name, clientId);
-            int ticket = queueService.getTicket();
+            studentService.manageStudent(name, clientId);
+            int ticket = studentService.getTicket();
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("ticket", ticket);
@@ -145,11 +139,6 @@ public class ResponderWorker implements Runnable {
             logger.error("Error parsing client request.", e);
             return "bad response";
         }
-    }
-
-
-    private void broadcastQueue(List<Student> queue) {
-        // Yet to be implemented
     }
 
 

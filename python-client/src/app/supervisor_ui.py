@@ -14,7 +14,7 @@ class SupervisorUI(ThemedTk):
 
         # Main frame
         content_frame = ttk.Frame(self)
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        content_frame.pack(fill=tk.BOTH, expand=True)
 
         # Input section
         ttk.Label(content_frame, text="Supervisor Name:", font=("Arial", 14)).grid(row=0, column=0, padx=10, pady=10,
