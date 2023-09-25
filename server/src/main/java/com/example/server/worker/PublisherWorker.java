@@ -1,5 +1,7 @@
 package com.example.server.worker;
 
+import com.example.server.event.NewStudentEvent;
+import com.example.server.event.NewSupervisorEvent;
 import com.example.server.models.Student;
 import com.example.server.service.StudentService;
 import com.example.server.service.SupervisorService;
@@ -8,6 +10,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.zeromq.ZMQ.Socket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,14 +41,12 @@ public class PublisherWorker implements Runnable {
         while (keepRunning) {
             try {
                 Thread.sleep(5000);
-                List<Student> queue = studentService.getQueue();
-                broadcastQueue(queue);
-                broadcastSupervisorsStatus();
             } catch (InterruptedException e) {
                 logger.error("Broadcasting thread interrupted", e);
             }
         }
     }
+
 
 
     public void broadcastQueue(List<Student> queue) {
