@@ -19,7 +19,7 @@ public class SupervisorService {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
 
     @Autowired
-    private QueueService queueService;
+    private StudentService studentService;
     @Autowired
     private ZMQ.Socket zmqPublisherSocket;
 
@@ -49,7 +49,7 @@ public class SupervisorService {
                 .orElse(null);
 
         if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
-            Student student = queueService.getQueue().stream()
+            Student student = studentService.getQueue().stream()
                     .findFirst()
                     .orElse(null);
             if (student != null) {
@@ -57,7 +57,7 @@ public class SupervisorService {
                 supervisor.setAttendingStudent(student);
                 supervisor.setMessageFromSupervisor(message);
                 sendUserMessage(supervisorName, student.getName(), message);
-                queueService.removeStudentByName(student.getName());
+                studentService.removeStudentByName(student.getName());
                 broadcastSupervisorsStatus();
                 return student.getName();
             } else {

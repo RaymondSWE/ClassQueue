@@ -1,7 +1,7 @@
 package com.example.server.worker;
 
 import com.example.server.models.Student;
-import com.example.server.service.QueueService;
+import com.example.server.service.StudentService;
 import com.example.server.service.SupervisorService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -12,9 +12,7 @@ import org.zeromq.ZMQ.Socket;
 
 import jakarta.annotation.PostConstruct;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class ResponderWorker implements Runnable {
@@ -24,7 +22,7 @@ public class ResponderWorker implements Runnable {
     private Socket zmqResponseSocket;
 
     @Autowired
-    private QueueService queueService;
+    private StudentService studentService;
 
     @Autowired
     private SupervisorService supervisorService;
@@ -63,7 +61,7 @@ public class ResponderWorker implements Runnable {
                     // Regular client request
                     String response = processClientRequest(clientRequest);
                     zmqResponseSocket.send(response);
-                    broadcastQueue(queueService.getQueue());
+                    broadcastQueue(studentService.getQueue());
                     break;
             }
         }
@@ -73,7 +71,7 @@ public class ResponderWorker implements Runnable {
         String name = jsonRequest.getString("name");
         String clientId = jsonRequest.getString("clientId");
         logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
-        queueService.updateClientHeartbeat(name);
+        studentService.updateClientHeartbeat(name);
         zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
     }
 
@@ -132,8 +130,8 @@ public class ResponderWorker implements Runnable {
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
-            queueService.manageStudent(name, clientId);
-            int ticket = queueService.getTicket();
+            studentService.manageStudent(name, clientId);
+            int ticket = studentService.getTicket();
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("ticket", ticket);

@@ -1,7 +1,7 @@
 package com.example.server.worker;
 
 import com.example.server.models.Student;
-import com.example.server.service.QueueService;
+import com.example.server.service.StudentService;
 import com.example.server.service.SupervisorService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +19,7 @@ public class PublisherWorker implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(PublisherWorker.class);
 
     private final Socket zmqPublisherSocket;
-    private final QueueService queueService;
+    private final StudentService studentService;
 
     @Autowired
     private SupervisorService supervisorService;
@@ -27,9 +27,9 @@ public class PublisherWorker implements Runnable {
     private volatile boolean keepRunning = true;
 
     @Autowired
-    public PublisherWorker(Socket zmqPublisherSocket, QueueService queueService) {
+    public PublisherWorker(Socket zmqPublisherSocket, StudentService studentService) {
         this.zmqPublisherSocket = zmqPublisherSocket;
-        this.queueService = queueService;
+        this.studentService = studentService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PublisherWorker implements Runnable {
         while (keepRunning) {
             try {
                 Thread.sleep(5000);
-                List<Student> queue = queueService.getQueue();
+                List<Student> queue = studentService.getQueue();
                 broadcastQueue(queue);
                 scheduleBroadcastSupervisorStatus();
             } catch (InterruptedException e) {
