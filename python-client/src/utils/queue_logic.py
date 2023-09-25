@@ -48,6 +48,7 @@ class QueueLogic:
             server_response = self.server_handler.send_request({
                 "type": "heartbeat",
                 "name": self.ui.name_entry.get(),
+                "clientId": self.client_id
             }, self.server_handler.req_socket)
             if "error" in server_response:
                 raise ServerError(server_response.get("message"))
