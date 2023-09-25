@@ -14,9 +14,9 @@ import java.util.Map;
 
 @Service
 @EnableScheduling
-public class QueueService {
+public class StudentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(QueueService.class);
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     private final List<Student> queue = new ArrayList<>();
     private String name;
