@@ -47,7 +47,8 @@ class SupervisorUI(ThemedTk):
 
         self.logic = SupervisorLogic(self)
 
-    def _create_listbox(self, parent, title, row, column, columnspan=1):
+    @staticmethod
+    def _create_listbox(parent, title, row, column, columnspan=1):
         ttk.Label(parent, text=title, font=("Arial", 14, "bold")).grid(row=row, column=column, columnspan=columnspan,
                                                                        pady=10)
         listbox = Listbox(parent, height=15, width=30, bg="#f5f5f5", fg="black",

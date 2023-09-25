@@ -59,7 +59,8 @@ class QueueLogic:
             elif topic == self.ui.name_entry.get():
                 self.display_user_message(data)
 
-    def display_user_message(self, data):
+    @staticmethod
+    def display_user_message(data):
         supervisor_name = data.get("supervisor")
         message = data.get("message")
         messagebox.showinfo("Supervisor Message", f"Message from {supervisor_name}: {message}")

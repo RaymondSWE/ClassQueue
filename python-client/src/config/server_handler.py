@@ -45,7 +45,8 @@ class ServerHandler:
         except json.JSONDecodeError:
             raise DeserializationError("Error decoding JSON from server.")
 
-    def send_request(self, message, socket):
+    @staticmethod
+    def send_request(message, socket):
         try:
             socket.send_json(message)
             response_data = socket.recv()
