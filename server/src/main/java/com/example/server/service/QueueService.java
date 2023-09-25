@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Configuration
 @EnableScheduling
 @Service
@@ -24,8 +25,6 @@ public class QueueService {
     private int ticket = -1;
 
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
-
-
 
 
     public int getTicket() {
@@ -71,20 +70,19 @@ public class QueueService {
         lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
 
     }
-    @Scheduled(fixedDelay =6000)
-public void removeInactiveStudents()
-{
-    Long currentTime=System.currentTimeMillis();
-    for(Map.Entry<String,Long> entry:lastHeartbeatReceived.entrySet())
-    {
-        Long elapsedTime=currentTime-entry.getValue();
-if(elapsedTime>4000)
-{
-removeStudentByName(entry.getKey());
 
-}
+    @Scheduled(fixedDelay = 6000)
+    public void removeInactiveStudents() {
+        Long currentTime = System.currentTimeMillis();
+        for (Map.Entry<String, Long> entry : lastHeartbeatReceived.entrySet()) {
+            Long elapsedTime = currentTime - entry.getValue();
+            if (elapsedTime > 4000) {
+                removeStudentByName(entry.getKey());
+
+            }
+        }
     }
-}
+
     //remove the first student in queue
     public Student removeFirstStudent() {
         return queue.remove(0);
