@@ -96,6 +96,8 @@ public class StudentService {
                 removeStudentByName(entry.getKey());
                 lastHeartbeatReceived.remove(entry.getKey());
                 logger.info("Removed inactive student with name: {}", entry.getKey());
+                logger.info("Queue state after removing {}: {}", entry.getKey(), queue);
+
             }
         }
     }
