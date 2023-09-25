@@ -70,6 +70,9 @@ public class SupervisorService {
                 supervisor.setMessageFromSupervisor(message);
                 publisherWorker.sendUserMessage(supervisorName, student.getName(), message);
                 studentService.removeStudentByName(student.getName());
+
+                publisherWorker.broadcastQueue(studentService.getQueue());
+                publisherWorker.broadcastSupervisorsStatus();
                 return student.getName();
             } else {
                 logger.info("No students in the queue");
