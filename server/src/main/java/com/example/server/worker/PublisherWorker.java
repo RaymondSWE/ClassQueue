@@ -23,7 +23,6 @@ public class PublisherWorker implements Runnable {
     private final StudentService studentService;
 
     @Autowired
-    @Lazy
     private SupervisorService supervisorService;
 
     private volatile boolean keepRunning = true;
