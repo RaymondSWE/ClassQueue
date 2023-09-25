@@ -3,7 +3,6 @@ package com.example.server.service;
 import com.example.server.models.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@EnableScheduling
 @Service
+@EnableScheduling
 public class QueueService {
 
     private static final Logger logger = LoggerFactory.getLogger(QueueService.class);
@@ -24,6 +23,7 @@ public class QueueService {
     private int ticket = -1;
 
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
+
 
 
     public int getTicket() {
@@ -70,17 +70,19 @@ public class QueueService {
 
     }
 
-    @Scheduled(fixedDelay = 6000)
+    @Scheduled(fixedRate = 4000)
     public void removeInactiveStudents() {
         Long currentTime = System.currentTimeMillis();
         for (Map.Entry<String, Long> entry : lastHeartbeatReceived.entrySet()) {
             Long elapsedTime = currentTime - entry.getValue();
             if (elapsedTime > 4000) {
                 removeStudentByName(entry.getKey());
-
+                lastHeartbeatReceived.remove(entry.getKey());
+                logger.info("Removed inactive student with name: {}", entry.getKey());
             }
         }
     }
+
 
     //remove the first student in queue
     public Student removeFirstStudent() {
