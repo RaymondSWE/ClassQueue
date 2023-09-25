@@ -7,7 +7,6 @@ class SupervisorClient(SupervisorUI):
         super().__init__()
 
         self.logic = SupervisorLogic(self)
-        self.logic.server_handler.send_startup_message()
 
 
         # Start listening for updates immediately
