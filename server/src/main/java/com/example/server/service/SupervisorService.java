@@ -94,6 +94,9 @@ public class SupervisorService {
             supervisor.setSupervisorStatus(SupervisorStatus.AVAILABLE);
             supervisor.setAttendingStudent(null);
             supervisor.setMessageFromSupervisor(null);
+
+            publisherWorker.broadcastSupervisorsStatus();
+            publisherWorker.broadcastQueue(studentService.getQueue());
         } else {
             logger.info("Supervisor not found");
         }

@@ -27,6 +27,10 @@ public class ResponderWorker implements Runnable {
     @Autowired
     private SupervisorService supervisorService;
 
+    @Autowired
+    private PublisherWorker publisherWorker;
+
+
     private volatile boolean keepRunning = true;
 
     @Override
@@ -78,6 +82,10 @@ public class ResponderWorker implements Runnable {
         } else {
             logger.info("Received startup message from client.");
         }
+        // Broadcast the current state of the student and supervisor queues
+        publisherWorker.broadcastQueue(studentService.getQueue());
+        publisherWorker.broadcastSupervisorsStatus();
+
         zmqResponseSocket.send("Acknowledged startup");
     }
         //TODO::Add a method to disconnect as supervisor, would be cool.
