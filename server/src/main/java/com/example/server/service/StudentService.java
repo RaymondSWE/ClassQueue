@@ -1,8 +1,12 @@
 package com.example.server.service;
 
+import com.example.server.event.NewStudentEvent;
+import com.example.server.event.StudentDeletedEvent;
 import com.example.server.models.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,12 @@ public class StudentService {
     private String name;
     private int ticket = -1;
 
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public StudentService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
 
 
@@ -57,11 +67,19 @@ public class StudentService {
     private void addStudent(Student student) {
         if (!queue.contains(student)) {
             queue.add(student);
+            eventPublisher.publishEvent(new NewStudentEvent(student));
+
         }
     }
 
     public void removeStudentByName(String name) {
-        queue.removeIf(student -> student.getName().equals(name));
+        queue.removeIf(student -> {
+            if (student.getName().equals(name)) {
+                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
+                return true;
+            }
+            return false;
+        });
     }
 
     public void updateClientHeartbeat(String clientId) {
@@ -78,6 +96,8 @@ public class StudentService {
                 removeStudentByName(entry.getKey());
                 lastHeartbeatReceived.remove(entry.getKey());
                 logger.info("Removed inactive student with name: {}", entry.getKey());
+                logger.info("Queue state after removing {}: {}", entry.getKey(), queue);
+
             }
         }
     }
