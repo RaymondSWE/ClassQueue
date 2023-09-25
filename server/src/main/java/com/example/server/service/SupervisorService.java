@@ -54,7 +54,7 @@ public class SupervisorService {
                     .findFirst()
                     .orElse(null);
             if (student != null) {
-                supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
+                supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
                 supervisor.setAttendingStudent(student);
                 supervisor.setMessageFromSupervisor(message);
                 publisherWorker.sendUserMessage(supervisorName, student.getName(), message);
