@@ -3,6 +3,7 @@ package com.example.server.service;
 import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
+import com.example.server.worker.PublisherWorker;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,9 @@ public class SupervisorService {
 
     @Autowired
     private StudentService studentService;
+
     @Autowired
-    private ZMQ.Socket zmqPublisherSocket;
+    private PublisherWorker publisherWorker;
 
     private final List<Supervisor> supervisors = new ArrayList<>();
 
@@ -32,7 +34,6 @@ public class SupervisorService {
         Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
         supervisors.add(supervisor);
         logger.info("Supervisor {} connected", supervisorName);
-        broadcastSupervisorsStatus();
     }
 
 
@@ -56,9 +57,8 @@ public class SupervisorService {
                 supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
                 supervisor.setAttendingStudent(student);
                 supervisor.setMessageFromSupervisor(message);
-                sendUserMessage(supervisorName, student.getName(), message);
+                publisherWorker.sendUserMessage(supervisorName, student.getName(), message);
                 studentService.removeStudentByName(student.getName());
-                broadcastSupervisorsStatus();
                 return student.getName();
             } else {
                 logger.info("No students in the queue");
@@ -70,32 +70,6 @@ public class SupervisorService {
     }
 
 
-    // Send a message to a specific user
-    private void sendUserMessage(String supervisorName, String userName, String message) {
-        JSONObject json = new JSONObject();
-        json.put("supervisor", supervisorName);
-        json.put("message", message);
-        zmqPublisherSocket.sendMore(userName);
-        zmqPublisherSocket.send(json.toString());
-        logger.info("Sending user message to {}: {}", userName, json.toString());
-    }
-
-    // Broadcast the status of all connected supervisors, using it currently for debugging
-    private void broadcastSupervisorsStatus() {
-        List<JSONObject> supervisorsStatus = supervisors.stream().map(supervisor -> {
-            JSONObject json = new JSONObject();
-            json.put("name", supervisor.getName());
-            json.put("status", supervisor.getSupervisorStatus().toString().toLowerCase());
-            json.put("client", supervisor.getAttendingStudent() != null ?
-                    supervisor.getAttendingStudent().getName() : null);
-            return json;
-        }).collect(Collectors.toList());
-        zmqPublisherSocket.sendMore("supervisors");
-        zmqPublisherSocket.send(supervisorsStatus.toString());
-        logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
-    }
-
-    // Method to make a supervisor available again
     public void makeSupervisorAvailable(String supervisorName) {
         Supervisor supervisor = supervisors.stream()
                 .filter(s -> Objects.equals(s.getName(), supervisorName))
@@ -106,7 +80,6 @@ public class SupervisorService {
             supervisor.setSupervisorStatus(SupervisorStatus.AVAILABLE);
             supervisor.setAttendingStudent(null);
             supervisor.setMessageFromSupervisor(null);
-            broadcastSupervisorsStatus();
         } else {
             logger.info("Supervisor not found");
         }

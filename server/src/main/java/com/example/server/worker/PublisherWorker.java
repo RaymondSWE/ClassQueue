@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.zeromq.ZMQ.Socket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class PublisherWorker implements Runnable {
     private final StudentService studentService;
 
     @Autowired
+    @Lazy
     private SupervisorService supervisorService;
 
     private volatile boolean keepRunning = true;
@@ -39,29 +41,13 @@ public class PublisherWorker implements Runnable {
                 Thread.sleep(5000);
                 List<Student> queue = studentService.getQueue();
                 broadcastQueue(queue);
-                scheduleBroadcastSupervisorStatus();
+                broadcastSupervisorsStatus();
             } catch (InterruptedException e) {
                 logger.error("Broadcasting thread interrupted", e);
             }
         }
     }
 
-    private void scheduleBroadcastSupervisorStatus() {
-        // Call the SupervisorService's method to get the status and then broadcast
-        List<JSONObject> supervisorStatus = supervisorService.displayAllConnectedSupervisors().stream()
-                .map(supervisor -> {
-                    JSONObject json = new JSONObject();
-                    json.put("name", supervisor.getName());
-                    json.put("status", supervisor.getSupervisorStatus().toString().toLowerCase());
-                    json.put("client", supervisor.getAttendingStudent() != null ?
-                            supervisor.getAttendingStudent().getName() : null);
-                    return json;
-                }).collect(Collectors.toList());
-
-        zmqPublisherSocket.sendMore("supervisors");
-        zmqPublisherSocket.send(supervisorStatus.toString());
-        logger.info("Broadcasting supervisors status: {}", supervisorStatus.toString());
-    }
 
     public void broadcastQueue(List<Student> queue) {
         zmqPublisherSocket.sendMore("queue");
@@ -78,6 +64,30 @@ public class PublisherWorker implements Runnable {
             jsonArray.put(studentJson);
         }
         return jsonArray.toString();
+    }
+
+
+    public void sendUserMessage(String supervisorName, String userName, String message) {
+        JSONObject json = new JSONObject();
+        json.put("supervisor", supervisorName);
+        json.put("message", message);
+        zmqPublisherSocket.sendMore(userName);
+        zmqPublisherSocket.send(json.toString());
+        logger.info("Sending user message to {}: {}", userName, json.toString());
+    }
+
+    public void broadcastSupervisorsStatus() {
+        List<JSONObject> supervisorsStatus = supervisorService.displayAllConnectedSupervisors().stream().map(supervisor -> {
+            JSONObject json = new JSONObject();
+            json.put("name", supervisor.getName());
+            json.put("status", supervisor.getSupervisorStatus().toString().toLowerCase());
+            json.put("client", supervisor.getAttendingStudent() != null ?
+                    supervisor.getAttendingStudent().getName() : null);
+            return json;
+        }).collect(Collectors.toList());
+        zmqPublisherSocket.sendMore("supervisors");
+        zmqPublisherSocket.send(supervisorsStatus.toString());
+        logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
     }
 
 
