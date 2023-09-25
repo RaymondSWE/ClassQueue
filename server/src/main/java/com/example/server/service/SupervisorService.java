@@ -37,7 +37,6 @@ public class SupervisorService {
     }
     private final List<Supervisor> supervisors = new ArrayList<>();
 
-    private volatile boolean keepRunning = true;
 
     // Method to add a new supervisor
     public void addSupervisor(String supervisorName) {
