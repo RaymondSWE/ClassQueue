@@ -25,7 +25,6 @@ public class QueueService {
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
 
 
-
     public int getTicket() {
         for (int i = 0; i < queue.size(); i++) {
             if (queue.get(i).getName().equals(this.name)) {

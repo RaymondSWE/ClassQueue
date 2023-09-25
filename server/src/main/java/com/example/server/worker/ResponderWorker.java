@@ -78,8 +78,6 @@ public class ResponderWorker implements Runnable {
     }
 
 
-
-
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
         if (clientNumber != -1) {
