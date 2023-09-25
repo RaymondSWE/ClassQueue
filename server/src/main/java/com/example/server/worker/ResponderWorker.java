@@ -85,7 +85,8 @@ public class ResponderWorker implements Runnable {
         }
         zmqResponseSocket.send("Acknowledged startup");
     }
-        //TODO::Add a method to disconnect as supervisor, would be cool
+        //TODO::Add a method to disconnect as supervisor, would be cool.
+        // Also really ugly ass code, switch to switch
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
