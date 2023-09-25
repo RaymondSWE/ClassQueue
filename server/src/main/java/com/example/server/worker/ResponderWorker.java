@@ -45,6 +45,7 @@ public class ResponderWorker implements Runnable {
 // Update to switch case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
+            //queueService.removeInactiveStudents();
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
             String type = jsonRequest.optString("type");
@@ -69,13 +70,12 @@ public class ResponderWorker implements Runnable {
     }
 
     private void handleHeartbeat(JSONObject jsonRequest) {
+        String name = jsonRequest.getString("name");
         String clientId = jsonRequest.getString("clientId");
-        logger.info("Received heartbeat from clientId: {}", clientId);
-        queueService.updateClientHeartbeat(clientId);
+        logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
+        queueService.updateClientHeartbeat(name);
         zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
     }
-
-
 
 
     private void handleStartupMessage(JSONObject jsonRequest) {
