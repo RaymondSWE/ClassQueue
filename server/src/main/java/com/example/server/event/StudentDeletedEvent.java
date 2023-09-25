@@ -1,6 +1,5 @@
 package com.example.server.event;
 
-import com.example.server.models.Student;
 import org.springframework.context.ApplicationEvent;
 
 public class StudentDeletedEvent extends ApplicationEvent {

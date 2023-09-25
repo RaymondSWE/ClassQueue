@@ -1,7 +1,5 @@
 package com.example.server.worker;
 
-import com.example.server.event.NewStudentEvent;
-import com.example.server.event.NewSupervisorEvent;
 import com.example.server.models.Student;
 import com.example.server.service.StudentService;
 import com.example.server.service.SupervisorService;
@@ -9,14 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.event.EventListener;
-import org.zeromq.ZMQ.Socket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.zeromq.ZMQ.Socket;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PublisherWorker implements Runnable {
