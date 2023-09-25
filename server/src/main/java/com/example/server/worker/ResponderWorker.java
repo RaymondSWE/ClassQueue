@@ -61,7 +61,6 @@ public class ResponderWorker implements Runnable {
                     // Regular client request
                     String response = processClientRequest(clientRequest);
                     zmqResponseSocket.send(response);
-                    broadcastQueue(studentService.getQueue());
                     break;
             }
         }
@@ -144,11 +143,6 @@ public class ResponderWorker implements Runnable {
             logger.error("Error parsing client request.", e);
             return "bad response";
         }
-    }
-
-
-    private void broadcastQueue(List<Student> queue) {
-        // Yet to be implemented
     }
 
 
