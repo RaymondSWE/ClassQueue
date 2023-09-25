@@ -27,6 +27,10 @@ public class ResponderWorker implements Runnable {
     @Autowired
     private SupervisorService supervisorService;
 
+    @Autowired
+    private PublisherWorker publisherWorker;
+
+
     private volatile boolean keepRunning = true;
 
     @Override
@@ -40,24 +44,31 @@ public class ResponderWorker implements Runnable {
     }
 
     public void handleClientRequest() {
-        while (keepRunning) {
-            String clientRequest = zmqResponseSocket.recvStr();
-            JSONObject jsonRequest = new JSONObject(clientRequest);
-            String type = jsonRequest.optString("type");
-            switch (type) {
-                case "heartbeat":
-                    handleHeartbeat(jsonRequest);
+        while (keepRunning && !Thread.currentThread().isInterrupted()) {
+            try {
+                String clientRequest = zmqResponseSocket.recvStr();
+                JSONObject jsonRequest = new JSONObject(clientRequest);
+                String type = jsonRequest.optString("type");
+                switch (type) {
+                    case "heartbeat":
+                        handleHeartbeat(jsonRequest);
+                        break;
+                    case "supervisor":
+                        handleSupervisorRequest(jsonRequest);
+                        break;
+                    case "startup":
+                        handleStartupMessage(jsonRequest);
+                        break;
+                    default:
+                        String response = processClientRequest(clientRequest);
+                        zmqResponseSocket.send(response);
+                        break;
+                }
+            } catch (Exception e) {
+                if (!keepRunning) {
                     break;
-                case "supervisor":
-                    handleSupervisorRequest(jsonRequest);
-                    break;
-                case "startup":
-                    handleStartupMessage(jsonRequest);
-                    break;
-                default:
-                    String response = processClientRequest(clientRequest);
-                    zmqResponseSocket.send(response);
-                    break;
+                }
+                logger.error("Error handling client request: ", e);
             }
         }
     }
@@ -78,6 +89,10 @@ public class ResponderWorker implements Runnable {
         } else {
             logger.info("Received startup message from client.");
         }
+        // Broadcast the current state of the student and supervisor queues
+        publisherWorker.broadcastQueue(studentService.getQueue());
+        publisherWorker.broadcastSupervisorsStatus();
+
         zmqResponseSocket.send("Acknowledged startup");
     }
         //TODO::Add a method to disconnect as supervisor, would be cool.
