@@ -37,7 +37,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-
         <!-- Validation API -->
         <dependency>
             <groupId>javax.validation</groupId>
@@ -56,7 +55,6 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-zeromq</artifactId>
-
         </dependency>
 
         <!-- Spring Boot Starter pack -->
@@ -70,6 +68,7 @@
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
