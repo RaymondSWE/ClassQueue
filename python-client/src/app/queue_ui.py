@@ -13,7 +13,7 @@ class QueueUI(ThemedTk):
 
         # frame
         content_frame = ttk.Frame(self)
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=30, pady=30)
+        content_frame.pack(fill=tk.BOTH, expand=True)
 
         # outer frame
         outer_frame = ttk.Frame(content_frame)
