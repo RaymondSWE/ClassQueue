@@ -43,7 +43,6 @@ public class ResponderWorker implements Runnable {
 // Update to switch case instead of if/else
     public void handleClientRequest() {
         while (keepRunning) {
-            //queueService.removeInactiveStudents();
             String clientRequest = zmqResponseSocket.recvStr();
             JSONObject jsonRequest = new JSONObject(clientRequest);
             String type = jsonRequest.optString("type");
