@@ -58,7 +58,6 @@ public class ResponderWorker implements Runnable {
                     handleStartupMessage(jsonRequest);
                     break;
                 default:
-                    // Regular client request
                     String response = processClientRequest(clientRequest);
                     zmqResponseSocket.send(response);
                     break;
