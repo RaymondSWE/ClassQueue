@@ -2,7 +2,7 @@ import uuid
 from tkinter import messagebox
 from config.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
-
+from error.connection_exceptions import ServerError
 
 class QueueLogic:
     def __init__(self, ui):
@@ -48,8 +48,9 @@ class QueueLogic:
             server_response = self.server_handler.send_request({
                 "type": "heartbeat",
                 "name": self.ui.name_entry.get(),
-                "clientId": self.client_id
             }, self.server_handler.req_socket)
+            if "error" in server_response:
+                raise ServerError(server_response.get("message"))
         except EmptyResponseError:
             messagebox.showerror("Error", "Empty response received from the server.")
 

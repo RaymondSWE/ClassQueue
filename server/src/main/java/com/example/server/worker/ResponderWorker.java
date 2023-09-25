@@ -33,6 +33,13 @@ public class ResponderWorker implements Runnable {
 
     private volatile boolean keepRunning = true;
 
+    private void sendErrorMsg(String errorType, String message)
+    {
+JSONObject json=new JSONObject();
+json.put("message", message);
+json.put("error", errorType);
+zmqResponseSocket.send(json.toString());
+    }
     @Override
     public void run() {
         handleClientRequest();
@@ -74,16 +81,26 @@ public class ResponderWorker implements Runnable {
     }
 
     private void handleHeartbeat(JSONObject jsonRequest) {
+        if(jsonRequest.has("clientId")&&jsonRequest.has("name"))
+        {
         String name = jsonRequest.getString("name");
         String clientId = jsonRequest.getString("clientId");
         logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
         studentService.updateClientHeartbeat(name);
         zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
     }
+    else
+    {
+        logger.info("no client id found");
+        sendErrorMsg("invalidMessage", "your message is not valid");
+         return;
+    }
+    }
 
 
     private void handleStartupMessage(JSONObject jsonRequest) {
         int clientNumber = jsonRequest.optInt("client_number", -1);
+        
         if (clientNumber != -1) {
             logger.info("Received startup message from client number: {}  ", clientNumber);
         } else {
