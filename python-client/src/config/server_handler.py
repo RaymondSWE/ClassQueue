@@ -23,7 +23,7 @@ class ServerHandler:
         while retries < self.MAX_RETRIES:
             try:
                 self.req_socket = self.context.socket(zmq.REQ)
-                self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)  # Set a timeout for receive operations
+                self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)
                 self.req_socket.connect(self.REQ_SOCKET_ADDRESS)
 
                 self.sub_socket = self.context.socket(zmq.SUB)
