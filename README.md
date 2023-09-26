@@ -7,10 +7,8 @@
 
 ## Reflection & Improvement
 
-During the development of our project, we tried to a structured workflow, especially with our main branch being protected. This meant that pull requests were needed for code to  be merged to main branch. We  used the SonarLint extension, which highlighted code smells representing instances of bad coding practices and provided explanations and recommendations on improving code quality and learning clean code fundamentals.
-
-DeepSource served as a valuable tool in identifying security vulnerabilities, anti-patterns, and instances of bad coding practices. It suggested issues to fix bad code practice or security issues.
-We conducted code reviews for each other. Given that there were no automated CI/CD workflow for testing, manual tests were performed on each branch before merging PRs. This project that was highly enjoyable, but also very educational.
+During the development of our project, we tried to a structured workflow, especially with our main branch being protected. This meant that pull requests were needed for code to  be merged to main branch. 
+We conducted code reviews for each other. Given that there were no automated CI/CD workflow for testing, manual tests were done on each branch before merging PRs. This project that was highly enjoyable, but also very educational.
 
 For the future, we want to learn how to implement a good CI/CD pipeline for a better development experience. We are also considering changing from Tkinter to PySide for the GUI, because its more modern. The reason we initially chose Tkinter was because it had lower learning curve.
 
@@ -127,7 +125,8 @@ Sent to the server when a supervisor attends a student in the queue
 ```json
 {
     "message":"<the message that is going to be sent to the student when they are informed about their turn to be attended.>"
-     "type":"supervisor", "attendStudent":true, "supervisorName": "<name of the supervisor that is going to attend the student>"
+     "type":"supervisor", "attendStudent":true
+    "supervisorName": "<name of the supervisor that is going to attend the student>"
 }
 ```
 server response:
