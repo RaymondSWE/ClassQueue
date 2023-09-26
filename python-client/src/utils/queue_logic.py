@@ -22,6 +22,7 @@ class QueueLogic:
             if connected:
                 self.ui.join_queue_button['state'] = tk.NORMAL
                 self.server_handler.send_startup_message()
+                self.ui.listen_for_updates()
                 messagebox.showinfo("Success", f"Connected to the server at {host} successfully!")
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
@@ -53,7 +54,7 @@ class QueueLogic:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
             self.ui.start_heartbeat()  # Heartbeats should be sent after it has joined the queue (I think)
             self.send_heartbeat_flag = True
-            self.ui.listen_for_updates()  # Start listening for updates after joining the queue
+            self.ui.listen_for_updates()
 
         else:
             messagebox.showerror("Error", "Failed to join the queue.")

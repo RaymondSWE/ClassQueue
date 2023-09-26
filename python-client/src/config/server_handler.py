@@ -8,7 +8,7 @@ from error.connection_exceptions import (
 
 
 class ServerHandler:
-    CLIENT_NUMBER = 1
+    CLIENT_NUMBER = 2
     MAX_RETRIES = 3
     RETRY_INTERVAL = 5
 
