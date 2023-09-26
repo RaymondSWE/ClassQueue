@@ -83,7 +83,7 @@ public class ResponderWorker implements Runnable {
             studentService.updateClientHeartbeat(name);
             zmqResponseSocket.send(new JSONObject().toString());
         } else {
-            logger.warn("Invalid heartbeat message: clientId or name not found");
+            logger.error("Invalid heartbeat message: clientId or name not found");
             sendErrorMsg("invalidMessage", "Invalid heartbeat message");
         }
     }
@@ -98,14 +98,12 @@ public class ResponderWorker implements Runnable {
             } else {
                 logger.info("Received startup message from client.");
             }
-            // Broadcast the current state of the student and supervisor queues
             publisherWorker.broadcastQueue(studentService.getQueue());
             publisherWorker.broadcastSupervisorsStatus();
-
             zmqResponseSocket.send("Acknowledged startup");
         } else {
-            logger.info("no client id found");
-            sendErrorMsg(invalidMessageType, "no client id was found");
+            logger.error("no client id found");
+            sendErrorMsg(invalidMessageType, "No client id was found");
         }
 
     }
@@ -121,13 +119,15 @@ public class ResponderWorker implements Runnable {
             handleMakeAvailable(jsonRequest);
         } else {
             sendErrorMsg(invalidMessageType, "Invalid supervisor request");
+            logger.error("Invalid supervisor request");
+
         }
     }
 
     private void handleAddSupervisor(JSONObject jsonRequest) {
         String supervisorName = jsonRequest.optString("supervisorName");
         if (supervisorName.isEmpty()) {
-            logger.warn("Could not find supervisorName in message");
+            logger.error("Invalid request. Unable to find supervisorName");
             sendErrorMsg(invalidMessageType, "Invalid request. Unable to find supervisorName");
             return;
         }
@@ -176,7 +176,7 @@ public class ResponderWorker implements Runnable {
         jsonResponse.put("message", "Supervisor is now available");
         zmqResponseSocket.send(jsonResponse.toString());
     }
-    
+
 
     private void processClientRequest(JSONObject json) {
         try {
