@@ -1,6 +1,8 @@
 package com.example.server.service;
 
 import com.example.server.event.NewSupervisorEvent;
+import com.example.server.event.SupervisorAssignedStudentEvent;
+import com.example.server.event.SupervisorStatusChangedEvent;
 import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
@@ -32,6 +34,7 @@ public class SupervisorService {
     public SupervisorService(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
+
     private final List<Supervisor> supervisors = new ArrayList<>();
 
 
@@ -78,17 +81,13 @@ public class SupervisorService {
     private Student findFirstStudentInQueue() {
         return studentService.getQueue().stream().findFirst().orElse(null);
     }
-    //TODO:: Try to have publisher inside of the eventlistener file instead
+
     private void attendToStudent(Supervisor supervisor, Student student, String message) {
         supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
         supervisor.setAttendingStudent(student);
         supervisor.setMessageFromSupervisor(message);
-
-        publisherWorker.sendUserMessage(supervisor.getName(), student.getName(), message);
         studentService.removeStudentByName(student.getName());
-
-        publisherWorker.broadcastQueue(studentService.getQueue());
-        publisherWorker.broadcastSupervisorsStatus();
+        eventPublisher.publishEvent(new SupervisorAssignedStudentEvent(this, supervisor.getName(), student.getName(), message));
     }
 
 
@@ -103,9 +102,8 @@ public class SupervisorService {
             supervisor.setAttendingStudent(null);
             supervisor.setMessageFromSupervisor(null);
 
-            publisherWorker.broadcastSupervisorsStatus();
-            publisherWorker.broadcastQueue(studentService.getQueue());
-            logger.info("Supervisor {} is now available", supervisorName);
+            eventPublisher.publishEvent(new SupervisorStatusChangedEvent(this, supervisorName));
+
         } else {
             logger.error("Supervisor not found");
         }

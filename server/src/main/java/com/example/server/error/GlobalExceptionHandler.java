@@ -16,5 +16,4 @@ public class GlobalExceptionHandler {
         return e.getMessage();
     }
 
-    // More exception will be added for other configs, logic etc
 }
