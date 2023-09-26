@@ -1,6 +1,3 @@
-# Distrubted system  for queue system - API documentation
-
-
 ## Authors
 a21nibah
 a21rammo
