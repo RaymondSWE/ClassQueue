@@ -55,6 +55,8 @@ public class ResponderWorker implements Runnable {
                     case "heartbeat" -> handleHeartbeat(jsonRequest);
                     case "supervisor" -> handleSupervisorRequest(jsonRequest);
                     case "startup" -> handleStartupMessage(jsonRequest);
+                    case "ping" -> handlePing();
+
                     default -> handleStudentRequest(jsonRequest);
                 }
             } catch (Exception e) {
@@ -66,6 +68,12 @@ public class ResponderWorker implements Runnable {
 
             }
         }
+    }
+
+    private void handlePing() {
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("message", "pong");
+        zmqResponseSocket.send(jsonResponse.toString());
     }
 
     private void handleHeartbeat(JSONObject jsonRequest) {
