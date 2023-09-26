@@ -3,7 +3,7 @@
 
 ## ResponderWorker
 
-#### Description
+### Description
 `ResponderWorker` handles incoming client requests and sends responses back.
 
 ### Methods
