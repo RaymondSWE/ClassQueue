@@ -61,9 +61,6 @@ class QueueUI(ThemedTk):
         self.join_queue_button = ttk.Button(input_section, text="Join Queue", state=tk.DISABLED)
         self.join_queue_button.grid(row=0, column=2, padx=10, pady=10)
 
-
-
-
         # Queue section
         queue_section = ttk.Frame(outer_frame)
         queue_section.grid(row=1, column=0, sticky="nsew", pady=20)
@@ -86,8 +83,6 @@ class QueueUI(ThemedTk):
         outer_frame.columnconfigure(0, weight=1)
         outer_frame.rowconfigure(0, weight=1)
         outer_frame.rowconfigure(1, weight=3)
-
-
 
     def update_queue(self, queue_data):
         self.queue_listbox.delete(0, tk.END)
