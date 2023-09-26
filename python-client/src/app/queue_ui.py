@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, Listbox
 from ttkthemes import ThemedTk
 
+from utils.queue_logic import QueueLogic
+
 
 class QueueUI(ThemedTk):
     def __init__(self):
@@ -46,7 +48,11 @@ class QueueUI(ThemedTk):
         ttk.Label(input_section, text="Name:", font=("Poppins", 12)).grid(row=0, column=0, padx=10, pady=10)
         self.name_entry = ttk.Entry(input_section, font=("Poppins", 12), width=30)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10)
-        self.join_queue_button = ttk.Button(input_section, text="Join Queue")
+
+        self.connect_button = ttk.Button(host_port_section, text="Connect", command=self.connect_to_server)
+        self.connect_button.grid(row=0, column=6, padx=10, pady=10)
+
+        self.join_queue_button = ttk.Button(input_section, text="Join Queue", state=tk.DISABLED)
         self.join_queue_button.grid(row=0, column=2, padx=10, pady=10)
 
 
@@ -94,6 +100,12 @@ class QueueUI(ThemedTk):
             status = supervisor.get('status', '')
             client = supervisor.get('client', '')
             self.supervisor_listbox.insert(tk.END, f"{name} - {status} - {client}")
+
+
+    def connect_to_server(self):
+        self.logic = QueueLogic(self)
+        if self.logic.server_handler:
+            self.join_queue_button['state'] = tk.NORMAL
 
 
 if __name__ == "__main__":
