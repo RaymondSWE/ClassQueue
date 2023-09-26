@@ -56,7 +56,6 @@ public class ResponderWorker implements Runnable {
                     case "supervisor" -> handleSupervisorRequest(jsonRequest);
                     case "startup" -> handleStartupMessage(jsonRequest);
                     case "ping" -> handlePing();
-
                     default -> handleStudentRequest(jsonRequest);
                 }
             } catch (Exception e) {
