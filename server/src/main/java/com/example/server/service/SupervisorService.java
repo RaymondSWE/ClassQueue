@@ -94,7 +94,7 @@ public class SupervisorService {
             publisherWorker.broadcastSupervisorsStatus();
             publisherWorker.broadcastQueue(studentService.getQueue());
         } else {
-            logger.info("Supervisor not found");
+            logger.error("Supervisor not found");
         }
     }
 
