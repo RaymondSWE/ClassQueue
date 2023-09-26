@@ -85,9 +85,4 @@ public class PublisherWorker implements Runnable {
         logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
     }
 
-
-
-    public void stop() {
-        this.keepRunning = false;
-    }
 }

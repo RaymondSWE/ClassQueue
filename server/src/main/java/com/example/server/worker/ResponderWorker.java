@@ -25,10 +25,10 @@ public class ResponderWorker implements Runnable {
 
     @Autowired
     private PublisherWorker publisherWorker;
-    private String invalidMessageType = "invalidMessage";
+    private final String INVALID_MESSAGE_TYPE = "invalidMessage";
     private volatile boolean keepRunning = true;
 
-    private void sendErrorMsg(String errorType, String message) {
+    private void handleErrorMessage(String errorType, String message) {
         JSONObject json = new JSONObject();
         json.put("message", message);
         json.put("error", errorType);
@@ -84,7 +84,7 @@ public class ResponderWorker implements Runnable {
             zmqResponseSocket.send(new JSONObject().toString());
         } else {
             logger.error("Invalid heartbeat message: clientId or name not found");
-            sendErrorMsg("invalidMessage", "Invalid heartbeat message");
+            handleErrorMessage("invalidMessage", "Invalid heartbeat message");
         }
     }
 
@@ -103,13 +103,14 @@ public class ResponderWorker implements Runnable {
             zmqResponseSocket.send("Acknowledged startup");
         } else {
             logger.error("no client id found");
-            sendErrorMsg(invalidMessageType, "No client id was found");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "No client id was found");
         }
 
     }
 
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
+
 
         if (jsonRequest.has("addSupervisor")) {
             handleAddSupervisor(jsonRequest);
@@ -118,7 +119,7 @@ public class ResponderWorker implements Runnable {
         } else if (jsonRequest.has("makeAvailable")) {
             handleMakeAvailable(jsonRequest);
         } else {
-            sendErrorMsg(invalidMessageType, "Invalid supervisor request");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid supervisor request");
             logger.error("Invalid supervisor request");
 
         }
@@ -128,7 +129,7 @@ public class ResponderWorker implements Runnable {
         String supervisorName = jsonRequest.optString("supervisorName");
         if (supervisorName.isEmpty()) {
             logger.error("Invalid request. Unable to find supervisorName");
-            sendErrorMsg(invalidMessageType, "Invalid request. Unable to find supervisorName");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. Unable to find supervisorName");
             return;
         }
 
@@ -145,13 +146,13 @@ public class ResponderWorker implements Runnable {
 
         if (supervisorName.isEmpty() || message.isEmpty()) {
             logger.warn("Invalid request. Supervisor name or message not found");
-            sendErrorMsg(invalidMessageType, "Invalid request. SupervisorName or message is missing");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. SupervisorName or message is missing");
             return;
         }
 
         String studentName = supervisorService.attendStudent(supervisorName, message);
         if (studentName.isEmpty()) {
-            sendErrorMsg(invalidMessageType, "Failed to attend students");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Failed to attend students");
             return;
         }
 
@@ -166,7 +167,7 @@ public class ResponderWorker implements Runnable {
         String supervisorName = jsonRequest.optString("supervisorName");
         if (supervisorName.isEmpty()) {
             logger.warn("Invalid request. Could not find supervisorName");
-            sendErrorMsg(invalidMessageType, "Invalid request. Could not find supervisorName");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. Could not find supervisorName");
             return;
         }
 
@@ -192,12 +193,9 @@ public class ResponderWorker implements Runnable {
             zmqResponseSocket.send(responseJson.toString());
         } catch (Exception e) {
             logger.error("Error parsing client request.", e);
-            sendErrorMsg(invalidMessageType, "invalid queue request");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "invalid queue request");
         }
     }
 
 
-    public void stop() {
-        this.keepRunning = false;
-    }
 }
