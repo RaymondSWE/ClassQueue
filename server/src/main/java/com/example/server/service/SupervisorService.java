@@ -78,7 +78,7 @@ public class SupervisorService {
     private Student findFirstStudentInQueue() {
         return studentService.getQueue().stream().findFirst().orElse(null);
     }
-
+    //TODO:: Try to have publisher inside of the eventlistener file instead
     private void attendToStudent(Supervisor supervisor, Student student, String message) {
         supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
         supervisor.setAttendingStudent(student);
