@@ -78,6 +78,8 @@ class SupervisorLogic:
                 self.ui.update_supervisor_queue(data)
             elif topic == "queue":
                 self.ui.update_queue(data)
+            elif topic == "error":
+                messagebox.showerror("Error", data.get("message"))
 
     def make_supervisor_available(self):
         request = {
