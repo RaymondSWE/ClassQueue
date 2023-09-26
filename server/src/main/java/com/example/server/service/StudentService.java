@@ -95,7 +95,7 @@ public class StudentService {
             if (elapsedTime > 4000) {
                 removeStudentByName(entry.getKey());
                 lastHeartbeatReceived.remove(entry.getKey());
-                logger.info("Removed student with name: {}", entry.getKey());
+                logger.warn("Removed inactive student with name: {}", entry.getKey());
 
             }
         }
