@@ -7,15 +7,11 @@ class SupervisorClient(SupervisorUI):
         super().__init__()
 
         self.logic = SupervisorLogic(self)
-        self.logic.server_handler.send_startup_message()
-
-
-        # Start listening for updates immediately
-        self.listen_for_updates()
 
     def listen_for_updates(self):
         self.logic.listen_for_updates()
         self.after(100, self.listen_for_updates)
+
 
 if __name__ == "__main__":
     app = SupervisorClient()

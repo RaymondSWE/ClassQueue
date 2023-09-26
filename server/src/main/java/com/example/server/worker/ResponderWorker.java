@@ -91,8 +91,9 @@ public class ResponderWorker implements Runnable {
 
         zmqResponseSocket.send("Acknowledged startup");
     }
-        //TODO::Add a method to disconnect as supervisor, would be cool.
-        // Also really ugly ass code, switch to switch
+
+    //TODO::Add a method to disconnect as supervisor, would be cool.
+    // Also really ugly ass code, switch to switch
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
@@ -114,14 +115,14 @@ public class ResponderWorker implements Runnable {
                 jsonResponse.put("message", "failed to attend students");
                 zmqResponseSocket.send(jsonResponse.toString());
             }
-        }else if (jsonRequest.has("makeAvailable")) {
+        } else if (jsonRequest.has("makeAvailable")) {
             String supervisorName = jsonRequest.getString("supervisorName");
             supervisorService.makeSupervisorAvailable(supervisorName);
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("status", "success");
             jsonResponse.put("message", "Supervisor is now available");
             zmqResponseSocket.send(jsonResponse.toString());
-        }else {
+        } else {
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("status", "error");
             jsonResponse.put("message", "Invalid supervisor request");
