@@ -4,6 +4,7 @@ import logging
 from config.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
 from tkinter import messagebox
+import tkinter as tk
 
 
 class SupervisorLogic:
@@ -19,6 +20,7 @@ class SupervisorLogic:
             connected = self.server_handler.connect()
             if connected:
                 messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
+                self.ui.connect_button['state'] = tk.NORMAL  # Enable the Connect as Supervisor button
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
         except Exception as e:
@@ -31,6 +33,7 @@ class SupervisorLogic:
             response = self.server_handler.send_request(message, self.server_handler.req_socket)
             jsonResponse = response if isinstance(response, dict) else json.loads(response)
             logging.info("Connect as supervisor response: %s", jsonResponse)
+            self.ui.listen_for_updates()
         except json.JSONDecodeError:
             logging.error("Received non-JSON response from server: %s", response)
         except EmptyResponseError as se:
@@ -57,6 +60,7 @@ class SupervisorLogic:
             messagebox.showerror("Error", message)
         else:
             messagebox.showinfo("Success", message)
+            self.ui.listen_for_updates()
 
     def listen_for_updates(self):
         update = self.server_handler.check_for_updates()
@@ -83,3 +87,4 @@ class SupervisorLogic:
             messagebox.showerror("Error", message)
         else:
             messagebox.showinfo("Success", message)
+            self.ui.listen_for_updates()
