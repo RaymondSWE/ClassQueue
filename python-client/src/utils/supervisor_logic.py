@@ -9,14 +9,20 @@ from tkinter import messagebox
 class SupervisorLogic:
     def __init__(self, ui):
         self.ui = ui
-        host = self.ui.host_entry.get()
-        sub_port = self.ui.sub_port_entry.get()
-        req_port = self.ui.req_port_entry.get()
+        self.host = "localhost"
+        self.sub_port = "5500"
+        self.req_port = "5600"
+
+    def connect_to_server(self):
         try:
-            self.server_handler = ServerHandler(host, sub_port, req_port)
-        except ConnectionError:
-            messagebox.showerror("Error", "Unable to connect to the server!")
-            return
+            self.server_handler = ServerHandler(self.host, self.sub_port, self.req_port)
+            connected = self.server_handler.connect()
+            if connected:
+                messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
+            else:
+                messagebox.showerror("Error", "Unable to connect to the server!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error connecting to the server: {e}")
 
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()
