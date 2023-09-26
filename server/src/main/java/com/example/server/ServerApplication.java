@@ -2,7 +2,6 @@ package com.example.server;
 
 import com.example.server.worker.PublisherWorker;
 import com.example.server.worker.ResponderWorker;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

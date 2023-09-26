@@ -5,18 +5,15 @@ import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
 import com.example.server.worker.PublisherWorker;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.zeromq.ZMQ;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class SupervisorService {
@@ -46,32 +43,17 @@ public class SupervisorService {
         logger.info("Supervisor {} connected", supervisorName);
     }
 
-
-    // Display info about all supervisors currently connected
     public List<Supervisor> displayAllConnectedSupervisors() {
         return new ArrayList<>(supervisors);
     }
 
-    // Attend to the first student in the queue
-    public String attendStudent(String supervisorName, String message) {
-        Supervisor supervisor = supervisors.stream()
-                .filter(s -> Objects.equals(s.getName(), supervisorName))
-                .findFirst()
-                .orElse(null);
+    public String assignStudentToSupervisor(String supervisorName, String message) {
+        Supervisor supervisor = findSupervisorByName(supervisorName);
 
-        if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
-            Student student = studentService.getQueue().stream()
-                    .findFirst()
-                    .orElse(null);
+        if (isSupervisorAvailable(supervisor)) {
+            Student student = findFirstStudentInQueue();
             if (student != null) {
-                supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
-                supervisor.setAttendingStudent(student);
-                supervisor.setMessageFromSupervisor(message);
-                publisherWorker.sendUserMessage(supervisorName, student.getName(), message);
-                studentService.removeStudentByName(student.getName());
-
-                publisherWorker.broadcastQueue(studentService.getQueue());
-                publisherWorker.broadcastSupervisorsStatus();
+                attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
                 logger.info("No students in the queue");
@@ -80,6 +62,33 @@ public class SupervisorService {
             logger.info("Supervisor not available or not found");
         }
         return "";
+    }
+
+    private Supervisor findSupervisorByName(String supervisorName) {
+        return supervisors.stream()
+                .filter(supervisor -> Objects.equals(supervisor.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isSupervisorAvailable(Supervisor supervisor) {
+        return supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE;
+    }
+
+    private Student findFirstStudentInQueue() {
+        return studentService.getQueue().stream().findFirst().orElse(null);
+    }
+    //TODO:: Try to have publisher inside of the eventlistener file instead
+    private void attendToStudent(Supervisor supervisor, Student student, String message) {
+        supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
+        supervisor.setAttendingStudent(student);
+        supervisor.setMessageFromSupervisor(message);
+
+        publisherWorker.sendUserMessage(supervisor.getName(), student.getName(), message);
+        studentService.removeStudentByName(student.getName());
+
+        publisherWorker.broadcastQueue(studentService.getQueue());
+        publisherWorker.broadcastSupervisorsStatus();
     }
 
 
@@ -97,7 +106,7 @@ public class SupervisorService {
             publisherWorker.broadcastSupervisorsStatus();
             publisherWorker.broadcastQueue(studentService.getQueue());
         } else {
-            logger.info("Supervisor not found");
+            logger.error("Supervisor not found");
         }
     }
 
