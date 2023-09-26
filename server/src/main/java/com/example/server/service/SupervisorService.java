@@ -86,12 +86,8 @@ public class SupervisorService {
         supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
         supervisor.setAttendingStudent(student);
         supervisor.setMessageFromSupervisor(message);
-
-        publisherWorker.sendUserMessage(supervisor.getName(), student.getName(), message);
         studentService.removeStudentByName(student.getName());
-
         eventPublisher.publishEvent(new SupervisorAssignedStudentEvent(this, supervisor.getName(), student.getName(), message));
-
     }
 
 
