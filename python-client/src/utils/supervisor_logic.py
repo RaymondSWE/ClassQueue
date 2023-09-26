@@ -9,10 +9,15 @@ from tkinter import messagebox
 class SupervisorLogic:
     def __init__(self, ui):
         self.ui = ui
-        self.server_handler = ServerHandler()
-        logging.basicConfig(level=logging.INFO)
+        host = self.ui.host_entry.get()
+        sub_port = self.ui.sub_port_entry.get()
+        req_port = self.ui.req_port_entry.get()
+        try:
+            self.server_handler = ServerHandler(host, sub_port, req_port)
+        except ConnectionError:
+            messagebox.showerror("Error", "Unable to connect to the server!")
+            return
 
-    ## Kinda spagetti code in connect_as supervisor fix it in the future
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()
         message = {"type": "supervisor", "supervisorName": self.supervisorName, "addSupervisor": True}

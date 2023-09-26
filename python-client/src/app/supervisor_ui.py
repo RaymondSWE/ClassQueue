@@ -22,6 +22,24 @@ class SupervisorUI(ThemedTk):
         self.name_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10, columnspan=2)
 
+        # Host and Port Input section
+        ttk.Label(content_frame, text="Host:", font=("Arial", 14)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+        self.host_entry = ttk.Entry(content_frame, font=("Arial", 12), width=40)
+        self.host_entry.grid(row=1, column=1, padx=10, pady=10, columnspan=2)
+
+        ttk.Label(content_frame, text="SUB Port:", font=("Arial", 14)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
+        self.sub_port_entry = ttk.Entry(content_frame, font=("Arial", 12), width=10)
+        self.sub_port_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        ttk.Label(content_frame, text="REQ Port:", font=("Arial", 14)).grid(row=2, column=2, padx=10, pady=10, sticky="e")
+        self.req_port_entry = ttk.Entry(content_frame, font=("Arial", 12), width=10)
+        self.req_port_entry.grid(row=2, column=3, padx=10, pady=10)
+
+        # set default values
+        self.host_entry.insert(0, "localhost")
+        self.sub_port_entry.insert(0, "5500")
+        self.req_port_entry.insert(0, "5600")
+
         # Button to connect
         self.connect_button = ttk.Button(content_frame, text="Connect", command=self.connect_as_supervisor)
         self.connect_button.grid(row=0, column=3, padx=10, pady=10)
