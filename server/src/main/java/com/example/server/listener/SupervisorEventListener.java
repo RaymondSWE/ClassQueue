@@ -29,7 +29,7 @@ public class SupervisorEventListener {
 
     @EventListener
     public void handleSupervisorAssignedStudentEvent(SupervisorAssignedStudentEvent event) {
-        publisherWorker.sendUserMessage(event.getSupervisorName(), event.getStudentName(), event.getMessage());
+        publisherWorker.sendStudentMessage(event.getSupervisorName(), event.getStudentName(), event.getMessage());
         publisherWorker.broadcastQueue(studentService.getQueue());
         publisherWorker.broadcastSupervisorsStatus();
     }

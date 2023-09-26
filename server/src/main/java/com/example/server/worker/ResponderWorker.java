@@ -150,7 +150,7 @@ public class ResponderWorker implements Runnable {
             return;
         }
 
-        String studentName = supervisorService.attendStudent(supervisorName, message);
+        String studentName = supervisorService.assignStudentToSupervisor(supervisorName, message);
         if (studentName.isEmpty()) {
             handleErrorMessage(INVALID_MESSAGE_TYPE, "Failed to attend students");
             return;
