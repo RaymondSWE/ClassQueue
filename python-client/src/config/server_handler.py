@@ -31,11 +31,11 @@ class ServerHandler:
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
 
-                # Testing connection by sending a ping or a simple message.
+                # Testing connection by sending simple message.
                 self.req_socket.send_string("queue")
-                # If server is offline, it will throw a zmq.Again exception.
+                # No respond =  will throw a zmq.Again exception.
                 self.req_socket.recv_string()
-                return True  # Connection successful
+                return True
 
             except zmq.Again:
                 logging.warning("Timeout while waiting for a response from server.")
@@ -50,7 +50,7 @@ class ServerHandler:
                 time.sleep(self.RETRY_INTERVAL)
 
         logging.error("Connection failed after reaching the maximum number of retries.")
-        return False  # Connection failed
+        return False
 
     def subscribe(self, topic):
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)
