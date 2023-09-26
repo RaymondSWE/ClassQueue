@@ -1,67 +1,65 @@
 package com.example.server.service;
 
+import com.example.server.event.NewSupervisorEvent;
+import com.example.server.event.SupervisorAssignedStudentEvent;
+import com.example.server.event.SupervisorStatusChangedEvent;
 import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
-import org.json.JSONObject;
+import com.example.server.worker.PublisherWorker;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.zeromq.ZMQ;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class SupervisorService {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
 
     @Autowired
-    private QueueService queueService;
+    private StudentService studentService;
+
     @Autowired
-    private ZMQ.Socket zmqPublisherSocket;
+    @Lazy
+    private PublisherWorker publisherWorker;
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public SupervisorService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
 
     private final List<Supervisor> supervisors = new ArrayList<>();
 
-    private volatile boolean keepRunning = true;
 
     // Method to add a new supervisor
     public void addSupervisor(String supervisorName) {
         Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
         supervisors.add(supervisor);
+        eventPublisher.publishEvent(new NewSupervisorEvent(supervisor));
         logger.info("Supervisor {} connected", supervisorName);
-        broadcastSupervisorsStatus();
     }
 
-
-    // Display info about all supervisors currently connected
     public List<Supervisor> displayAllConnectedSupervisors() {
         return new ArrayList<>(supervisors);
     }
 
-    // Attend to the first student in the queue
-    public String attendStudent(String supervisorName, String message) {
-        Supervisor supervisor = supervisors.stream()
-                .filter(s -> Objects.equals(s.getName(), supervisorName))
-                .findFirst()
-                .orElse(null);
+    public String assignStudentToSupervisor(String supervisorName, String message) {
+        Supervisor supervisor = findSupervisorByName(supervisorName);
 
-        if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
-            Student student = queueService.getQueue().stream()
-                    .findFirst()
-                    .orElse(null);
+        if (isSupervisorAvailable(supervisor)) {
+            Student student = findFirstStudentInQueue();
             if (student != null) {
-                supervisor.setSupervisorStatus(SupervisorStatus.BUSY);
-                supervisor.setAttendingStudent(student);
-                supervisor.setMessageFromSupervisor(message);
-                sendUserMessage(supervisorName, student.getName(), message);
-                queueService.removeStudentByName(student.getName());
-                broadcastSupervisorsStatus();
+                attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
-                logger.info("No students in the queue");
+                logger.warn("No students in the queue for");
             }
         } else {
             logger.info("Supervisor not available or not found");
@@ -69,30 +67,46 @@ public class SupervisorService {
         return "";
     }
 
-
-    // Send a message to a specific user
-    private void sendUserMessage(String supervisorName, String userName, String message) {
-        JSONObject json = new JSONObject();
-        json.put("supervisor", supervisorName);
-        json.put("message", message);
-        zmqPublisherSocket.sendMore(userName);
-        zmqPublisherSocket.send(json.toString());
-        logger.info("Sending user message to {}: {}", userName, json.toString());
+    private Supervisor findSupervisorByName(String supervisorName) {
+        return supervisors.stream()
+                .filter(supervisor -> Objects.equals(supervisor.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
     }
 
-    // Broadcast the status of all connected supervisors, using it currently for debugging
-    private void broadcastSupervisorsStatus() {
-        List<JSONObject> supervisorsStatus = supervisors.stream().map(supervisor -> {
-            JSONObject json = new JSONObject();
-            json.put("name", supervisor.getName());
-            json.put("status", supervisor.getSupervisorStatus().toString().toLowerCase());
-            json.put("client", supervisor.getAttendingStudent() != null ?
-                    supervisor.getAttendingStudent().getName() : null);
-            return json;
-        }).collect(Collectors.toList());
-        zmqPublisherSocket.sendMore("supervisors");
-        zmqPublisherSocket.send(supervisorsStatus.toString());
-        logger.info("Broadcasting supervisors status: {}", supervisorsStatus.toString());
+    private boolean isSupervisorAvailable(Supervisor supervisor) {
+        return supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE;
+    }
+
+    private Student findFirstStudentInQueue() {
+        return studentService.getQueue().stream().findFirst().orElse(null);
+    }
+
+    private void attendToStudent(Supervisor supervisor, Student student, String message) {
+        supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
+        supervisor.setAttendingStudent(student);
+        supervisor.setMessageFromSupervisor(message);
+        studentService.removeStudentByName(student.getName());
+        eventPublisher.publishEvent(new SupervisorAssignedStudentEvent(this, supervisor.getName(), student.getName(), message));
+    }
+
+
+    public void makeSupervisorAvailable(String supervisorName) {
+        Supervisor supervisor = supervisors.stream()
+                .filter(s -> Objects.equals(s.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
+
+        if (supervisor != null) {
+            supervisor.setSupervisorStatus(SupervisorStatus.AVAILABLE);
+            supervisor.setAttendingStudent(null);
+            supervisor.setMessageFromSupervisor(null);
+
+            eventPublisher.publishEvent(new SupervisorStatusChangedEvent(this, supervisorName));
+
+        } else {
+            logger.error("Supervisor not found");
+        }
     }
 
 }
