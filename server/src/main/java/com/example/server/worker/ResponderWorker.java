@@ -133,7 +133,7 @@ zmqResponseSocket.send(json.toString());
         } else if (jsonRequest.has("attendStudent")) {
             if(jsonRequest.has("supervisorName")&&jsonRequest.has("message"))
             {
-            String studentName = supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
+            String studentName = supervisorService.assignStudentToSupervisor(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
             if (!studentName.equals("")) {
                 JSONObject jsonResponse = new JSONObject();
                 jsonResponse.put("message", "attending: " + studentName);
