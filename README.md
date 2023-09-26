@@ -8,7 +8,6 @@
 
 ### Methods
 
-- `run()`: Implements the Runnable interface run method. Inorder to handle client requests.
 - `handleClientRequest()`: Handles incoming client requests and responds.
 - `handleErrorMessage(String errorType, String message)`: Sends an error message through the socket.
 - `handleHeartbeat(JSONObject jsonRequest)`: Handles heartbeat messages from clients.
@@ -24,7 +23,6 @@
 
 ### Methods
 
-- `run()`: Implements the Runnable interface's run method.
 - `broadcastQueue(List<Student> queue)`: Broadcasts the current queue of students.
 - `convertQueueToJson(List<Student> queue)`: Converts the student queue to a JSON.
 - `sendUserMessage(String supervisorName, String userName, String message)`: Sends a student message.
