@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import zmq
 from error.connection_exceptions import (
@@ -8,7 +9,7 @@ from error.connection_exceptions import (
 
 
 class ServerHandler:
-    CLIENT_NUMBER = 2
+    CLIENT_NUMBER = 1
     MAX_RETRIES = 3
     RETRY_INTERVAL = 5
 
@@ -22,19 +23,34 @@ class ServerHandler:
         while retries < self.MAX_RETRIES:
             try:
                 self.req_socket = self.context.socket(zmq.REQ)
+                self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)
                 self.req_socket.connect(self.REQ_SOCKET_ADDRESS)
 
                 self.sub_socket = self.context.socket(zmq.SUB)
                 self.sub_socket.connect(self.SUB_SOCKET_ADDRESS)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
-                return True  # Connection successful
-            except zmq.ZMQError:
+
+                # Testing connection by sending simple message.
+                self.req_socket.send_string("queue")
+                # No respond =  will throw a zmq.Again exception.
+                self.req_socket.recv_string()
+                return True
+
+            except zmq.Again:
+                logging.warning("Timeout while waiting for a response from server.")
+            except zmq.ZMQError as e:
+                logging.error(f"ZMQ Error: {e}")
+            except Exception as e:
+                logging.error(f"Unexpected Error: {e}")
+            finally:
                 retries += 1
-                print(f"Error connecting to server. Retrying in {self.RETRY_INTERVAL} seconds...")
+                logging.warning(
+                    f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds...")
                 time.sleep(self.RETRY_INTERVAL)
 
-        return False  # Connection failed
+        logging.error("Connection failed after reaching the maximum number of retries.")
+        return False
 
     def subscribe(self, topic):
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)

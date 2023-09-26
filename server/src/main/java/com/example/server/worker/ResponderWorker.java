@@ -37,7 +37,7 @@ public class ResponderWorker implements Runnable {
 
     @Override
     public void run() {
-        handleClientRequest();
+        handleAllRequest();
     }
 
     @PostConstruct
@@ -45,31 +45,25 @@ public class ResponderWorker implements Runnable {
         new Thread(this).start();
     }
 
-    public void handleClientRequest() {
+    public void handleAllRequest() {
         while (keepRunning && !Thread.currentThread().isInterrupted()) {
             try {
                 String clientRequest = zmqResponseSocket.recvStr();
                 JSONObject jsonRequest = new JSONObject(clientRequest);
                 String type = jsonRequest.optString("type");
                 switch (type) {
-                    case "heartbeat":
-                        handleHeartbeat(jsonRequest);
-                        break;
-                    case "supervisor":
-                        handleSupervisorRequest(jsonRequest);
-                        break;
-                    case "startup":
-                        handleStartupMessage(jsonRequest);
-                        break;
-                    default:
-                        processClientRequest(jsonRequest);
-                        break;
+                    case "heartbeat" -> handleHeartbeat(jsonRequest);
+                    case "supervisor" -> handleSupervisorRequest(jsonRequest);
+                    case "startup" -> handleStartupMessage(jsonRequest);
+                    default -> handleStudentRequest(jsonRequest);
                 }
             } catch (Exception e) {
                 if (!keepRunning) {
                     break;
                 }
                 logger.error("Error handling client request: ", e);
+                handleErrorMessage("serverError", "Error handling client request: " + e.getMessage());
+
             }
         }
     }
@@ -102,7 +96,7 @@ public class ResponderWorker implements Runnable {
             publisherWorker.broadcastSupervisorsStatus();
             zmqResponseSocket.send("Acknowledged startup");
         } else {
-            logger.error("no client id found");
+            logger.error("No client id found");
             handleErrorMessage(INVALID_MESSAGE_TYPE, "No client id was found");
         }
 
@@ -110,7 +104,6 @@ public class ResponderWorker implements Runnable {
 
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
-
 
         if (jsonRequest.has("addSupervisor")) {
             handleAddSupervisor(jsonRequest);
@@ -179,7 +172,7 @@ public class ResponderWorker implements Runnable {
     }
 
 
-    private void processClientRequest(JSONObject json) {
+    private void handleStudentRequest(JSONObject json) {
         try {
             String name = json.getString("name");
             String clientId = json.getString("clientId");
