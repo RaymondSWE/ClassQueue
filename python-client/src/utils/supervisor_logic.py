@@ -21,7 +21,8 @@ class SupervisorLogic:
             if connected:
                 messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
                 self.ui.connect_button['state'] = tk.NORMAL
-                self.ui.status_label.config(text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
+                self.ui.status_label.config(
+                    text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
                 self.ui.listen_for_updates()
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
@@ -73,6 +74,8 @@ class SupervisorLogic:
                 self.ui.update_supervisor_queue(data)
             elif topic == "queue":
                 self.ui.update_queue(data)
+            elif topic == "error":
+                messagebox.showerror("Error", data.get("message"))
 
     def make_supervisor_available(self):
         request = {

@@ -83,7 +83,9 @@ class QueueLogic:
         update = self.server_handler.check_for_updates()
         if update:
             topic, data = update
-            if topic == "queue":
+            if topic == "error":
+                messagebox.showerror("Error", data.get("message"))
+            elif topic == "queue":
                 self.ui.update_queue(data)
             elif topic == "supervisors":
                 self.ui.update_supervisors(data)
