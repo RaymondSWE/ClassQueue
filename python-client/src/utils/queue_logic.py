@@ -7,8 +7,12 @@ from error.connection_exceptions import EmptyResponseError
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
-        self.client_id = str(uuid.uuid4())  # unique client identifier
-        self.server_handler = ServerHandler()
+        self.client_id = str(uuid.uuid4())
+        try:
+            self.server_handler = ServerHandler()
+        except ConnectionError:
+            messagebox.showerror("Error", "Unable to connect to the server!")
+            return
         self.send_heartbeat_flag = True
 
     def join_queue(self):

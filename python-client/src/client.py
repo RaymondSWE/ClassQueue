@@ -8,6 +8,7 @@ class QueueClient(QueueUI):
         self.logic = QueueLogic(self)
         self.logic.server_handler.send_startup_message()
 
+
         # Set the command for the button
         self.join_queue_button.config(command=self.logic.join_queue)
 
