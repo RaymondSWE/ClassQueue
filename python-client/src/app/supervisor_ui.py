@@ -38,6 +38,8 @@ class SupervisorUI(ThemedTk):
         self.message_entry = ttk.Entry(content_frame, font=("Arial", 12), width=30)
         self.message_entry.grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
+
+
         # Attend student button
         self.attend_student_button = ttk.Button(content_frame, text="Attend Student", command=self.attend_queue)
         self.attend_student_button.grid(row=1, column=2, padx=10, pady=10, sticky="w")
@@ -45,6 +47,10 @@ class SupervisorUI(ThemedTk):
         # Queue and supervisors Listboxes
         self.queue_listbox = self._create_listbox(content_frame, "Students in Queue", row=2, column=0, columnspan=2)
         self.supervisor_listbox = self._create_listbox(content_frame, "Connected Supervisors", row=2, column=2, columnspan=3)
+
+        # Status Label for showing connection information
+        self.status_label = ttk.Label(content_frame, text="", font=("Poppins", 12), anchor="e")
+        self.status_label.grid(row=4, column=0, columnspan=5, sticky="ew", padx=10, pady=10)
 
         self.logic = SupervisorLogic(self)
 

@@ -20,9 +20,11 @@ class SupervisorLogic:
             connected = self.server_handler.connect()
             if connected:
                 messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
-                self.ui.connect_button['state'] = tk.NORMAL  # Enable the Connect as Supervisor button
+                self.ui.connect_button['state'] = tk.NORMAL
+                self.ui.status_label.config(text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
+                self.ui.status_label.config(text="Unable to connect!")
         except Exception as e:
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
 
