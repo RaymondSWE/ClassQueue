@@ -1,44 +1,48 @@
 import json
-
+import time
 import zmq
 
 from error.connection_exceptions import (ConnectionError, EmptyResponseError, ServerError, 
                                          DeserializationError, SendMessageError, InvalidResponseError)
 
-
 class ServerHandler:
-    client_number = 1
+    CLIENT_NUMBER = 2
+    MAX_RETRIES = 3
+    RETRY_INTERVAL = 5
 
-    def __init__(self):
+    def __init__(self, host, sub_port, req_port):
+        self.REQ_SOCKET_ADDRESS = f"tcp://{host}:{req_port}"
+        self.SUB_SOCKET_ADDRESS = f"tcp://{host}:{sub_port}"
         self.context = zmq.Context()
-        try:
-            # request socket
-            self.req_socket = self.context.socket(zmq.REQ)
-            self.req_socket.connect("tcp://localhost:5600")
 
-            # subscriber socket
-            self.sub_socket = self.context.socket(zmq.SUB)
-            self.sub_socket.connect("tcp://localhost:5500")
-            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
-            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
+    def connect(self):
+        retries = 0
+        while retries < self.MAX_RETRIES:
+            try:
+                self.req_socket = self.context.socket(zmq.REQ)
+                self.req_socket.connect(self.REQ_SOCKET_ADDRESS)
 
-        except zmq.ZMQError:
-            raise ConnectionError("Error connecting to server")
-        # subscribe to aditional topics
+                self.sub_socket = self.context.socket(zmq.SUB)
+                self.sub_socket.connect(self.SUB_SOCKET_ADDRESS)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
+                return True  # Connection successful
+            except zmq.ZMQError:
+                retries += 1
+                print(f"Error connecting to server. Retrying in {self.RETRY_INTERVAL} seconds...")
+                time.sleep(self.RETRY_INTERVAL)
+
+        return False  # Connection failed
 
     def subscribe(self, topic):
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)
 
     def check_for_updates(self):
         try:
-            # Check for new messages
             topic = self.sub_socket.recv_string(flags=zmq.NOBLOCK)
             msg = self.sub_socket.recv_string(flags=zmq.NOBLOCK)
-
-            # Check if the message is empty or not valid JSON
             if not msg or not (msg.startswith('{') or msg.startswith('[')):
                 return None
-
             return (topic, json.loads(msg))
         except zmq.Again:
             return None
@@ -49,12 +53,8 @@ class ServerHandler:
         try:
             socket.send_json(message)
             response_data = socket.recv()
-
-            # Check for Empty Responses
             if not response_data.strip():
                 raise EmptyResponseError("Received empty data from server.")
-
-            # Check if it's valid JSON
             if response_data.startswith(b'{') and response_data.endswith(b'}'):
                 return json.loads(response_data)
             raise InvalidResponseError("Received non-JSON response from server.")

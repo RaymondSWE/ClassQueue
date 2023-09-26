@@ -4,15 +4,31 @@ import logging
 from config.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
 from tkinter import messagebox
+import tkinter as tk
 
 
 class SupervisorLogic:
     def __init__(self, ui):
         self.ui = ui
-        self.server_handler = ServerHandler()
-        logging.basicConfig(level=logging.INFO)
+        self.host = "localhost"
+        self.sub_port = "5500"
+        self.req_port = "5600"
 
-    ## Kinda spagetti code in connect_as supervisor fix it in the future
+    def connect_to_server(self):
+        try:
+            self.server_handler = ServerHandler(self.host, self.sub_port, self.req_port)
+            connected = self.server_handler.connect()
+            if connected:
+                messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
+                self.ui.connect_button['state'] = tk.NORMAL
+                self.ui.status_label.config(text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
+                self.ui.listen_for_updates()
+            else:
+                messagebox.showerror("Error", "Unable to connect to the server!")
+                self.ui.status_label.config(text="Unable to connect!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error connecting to the server: {e}")
+
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()
         message = {"type": "supervisor", "supervisorName": self.supervisorName, "addSupervisor": True}
@@ -20,8 +36,12 @@ class SupervisorLogic:
             response = self.server_handler.send_request(message, self.server_handler.req_socket)
             jsonResponse = response if isinstance(response, dict) else json.loads(response)
             logging.info("Connect as supervisor response: %s", jsonResponse)
+             self.ui.listen_for_updates()
+
             if "error" in jsonResponse:
                 messagebox.showerror("error", jsonResponse.get("message"))
+            self.ui.listen_for_updates()
+            
         except json.JSONDecodeError:
             logging.error("Received non-JSON response from server: %s", response)
         except EmptyResponseError as se:
@@ -49,6 +69,7 @@ class SupervisorLogic:
 
         if status == "success":
             messagebox.showinfo("Success", message)
+            self.ui.listen_for_updates()
 
     def listen_for_updates(self):
         update = self.server_handler.check_for_updates()
@@ -74,4 +95,6 @@ class SupervisorLogic:
         if "error" in response:
             messagebox.showerror("Error", message)
         else:
-            messagebox.showinfo( message)
+            messagebox.showinfo("Success", message)
+            self.ui.listen_for_updates()
+
