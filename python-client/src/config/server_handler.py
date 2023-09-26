@@ -21,7 +21,7 @@ class ServerHandler:
     def ping_server(self):
         try:
             self.req_socket.send_json({"type": "ping"})
-            self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)  # Set timeout to 5000 milliseconds
+            self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)
             response_data = self.req_socket.recv()
             response = json.loads(response_data)
             return response.get("message") == "pong"
@@ -47,14 +47,14 @@ class ServerHandler:
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
                 if self.ping_server():
-                    return True  # Connection successful
+                    return True
             except zmq.ZMQError:
                 pass
             retries += 1
-            logging.warning(f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds...")
+            logging.warning(f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds")
             time.sleep(self.RETRY_INTERVAL)
         logging.error("Connection failed after reaching the maximum number of retries.")
-        return False  # Connection failed
+        return False
 
     def subscribe(self, topic):
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)
