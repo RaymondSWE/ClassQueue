@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, Listbox
 from ttkthemes import ThemedTk
 
-from utils.queue_logic import QueueLogic
+from utils.student_logic import QueueLogic
 
 
 class QueueUI(ThemedTk):
