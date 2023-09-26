@@ -36,12 +36,7 @@ class SupervisorLogic:
             response = self.server_handler.send_request(message, self.server_handler.req_socket)
             jsonResponse = response if isinstance(response, dict) else json.loads(response)
             logging.info("Connect as supervisor response: %s", jsonResponse)
-             self.ui.listen_for_updates()
-
-            if "error" in jsonResponse:
-                messagebox.showerror("error", jsonResponse.get("message"))
             self.ui.listen_for_updates()
-            
         except json.JSONDecodeError:
             logging.error("Received non-JSON response from server: %s", response)
         except EmptyResponseError as se:
@@ -60,14 +55,13 @@ class SupervisorLogic:
         }
         response = self.server_handler.send_request(request, self.server_handler.req_socket)
         logging.info("Attend request sent")
-        if "error" in response:
-            messagebox.showerror("error", response.get("message"))
-            return
 
         status = response.get("status")
         message = response.get("message")
 
-        if status == "success":
+        if status == "error":
+            messagebox.showerror("Error", message)
+        else:
             messagebox.showinfo("Success", message)
             self.ui.listen_for_updates()
 
@@ -92,9 +86,8 @@ class SupervisorLogic:
         status = response.get("status")
         message = response.get("message")
 
-        if "error" in response:
+        if status == "error":
             messagebox.showerror("Error", message)
         else:
             messagebox.showinfo("Success", message)
             self.ui.listen_for_updates()
-

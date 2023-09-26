@@ -43,33 +43,17 @@ public class SupervisorService {
         logger.info("Supervisor {} connected", supervisorName);
     }
 
-
-    // Display info about all supervisors currently connected
     public List<Supervisor> displayAllConnectedSupervisors() {
         return new ArrayList<>(supervisors);
     }
 
-    // Attend to the first student in the queue
-    public String attendStudent(String supervisorName, String message) {
-        Supervisor supervisor = supervisors.stream()
-                .filter(s -> Objects.equals(s.getName(), supervisorName))
-                .findFirst()
-                .orElse(null);
+    public String assignStudentToSupervisor(String supervisorName, String message) {
+        Supervisor supervisor = findSupervisorByName(supervisorName);
 
-        if (supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE) {
-            Student student = studentService.getQueue().stream()
-                    .findFirst()
-                    .orElse(null);
+        if (isSupervisorAvailable(supervisor)) {
+            Student student = findFirstStudentInQueue();
             if (student != null) {
-                supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
-                supervisor.setAttendingStudent(student);
-                supervisor.setMessageFromSupervisor(message);
-                publisherWorker.sendStudentMessage(supervisorName, student.getName(), message);
-                studentService.removeStudentByName(student.getName());
-
-                publisherWorker.broadcastQueue(studentService.getQueue());
-                publisherWorker.broadcastSupervisorsStatus();
-                logger.info("Student {} is being attended by Supervisor {}", student.getName(), supervisorName);
+                attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
                 logger.warn("No students in the queue for");
@@ -78,6 +62,33 @@ public class SupervisorService {
             logger.info("Supervisor not available or not found");
         }
         return "";
+    }
+
+    private Supervisor findSupervisorByName(String supervisorName) {
+        return supervisors.stream()
+                .filter(supervisor -> Objects.equals(supervisor.getName(), supervisorName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isSupervisorAvailable(Supervisor supervisor) {
+        return supervisor != null && supervisor.getSupervisorStatus() == SupervisorStatus.AVAILABLE;
+    }
+
+    private Student findFirstStudentInQueue() {
+        return studentService.getQueue().stream().findFirst().orElse(null);
+    }
+    //TODO:: Try to have publisher inside of the eventlistener file instead
+    private void attendToStudent(Supervisor supervisor, Student student, String message) {
+        supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
+        supervisor.setAttendingStudent(student);
+        supervisor.setMessageFromSupervisor(message);
+
+        publisherWorker.sendUserMessage(supervisor.getName(), student.getName(), message);
+        studentService.removeStudentByName(student.getName());
+
+        publisherWorker.broadcastQueue(studentService.getQueue());
+        publisherWorker.broadcastSupervisorsStatus();
     }
 
 
