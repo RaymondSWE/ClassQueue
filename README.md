@@ -66,7 +66,9 @@ An empty JSON string
 Sent to the server in order to connect as a supervisor instead of a student
 ```json
 {"type": "supervisor", "supervisorName": "<name of the supervisor>", "addSupervisor": true}
+```
 server response:
+```json
 {"status":"<success>", "message": "<a message indicating that the supervisor was added>"}
 ```
 #### Attend the queue
