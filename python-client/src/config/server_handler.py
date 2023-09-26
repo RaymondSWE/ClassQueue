@@ -1,11 +1,9 @@
 import json
 import time
 import zmq
-from error.connection_exceptions import (
-    ConnectionError, DeserializationError, EmptyResponseError,
-    InvalidResponseError, SendMessageError
-)
 
+from error.connection_exceptions import (ConnectionError, EmptyResponseError, ServerError, 
+                                         DeserializationError, SendMessageError, InvalidResponseError)
 
 class ServerHandler:
     CLIENT_NUMBER = 2
@@ -49,7 +47,7 @@ class ServerHandler:
         except zmq.Again:
             return None
         except json.JSONDecodeError:
-            raise DeserializationError("Error decoding JSON from server.")
+            raise DeserializationErstartror("Error decoding JSON from server.")
 
     def send_request(self, message, socket):
         try:
@@ -67,9 +65,11 @@ class ServerHandler:
 
     def send_startup_message(self):
         try:
-            self.req_socket.send_json({"type": "startup", "client_number": self.CLIENT_NUMBER})
-            self.CLIENT_NUMBER += 1
-            reply = self.req_socket.recv()
-            print("Startup message:", reply)
+            self.req_socket.send_json({"type": "startup", "client_number": ServerHandler.client_number})
+            ServerHandler.client_number += 1
+            reply = self.req_socket.recv_string()
+            print("startup message:", reply)
+            if "error" in reply:
+                raise ServerError("invalid message");
         except zmq.ZMQError:
             print("Error sending startup message to server.")

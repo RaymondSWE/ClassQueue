@@ -22,3 +22,6 @@ class SendMessageError(Exception):
     def __init__(self, message="Error sending message"):
         self.message = message
         super().__init__(self.message)
+class ServerError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
