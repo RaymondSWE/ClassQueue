@@ -23,9 +23,11 @@ class QueueLogic:
                 self.ui.join_queue_button['state'] = tk.NORMAL
                 self.server_handler.send_startup_message()
                 self.ui.listen_for_updates()
+                self.ui.status_label.config(text=f"Connected to {host}:{sub_port}/{req_port}")
                 messagebox.showinfo("Success", f"Connected to the server at {host} successfully!")
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
+                self.ui.status_label.config(text="Unable to connect!")
         except Exception as e:
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
 

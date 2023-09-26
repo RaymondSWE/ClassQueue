@@ -37,6 +37,10 @@ class QueueUI(ThemedTk):
         self.req_port_entry = ttk.Entry(host_port_section, font=("Poppins", 12), width=10)
         self.req_port_entry.grid(row=0, column=5, padx=10, pady=10)
 
+        # Status Label for showing connection information
+        self.status_label = ttk.Label(content_frame, text="", font=("Poppins", 12), anchor="e")
+        self.status_label.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+
         # set default values
         self.host_entry.insert(0, "localhost")
         self.sub_port_entry.insert(0, "5500")
@@ -82,6 +86,8 @@ class QueueUI(ThemedTk):
         outer_frame.columnconfigure(0, weight=1)
         outer_frame.rowconfigure(0, weight=1)
         outer_frame.rowconfigure(1, weight=3)
+
+
 
     def update_queue(self, queue_data):
         self.queue_listbox.delete(0, tk.END)
