@@ -11,10 +11,11 @@ class ServerHandler:
     CLIENT_NUMBER = 1
     MAX_RETRIES = 3
     RETRY_INTERVAL = 5
-    REQ_SOCKET_ADDRESS = "tcp://localhost:5600"
-    SUB_SOCKET_ADDRESS = "tcp://localhost:5500"
 
-    def __init__(self):
+
+    def __init__(self, host, sub_port, req_port):
+        self.REQ_SOCKET_ADDRESS = f"tcp://{host}:{req_port}"
+        self.SUB_SOCKET_ADDRESS = f"tcp://{host}:{sub_port}"
         self.context = zmq.Context()
         self.connect()
 

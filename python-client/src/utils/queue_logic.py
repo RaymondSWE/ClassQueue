@@ -7,9 +7,12 @@ from error.connection_exceptions import EmptyResponseError
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
+        host = self.ui.host_entry.get()
+        sub_port = self.ui.sub_port_entry.get()
+        req_port = self.ui.req_port_entry.get()
         self.client_id = str(uuid.uuid4())
         try:
-            self.server_handler = ServerHandler()
+            self.server_handler = ServerHandler(host, sub_port, req_port)
         except ConnectionError:
             messagebox.showerror("Error", "Unable to connect to the server!")
             return

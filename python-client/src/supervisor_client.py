@@ -10,7 +10,7 @@ class SupervisorClient(SupervisorUI):
 
 
         # Start listening for updates immediately
-        self.listen_for_updates()
+       # self.listen_for_updates()
 
     def listen_for_updates(self):
         self.logic.listen_for_updates()

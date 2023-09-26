@@ -6,7 +6,7 @@ class QueueClient(QueueUI):
     def __init__(self):
         super().__init__()
         self.logic = QueueLogic(self)
-        self.logic.server_handler.send_startup_message()
+        # self.logic.server_handler.send_startup_message()
 
 
         # Set the command for the button
