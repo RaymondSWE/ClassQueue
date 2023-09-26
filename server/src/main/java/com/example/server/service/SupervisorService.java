@@ -64,7 +64,7 @@ public class SupervisorService {
                 supervisor.setSupervisorStatus(SupervisorStatus.OCCUPIED);
                 supervisor.setAttendingStudent(student);
                 supervisor.setMessageFromSupervisor(message);
-                publisherWorker.sendUserMessage(supervisorName, student.getName(), message);
+                publisherWorker.sendStudentMessage(supervisorName, student.getName(), message);
                 studentService.removeStudentByName(student.getName());
 
                 publisherWorker.broadcastQueue(studentService.getQueue());

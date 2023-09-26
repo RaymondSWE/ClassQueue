@@ -62,13 +62,13 @@ public class PublisherWorker implements Runnable {
     }
 
 
-    public void sendUserMessage(String supervisorName, String userName, String message) {
+    public void sendStudentMessage(String supervisorName, String studentName, String message) {
         JSONObject json = new JSONObject();
         json.put("supervisor", supervisorName);
         json.put("message", message);
-        zmqPublisherSocket.sendMore(userName);
+        zmqPublisherSocket.sendMore(studentName);
         zmqPublisherSocket.send(json.toString());
-        logger.info("Sending user message to {}: {}", userName, json.toString());
+        logger.info("Sending student message to {}: {}", studentName, json.toString());
     }
 
     public void broadcastSupervisorsStatus() {
