@@ -29,8 +29,7 @@ public class ResponderWorker implements Runnable {
 
     @Autowired
     private PublisherWorker publisherWorker;
-
-
+private String invalidMessageType="invalidMessage";
     private volatile boolean keepRunning = true;
 
     private void sendErrorMsg(String errorType, String message)
@@ -67,8 +66,7 @@ zmqResponseSocket.send(json.toString());
                         handleStartupMessage(jsonRequest);
                         break;
                     default:
-                        String response = processClientRequest(clientRequest);
-                        zmqResponseSocket.send(response);
+                   processClientRequest(jsonRequest);
                         break;
                 }
             } catch (Exception e) {
@@ -92,13 +90,14 @@ zmqResponseSocket.send(json.toString());
     else
     {
         logger.info("no client id found");
-        sendErrorMsg("invalidMessage", "your message is not valid");
-         return;
+        sendErrorMsg(invalidMessageType, "your message is not valid");
     }
     }
 
 
     private void handleStartupMessage(JSONObject jsonRequest) {
+        if(jsonRequest.has("client_number"))
+        {
         int clientNumber = jsonRequest.optInt("client_number", -1);
         
         if (clientNumber != -1) {
@@ -112,18 +111,32 @@ zmqResponseSocket.send(json.toString());
 
         zmqResponseSocket.send("Acknowledged startup");
     }
+    else
+    {
+        logger.info("no client id found");
+        sendErrorMsg(invalidMessageType, "no client id was found");
+    }
 
+}
     //TODO::Add a method to disconnect as supervisor, would be cool.
     // Also really ugly ass code, switch to switch
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
         if (jsonRequest.has("addSupervisor")) {
+            if(!jsonRequest.has("supervisorName"))
+            {
+                logger.info("could not find supervisorName in message");
+                sendErrorMsg(invalidMessageType, "invalid request. unable to find supervisorName");
+                return;
+            }
             supervisorService.addSupervisor(jsonRequest.getString("supervisorName"));
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("status", "success");
             jsonResponse.put("message", "Supervisor added successfully");
             zmqResponseSocket.send(jsonResponse.toString());
         } else if (jsonRequest.has("attendStudent")) {
+            if(jsonRequest.has("supervisorName")&&jsonRequest.has("message"))
+            {
             String studentName = supervisorService.attendStudent(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
             if (!studentName.equals("")) {
                 JSONObject jsonResponse = new JSONObject();
@@ -131,12 +144,23 @@ zmqResponseSocket.send(json.toString());
                 jsonResponse.put("status", "success");
                 zmqResponseSocket.send(jsonResponse.toString());
             } else {
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "failed to attend students");
-                zmqResponseSocket.send(jsonResponse.toString());
+                sendErrorMsg(invalidMessageType, "failed to attend students");
+        }
             }
+    else
+    {
+logger.info("invalud request. supervisor message and name not found");
+sendErrorMsg(invalidMessageType, "invalid request. supervisorName or message is missing");
+return;
+    
+}
         } else if (jsonRequest.has("makeAvailable")) {
+            if(!jsonRequest.has("supervisorName"))
+            {
+                logger.info("invalid request. could not find supervisorName");
+                sendErrorMsg(invalidMessageType, "invalid request. could not find supervisorName");
+                return;
+            }
             String supervisorName = jsonRequest.getString("supervisorName");
             supervisorService.makeSupervisorAvailable(supervisorName);
             JSONObject jsonResponse = new JSONObject();
@@ -144,18 +168,13 @@ zmqResponseSocket.send(json.toString());
             jsonResponse.put("message", "Supervisor is now available");
             zmqResponseSocket.send(jsonResponse.toString());
         } else {
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "Invalid supervisor request");
-            zmqResponseSocket.send(jsonResponse.toString());
+            sendErrorMsg(invalidMessageType, "invalid supervisor request");
         }
-
     }
 
 
-    private String processClientRequest(String request) {
+    private void processClientRequest(JSONObject json) {
         try {
-            JSONObject json = new JSONObject(request);
             String name = json.getString("name");
             String clientId = json.getString("clientId");
 
@@ -165,12 +184,10 @@ zmqResponseSocket.send(json.toString());
             JSONObject responseJson = new JSONObject();
             responseJson.put("ticket", ticket);
             responseJson.put("name", name);
-
-            return responseJson.toString();
-
+            zmqResponseSocket.send(responseJson.toString());
         } catch (Exception e) {
             logger.error("Error parsing client request.", e);
-            return "bad response";
+            sendErrorMsg(invalidMessageType, "invalid queue request");
         }
     }
 

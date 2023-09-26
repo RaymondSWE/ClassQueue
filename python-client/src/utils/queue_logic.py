@@ -36,9 +36,10 @@ class QueueLogic:
             messagebox.showinfo("Info", f"Joined the queue with ticket number: {ticket}")
             self.ui.start_heartbeat()  # Heartbeats should be sent after it has joined the queue (I think)
             self.send_heartbeat_flag = True
-
-        else:
-            messagebox.showerror("Error", "Failed to join the queue.")
+        if "error" in server_response:
+            messagebox.showerror("error", server_response.get("message"))
+        #else:
+            #messagebox.showerror("Error", "Failed to join the queue.")
 
     def send_heartbeat(self):
         if not self.send_heartbeat_flag:
