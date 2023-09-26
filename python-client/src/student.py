@@ -1,5 +1,5 @@
-from app.queue_ui import QueueUI
-from utils.queue_logic import QueueLogic
+from app.student_ui import QueueUI
+from utils.student_logic import QueueLogic
 
 
 class QueueClient(QueueUI):
