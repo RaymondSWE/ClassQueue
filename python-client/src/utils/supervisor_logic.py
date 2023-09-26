@@ -25,10 +25,14 @@ class SupervisorLogic:
                     text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
                 self.ui.listen_for_updates()
             else:
+                logging.error("Unable to connect to the server!")
                 messagebox.showerror("Error", "Unable to connect to the server!")
                 self.ui.status_label.config(text="Unable to connect!")
+                self.ui.quit()  # Close the GUI safely
         except Exception as e:
+            logging.error(f"Error connecting to the server: {e}")
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
+            self.ui.quit()  # Close the GUI safely
 
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()

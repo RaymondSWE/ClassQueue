@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import zmq
 from error.connection_exceptions import (
@@ -17,6 +18,23 @@ class ServerHandler:
         self.SUB_SOCKET_ADDRESS = f"tcp://{host}:{sub_port}"
         self.context = zmq.Context()
 
+    def ping_server(self):
+        try:
+            self.req_socket.send_json({"type": "ping"})
+            self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)  # Set timeout to 5000 milliseconds
+            response_data = self.req_socket.recv()
+            response = json.loads(response_data)
+            return response.get("message") == "pong"
+        except zmq.Again:
+            logging.warning("Timeout while waiting for a response from server.")
+            return False
+        except zmq.ZMQError as e:
+            logging.error(f"ZMQ Error: {e}")
+            return False
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON Decode Error: {e}")
+            return False
+
     def connect(self):
         retries = 0
         while retries < self.MAX_RETRIES:
@@ -28,12 +46,14 @@ class ServerHandler:
                 self.sub_socket.connect(self.SUB_SOCKET_ADDRESS)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
-                return True  # Connection successful
+                if self.ping_server():
+                    return True  # Connection successful
             except zmq.ZMQError:
-                retries += 1
-                print(f"Error connecting to server. Retrying in {self.RETRY_INTERVAL} seconds...")
-                time.sleep(self.RETRY_INTERVAL)
-
+                pass
+            retries += 1
+            logging.warning(f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds...")
+            time.sleep(self.RETRY_INTERVAL)
+        logging.error("Connection failed after reaching the maximum number of retries.")
         return False  # Connection failed
 
     def subscribe(self, topic):
