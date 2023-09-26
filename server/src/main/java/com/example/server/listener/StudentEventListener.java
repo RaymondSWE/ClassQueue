@@ -27,7 +27,6 @@ public class StudentEventListener {
 
     @EventListener
     public void handleStudentDeletedEvent(StudentDeletedEvent event) {
-        // Handle the student deleted event and broadcast the updated queue.
         publisherWorker.broadcastQueue(studentService.getQueue());
     }
 }

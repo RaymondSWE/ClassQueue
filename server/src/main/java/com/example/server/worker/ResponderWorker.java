@@ -25,16 +25,16 @@ public class ResponderWorker implements Runnable {
 
     @Autowired
     private PublisherWorker publisherWorker;
-private String invalidMessageType="invalidMessage";
+    private final String INVALID_MESSAGE_TYPE = "invalidMessage";
     private volatile boolean keepRunning = true;
 
-    private void sendErrorMsg(String errorType, String message)
-    {
-JSONObject json=new JSONObject();
-json.put("message", message);
-json.put("error", errorType);
-zmqResponseSocket.send(json.toString());
+    private void handleErrorMessage(String errorType, String message) {
+        JSONObject json = new JSONObject();
+        json.put("message", message);
+        json.put("error", errorType);
+        zmqResponseSocket.send(json.toString());
     }
+
     @Override
     public void run() {
         handleClientRequest();
@@ -62,7 +62,7 @@ zmqResponseSocket.send(json.toString());
                         handleStartupMessage(jsonRequest);
                         break;
                     default:
-                   processClientRequest(jsonRequest);
+                        processClientRequest(jsonRequest);
                         break;
                 }
             } catch (Exception e) {
@@ -75,97 +75,107 @@ zmqResponseSocket.send(json.toString());
     }
 
     private void handleHeartbeat(JSONObject jsonRequest) {
-        if(jsonRequest.has("clientId")&&jsonRequest.has("name"))
-        {
-        String name = jsonRequest.getString("name");
-        String clientId = jsonRequest.getString("clientId");
-        logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
-        studentService.updateClientHeartbeat(name);
-        zmqResponseSocket.send(new JSONObject().toString()); // empty JSON object as a response
-    }
-    else
-    {
-        logger.info("no client id found");
-        sendErrorMsg(invalidMessageType, "your message is not valid");
-    }
+        String clientId = jsonRequest.optString("clientId");
+        String name = jsonRequest.optString("name");
+
+        if (!clientId.isEmpty() && !name.isEmpty()) {
+            logger.info("Received heartbeat from: {} with clientId: {}", name, clientId);
+            studentService.updateClientHeartbeat(name);
+            zmqResponseSocket.send(new JSONObject().toString());
+        } else {
+            logger.error("Invalid heartbeat message: clientId or name not found");
+            handleErrorMessage("invalidMessage", "Invalid heartbeat message");
+        }
     }
 
 
     private void handleStartupMessage(JSONObject jsonRequest) {
-        if(jsonRequest.has("client_number"))
-        {
-        int clientNumber = jsonRequest.optInt("client_number", -1);
-        
-        if (clientNumber != -1) {
-            logger.info("Received startup message from client number: {}  ", clientNumber);
+        if (jsonRequest.has("client_number")) {
+            int clientNumber = jsonRequest.optInt("client_number", -1);
+
+            if (clientNumber != -1) {
+                logger.info("Received startup message from client number: {}  ", clientNumber);
+            } else {
+                logger.info("Received startup message from client.");
+            }
+            publisherWorker.broadcastQueue(studentService.getQueue());
+            publisherWorker.broadcastSupervisorsStatus();
+            zmqResponseSocket.send("Acknowledged startup");
         } else {
-            logger.info("Received startup message from client.");
+            logger.error("no client id found");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "No client id was found");
         }
-        // Broadcast the current state of the student and supervisor queues
-        publisherWorker.broadcastQueue(studentService.getQueue());
-        publisherWorker.broadcastSupervisorsStatus();
 
-        zmqResponseSocket.send("Acknowledged startup");
-    }
-    else
-    {
-        logger.info("no client id found");
-        sendErrorMsg(invalidMessageType, "no client id was found");
     }
 
-}
-    //TODO::Add a method to disconnect as supervisor, would be cool.
-    // Also really ugly ass code, switch to switch
     private void handleSupervisorRequest(JSONObject jsonRequest) {
         logger.info("Received Supervisor Request: {}", jsonRequest.toString());
+
+
         if (jsonRequest.has("addSupervisor")) {
-            if(!jsonRequest.has("supervisorName"))
-            {
-                logger.info("could not find supervisorName in message");
-                sendErrorMsg(invalidMessageType, "invalid request. unable to find supervisorName");
-                return;
-            }
-            supervisorService.addSupervisor(jsonRequest.getString("supervisorName"));
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "success");
-            jsonResponse.put("message", "Supervisor added successfully");
-            zmqResponseSocket.send(jsonResponse.toString());
+            handleAddSupervisor(jsonRequest);
         } else if (jsonRequest.has("attendStudent")) {
-            if(jsonRequest.has("supervisorName")&&jsonRequest.has("message"))
-            {
-            String studentName = supervisorService.assignStudentToSupervisor(jsonRequest.getString("supervisorName"), jsonRequest.getString("message"));
-            if (!studentName.equals("")) {
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("message", "attending: " + studentName);
-                jsonResponse.put("status", "success");
-                zmqResponseSocket.send(jsonResponse.toString());
-            } else {
-                sendErrorMsg(invalidMessageType, "failed to attend students");
-        }
-            }
-    else
-    {
-logger.info("invalud request. supervisor message and name not found");
-sendErrorMsg(invalidMessageType, "invalid request. supervisorName or message is missing");
-return;
-    
-}
+            handleAttendStudent(jsonRequest);
         } else if (jsonRequest.has("makeAvailable")) {
-            if(!jsonRequest.has("supervisorName"))
-            {
-                logger.info("invalid request. could not find supervisorName");
-                sendErrorMsg(invalidMessageType, "invalid request. could not find supervisorName");
-                return;
-            }
-            String supervisorName = jsonRequest.getString("supervisorName");
-            supervisorService.makeSupervisorAvailable(supervisorName);
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "success");
-            jsonResponse.put("message", "Supervisor is now available");
-            zmqResponseSocket.send(jsonResponse.toString());
+            handleMakeAvailable(jsonRequest);
         } else {
-            sendErrorMsg(invalidMessageType, "invalid supervisor request");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid supervisor request");
+            logger.error("Invalid supervisor request");
+
         }
+    }
+
+    private void handleAddSupervisor(JSONObject jsonRequest) {
+        String supervisorName = jsonRequest.optString("supervisorName");
+        if (supervisorName.isEmpty()) {
+            logger.error("Invalid request. Unable to find supervisorName");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. Unable to find supervisorName");
+            return;
+        }
+
+        supervisorService.addSupervisor(supervisorName);
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("status", "success");
+        jsonResponse.put("message", "Supervisor added successfully");
+        zmqResponseSocket.send(jsonResponse.toString());
+    }
+
+    private void handleAttendStudent(JSONObject jsonRequest) {
+        String supervisorName = jsonRequest.optString("supervisorName");
+        String message = jsonRequest.optString("message");
+
+        if (supervisorName.isEmpty() || message.isEmpty()) {
+            logger.warn("Invalid request. Supervisor name or message not found");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. SupervisorName or message is missing");
+            return;
+        }
+
+        String studentName = supervisorService.attendStudent(supervisorName, message);
+        if (studentName.isEmpty()) {
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Failed to attend students");
+            return;
+        }
+
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("message", "Attending: " + studentName);
+        jsonResponse.put("status", "success");
+        zmqResponseSocket.send(jsonResponse.toString());
+    }
+
+
+    private void handleMakeAvailable(JSONObject jsonRequest) {
+        String supervisorName = jsonRequest.optString("supervisorName");
+        if (supervisorName.isEmpty()) {
+            logger.warn("Invalid request. Could not find supervisorName");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "Invalid request. Could not find supervisorName");
+            return;
+        }
+
+        supervisorService.makeSupervisorAvailable(supervisorName);
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("status", "success");
+        jsonResponse.put("message", "Supervisor is now available");
+        zmqResponseSocket.send(jsonResponse.toString());
     }
 
 
@@ -183,12 +193,9 @@ return;
             zmqResponseSocket.send(responseJson.toString());
         } catch (Exception e) {
             logger.error("Error parsing client request.", e);
-            sendErrorMsg(invalidMessageType, "invalid queue request");
+            handleErrorMessage(INVALID_MESSAGE_TYPE, "invalid queue request");
         }
     }
 
 
-    public void stop() {
-        this.keepRunning = false;
-    }
 }

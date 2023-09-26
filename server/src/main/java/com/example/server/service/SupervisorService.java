@@ -59,7 +59,7 @@ public class SupervisorService {
                 attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
-                logger.info("No students in the queue");
+                logger.warn("No students in the queue for");
             }
         } else {
             logger.info("Supervisor not available or not found");
@@ -103,6 +103,7 @@ public class SupervisorService {
             supervisor.setMessageFromSupervisor(null);
 
             eventPublisher.publishEvent(new SupervisorStatusChangedEvent(this, supervisorName));
+
         } else {
             logger.error("Supervisor not found");
         }
