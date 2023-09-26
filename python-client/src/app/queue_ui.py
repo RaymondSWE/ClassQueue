@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Listbox
+from tkinter import ttk, Listbox, messagebox
 from ttkthemes import ThemedTk
 
 from utils.queue_logic import QueueLogic
@@ -52,6 +52,8 @@ class QueueUI(ThemedTk):
         self.connect_button = ttk.Button(host_port_section, text="Connect", command=self.connect_to_server)
         self.connect_button.grid(row=0, column=6, padx=10, pady=10)
 
+        self.logic = QueueLogic(self)
+
         self.join_queue_button = ttk.Button(input_section, text="Join Queue", state=tk.DISABLED)
         self.join_queue_button.grid(row=0, column=2, padx=10, pady=10)
 
@@ -101,11 +103,8 @@ class QueueUI(ThemedTk):
             client = supervisor.get('client', '')
             self.supervisor_listbox.insert(tk.END, f"{name} - {status} - {client}")
 
-
     def connect_to_server(self):
-        self.logic = QueueLogic(self)
-        if self.logic.server_handler:
-            self.join_queue_button['state'] = tk.NORMAL
+        self.logic.connect_to_server()
 
 
 if __name__ == "__main__":

@@ -12,12 +12,10 @@ class ServerHandler:
     MAX_RETRIES = 3
     RETRY_INTERVAL = 5
 
-
     def __init__(self, host, sub_port, req_port):
         self.REQ_SOCKET_ADDRESS = f"tcp://{host}:{req_port}"
         self.SUB_SOCKET_ADDRESS = f"tcp://{host}:{sub_port}"
         self.context = zmq.Context()
-        self.connect()
 
     def connect(self):
         retries = 0
@@ -30,13 +28,13 @@ class ServerHandler:
                 self.sub_socket.connect(self.SUB_SOCKET_ADDRESS)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
-                return
+                return True  # Connection successful
             except zmq.ZMQError:
                 retries += 1
                 print(f"Error connecting to server. Retrying in {self.RETRY_INTERVAL} seconds...")
                 time.sleep(self.RETRY_INTERVAL)
 
-        raise ConnectionError("Error connecting to server after max retries")
+        return False  # Connection failed
 
     def subscribe(self, topic):
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, topic)

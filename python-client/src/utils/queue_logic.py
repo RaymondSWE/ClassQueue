@@ -1,5 +1,6 @@
 import uuid
 from tkinter import messagebox
+import tkinter as tk
 from config.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
 
@@ -7,16 +8,25 @@ from error.connection_exceptions import EmptyResponseError
 class QueueLogic:
     def __init__(self, ui):
         self.ui = ui
+        self.client_id = str(uuid.uuid4())
+        self.send_heartbeat_flag = True
+
+    def connect_to_server(self):
         host = self.ui.host_entry.get()
         sub_port = self.ui.sub_port_entry.get()
         req_port = self.ui.req_port_entry.get()
-        self.client_id = str(uuid.uuid4())
+
+        self.server_handler = ServerHandler(host, sub_port, req_port)
         try:
-            self.server_handler = ServerHandler(host, sub_port, req_port)
-        except ConnectionError:
-            messagebox.showerror("Error", "Unable to connect to the server!")
-            return
-        self.send_heartbeat_flag = True
+            connected = self.server_handler.connect()
+            if connected:
+                self.ui.join_queue_button['state'] = tk.NORMAL
+                self.server_handler.send_startup_message()
+                messagebox.showinfo("Success", f"Connected to the server at {host} successfully!")
+            else:
+                messagebox.showerror("Error", "Unable to connect to the server!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error connecting to the server: {e}")
 
     def join_queue(self):
         name = self.ui.name_entry.get()
