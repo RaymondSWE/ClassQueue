@@ -5,7 +5,6 @@ from utils.supervisor_logic import SupervisorLogic
 class SupervisorClient(SupervisorUI):
     def __init__(self):
         super().__init__()
-
         self.logic = SupervisorLogic(self)
 
     def listen_for_updates(self):
