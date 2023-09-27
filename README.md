@@ -1,4 +1,4 @@
-# Distrubted system  for queue system - API documentation
+# Distributed queue system - API documentation
 
 
 ## Authors
@@ -11,7 +11,6 @@ During the development of our project, we tried to a structured workflow, especi
 We conducted code reviews for each other. Given that there were no automated CI/CD workflow for testing, manual tests were done on each branch before merging PRs. This project that was highly enjoyable, but also very educational.
 
 For the future, we want to learn how to implement a good CI/CD pipeline for a better development experience. We are also considering changing from Tkinter to PySide for the GUI, because its more modern. The reason we initially chose Tkinter was because it had lower learning curve.
-
 
 
 ## Getting started
@@ -198,7 +197,7 @@ This project adopts an event-driven architecture, using the Pub/Sub pattern thro
 
 ### Retry-Pattern for Connection
 
-Our connection utilizies a retry mechanism, it tries attempting to establish a connection multiple times before giving up and sending error message to user.
+Our connection utilizes a retry mechanism, it tries attempting to establish a connection multiple times before giving up and sending error message to user.
 
 ### Event-Driven with Pub/Sub Socket
 
@@ -218,9 +217,9 @@ Config files manage the ZeroMQ context and sockets, handling socket binding and 
 Services such as `StudentService` and `SupervisorService` manage the  business logic, including managing students and supervisors, assignments, and queue management. The system tries to keep only business logic related in these files. We tried to keep everything related to publish and responding out of the service folder, in order to keep a good code structure.
 
 ### Annotation in Spring framework
-Spring Framework utilizies annotations like @Bean to for methods that produce beans managed by the Spring container, typically this is singleton pattern. This ensures a single instance is created and managed, optimizing resources and simplifying development.
+Spring Framework utilizes annotations like @Bean for methods that produce beans managed by the Spring container, typically this is singleton pattern. This ensures a single instance is created and managed, optimizing resources and simplifying development.
 
-##Dependencies
+## Dependencies
 The project uses different dependencies, managed by Maven, to enhance its functionality and streamline development. Here's an overview of the dependencies and their purpose:
 
 
@@ -281,6 +280,21 @@ The project uses different dependencies, managed by Maven, to enhance its functi
 - **Artifact ID:** spring-boot-maven-plugin
 - **Purpose:** allows to package executable jar or war archives.
 
+## Client (Python)
+
+The client side of the project is developed using Python, using the `tkinter` library for creating the Graphical User Interface (GUI). `tkinter` is known for its simplicity and is user-friendly for beginners in GUI development.
+
+The project is organized into four distinct folders, each serving a specific purpose:
+
+- `app`: Contains the user interface, also seperated versions for students and supervisors.
+- `config`: Holds configuration files such as connection to server
+- `utils`:  the logic for the application, also seperated into student and supervisor versions.
+- `error`: Manages exception handling
+
+![supervisor](./assets/supervisorgui.png)
+![student](./assets/studentsgui.png)
+
+
 ## Indepth explanation of classes and methods in the Server
 
 ### ResponderWorker
@@ -296,8 +310,6 @@ The project uses different dependencies, managed by Maven, to enhance its functi
 - `handleStartupMessage(JSONObject jsonRequest)`: Handles startup messages from clients, broadcasts the updated queue and supervisor status, and sends acknowledgment.
 - `handleSupervisorRequest(JSONObject jsonRequest)`: Handles incoming supervisor requests and calls appropriate methods to process them.
 - `handleStudentRequest(JSONObject json)`: Processes student requests, assigns a ticket, and sends a response back.
-
-
 
 ### PublisherWorker
 
@@ -367,6 +379,8 @@ The project uses different dependencies, managed by Maven, to enhance its functi
 #### ZeroMqConfig
 - Configuration for ZeroMQ Sockets.
 - Provides beans for zmqPublisherSocket and zmqResponseSocket.
+
+
 
 #### AsyncConfig
 - Configuration to enable asynchronous execution. The method will only require @async annotation to be async.
