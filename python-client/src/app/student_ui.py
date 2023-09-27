@@ -24,7 +24,7 @@ class QueueUI(ThemedTk):
         self.name_entry = ttk.Entry(input_section, font=("Poppins", 12), width=30)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10)
         # connect button
-        self.connect_button = ttk.Button(input_section, text="Connect", command=self.connect_to_server)
+        self.connect_button = ttk.Button(input_section, text="Connect to server", command=self.connect_to_server)
         self.connect_button.grid(row=0, column=2, padx=10, pady=10)
 
         self.join_queue_button = ttk.Button(input_section, text="Join Queue", state=tk.DISABLED)
