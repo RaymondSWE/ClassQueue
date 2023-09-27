@@ -16,14 +16,14 @@ class QueueUI(ThemedTk):
         content_frame = ttk.Frame(self)
         content_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Input section
+        # Different input
         input_section = ttk.Frame(content_frame)
         input_section.grid(row=0, column=0, columnspan=2, sticky="ew", pady=20)
-
+        # Name input
         ttk.Label(input_section, text="Name:", font=("Poppins", 14)).grid(row=0, column=0, padx=10, pady=10)
         self.name_entry = ttk.Entry(input_section, font=("Poppins", 12), width=30)
         self.name_entry.grid(row=0, column=1, padx=10, pady=10)
-
+        # connect button
         self.connect_button = ttk.Button(input_section, text="Connect", command=self.connect_to_server)
         self.connect_button.grid(row=0, column=2, padx=10, pady=10)
 
