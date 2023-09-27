@@ -72,8 +72,8 @@ class QueueUI(ThemedTk):
 
     def update_queue(self, queue_data):
         self.queue_listbox.delete(0, tk.END)
-        for student in queue_data:
-            self.queue_listbox.insert(tk.END, student['name'])
+        for index, student in enumerate(queue_data, start=1):
+            self.queue_listbox.insert(tk.END, f"{index}. {student['name']}")
 
     def update_supervisors(self, supervisors_data):
         self.supervisor_listbox.delete(0, tk.END)
