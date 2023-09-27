@@ -25,14 +25,14 @@ class SupervisorLogic:
                     text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
                 self.ui.listen_for_updates()
             else:
-                logging.error("Unable to connect to the server!")
+                logging.error("Unable to connect to the server! (╯༎ຶ ۝ ༎ຶ）╯︵ ┻━┻")
                 messagebox.showerror("Error", "Unable to connect to the server!")
                 self.ui.status_label.config(text="Unable to connect!")
-                self.ui.quit()  # Close the GUI safely
+                self.ui.quit()
         except Exception as e:
             logging.error(f"Error connecting to the server: {e}")
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
-            self.ui.quit()  # Close the GUI safely
+            self.ui.quit()
 
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()
@@ -48,7 +48,6 @@ class SupervisorLogic:
             logging.error("Specific error occurred while connecting as supervisor: %s", se)
         except Exception as e:
             logging.error("Unexpected error occurred while connecting as supervisor: %s", e)  # attend the queue
-        # attend the queue
 
     def attend_queue(self):
         message = self.ui.message_entry.get()

@@ -31,10 +31,6 @@ class ServerHandler:
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
 
-                # Testing connection by sending simple message.
-                self.req_socket.send_string("queue")
-                # No respond =  will throw a zmq.Again exception.
-                self.req_socket.recv_string()
                 return True
 
             except zmq.Again:
@@ -49,7 +45,7 @@ class ServerHandler:
                     f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds...")
                 time.sleep(self.RETRY_INTERVAL)
 
-        logging.error("Connection failed after reaching the maximum number of retries.")
+        logging.error("Connection failed after 5 retries (╯༎ຶ ۝ ༎ຶ）╯︵ ┻━┻")
         return False
 
     def subscribe(self, topic):
