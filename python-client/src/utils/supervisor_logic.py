@@ -28,11 +28,11 @@ class SupervisorLogic:
                 logging.error("Unable to connect to the server! (╯༎ຶ ۝ ༎ຶ）╯︵ ┻━┻")
                 messagebox.showerror("Error", "Unable to connect to the server!")
                 self.ui.status_label.config(text="Unable to connect!")
-                self.ui.quit()  # Close the GUI safely
+                self.ui.quit()
         except Exception as e:
             logging.error(f"Error connecting to the server: {e}")
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
-            self.ui.quit()  # Close the GUI safely
+            self.ui.quit()
 
     def connect_as_supervisor(self):
         self.supervisorName = self.ui.name_entry.get()
