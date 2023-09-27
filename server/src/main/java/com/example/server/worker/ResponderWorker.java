@@ -49,13 +49,19 @@ public class ResponderWorker implements Runnable {
         while (keepRunning && !Thread.currentThread().isInterrupted()) {
             try {
                 String clientRequest = zmqResponseSocket.recvStr();
-                JSONObject jsonRequest = new JSONObject(clientRequest);
-                String type = jsonRequest.optString("type");
-                switch (type) {
-                    case "heartbeat" -> handleHeartbeat(jsonRequest);
-                    case "supervisor" -> handleSupervisorRequest(jsonRequest);
-                    case "startup" -> handleStartupMessage(jsonRequest);
-                    default -> handleStudentRequest(jsonRequest);
+                if (clientRequest.trim().startsWith("{")) {
+                    JSONObject jsonRequest = new JSONObject(clientRequest);
+                    logger.info("Received clientRequest: {}", clientRequest);
+                    String type = jsonRequest.optString("type");
+                    switch (type) {
+                        case "heartbeat" -> handleHeartbeat(jsonRequest);
+                        case "supervisor" -> handleSupervisorRequest(jsonRequest);
+                        case "startup" -> handleStartupMessage(jsonRequest);
+                        default -> handleStudentRequest(jsonRequest);
+                    }
+                } else {
+                    logger.error("Invalid JSON received: {}", clientRequest);
+                    handleErrorMessage("InvalidJSON", "Received string is not a valid JSON object.");
                 }
             } catch (Exception e) {
                 if (!keepRunning) {
@@ -63,10 +69,10 @@ public class ResponderWorker implements Runnable {
                 }
                 logger.error("Error handling client request: ", e);
                 handleErrorMessage("serverError", "Error handling client request: " + e.getMessage());
-
             }
         }
     }
+
 
     private void handleHeartbeat(JSONObject jsonRequest) {
         String clientId = jsonRequest.optString("clientId");
