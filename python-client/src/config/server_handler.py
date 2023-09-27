@@ -19,9 +19,10 @@ class ServerHandler:
         self.context = zmq.Context()
 
     def connect(self):
-        retries = 0
-        while retries < self.MAX_RETRIES:
+        retries_left = self.MAX_RETRIES
+        while retries_left:
             try:
+                # Creating and setting up sockets
                 self.req_socket = self.context.socket(zmq.REQ)
                 self.req_socket.setsockopt(zmq.RCVTIMEO, 5000)
                 self.req_socket.connect(self.REQ_SOCKET_ADDRESS)
@@ -31,23 +32,20 @@ class ServerHandler:
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "queue")
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, "supervisors")
 
-                # Testing connection by sending simple message.
+                # Testing connection by sending a queue message
                 self.req_socket.send_string("queue")
-                # No respond =  will throw a zmq.Again exception.
-                self.req_socket.recv_string()
+                self.req_socket.recv_string()  # No respond will throw a zmq.Again exception
                 return True
 
             except zmq.Again:
-                logging.warning("Timeout while waiting for a response from server.")
+                retries_left -= 1
+                logging.warning(
+                    f"Timeout while waiting for a response from server. Retrying {self.MAX_RETRIES - retries_left}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL * (self.MAX_RETRIES - retries_left)} seconds...")
+                time.sleep(self.RETRY_INTERVAL * (self.MAX_RETRIES - retries_left))
             except zmq.ZMQError as e:
                 logging.error(f"ZMQ Error: {e}")
             except Exception as e:
                 logging.error(f"Unexpected Error: {e}")
-            finally:
-                retries += 1
-                logging.warning(
-                    f"Error connecting to server. Retrying {retries}/{self.MAX_RETRIES} in {self.RETRY_INTERVAL} seconds...")
-                time.sleep(self.RETRY_INTERVAL)
 
         logging.error("Connection failed after reaching the maximum number of retries.")
         return False
