@@ -96,7 +96,7 @@ public class StudentService {
                 removeStudentByName(entry.getKey());
                 lastHeartbeatReceived.remove(entry.getKey());
                 logger.warn("Removed inactive student with name: {}", entry.getKey());
-
+                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
             }
         }
     }
