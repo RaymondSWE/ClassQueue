@@ -1,4 +1,4 @@
-from app.supervisor_ui import SupervisorUI
+from ui.supervisor_ui import SupervisorUI
 from utils.supervisor_logic import SupervisorLogic
 
 

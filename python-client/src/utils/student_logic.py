@@ -1,7 +1,7 @@
 import uuid
 from tkinter import messagebox
 import tkinter as tk
-from config.server_handler import ServerHandler
+from service.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
 from error.connection_exceptions import ServerError
 

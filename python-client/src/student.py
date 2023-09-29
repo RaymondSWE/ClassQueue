@@ -1,4 +1,4 @@
-from app.student_ui import QueueUI
+from ui.student_ui import QueueUI
 from utils.student_logic import QueueLogic
 
 
