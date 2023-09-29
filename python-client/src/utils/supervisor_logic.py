@@ -21,6 +21,7 @@ class SupervisorLogic:
             if connected:
                 messagebox.showinfo("Success", f"Connected to the server at {self.host} successfully!")
                 self.ui.connect_button['state'] = tk.NORMAL
+                self.ui.attend_student_button['state'] = tk.NORMAL
                 self.ui.status_label.config(
                     text=f"Connected to {self.host}: SUB Port - {self.sub_port}, REQ Port - {self.req_port}")
                 self.ui.listen_for_updates()

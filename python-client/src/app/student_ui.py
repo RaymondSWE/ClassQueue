@@ -20,7 +20,7 @@ class QueueUI(ThemedTk):
         self.failed_connection_icon = PhotoImage(file='assets/failed_connection.png').subsample(20, 20)
 
         self.style = ttk.Style()
-        self.style.configure('.', padding=5)
+        self.style.configure('.', padding=5, foreground='#ffffff')
 
         # Main frame
         content_frame = ttk.Frame(self)
@@ -86,7 +86,7 @@ class QueueUI(ThemedTk):
                                                                                                pady=10)
         listbox = Listbox(parent, height=15, width=40, bg="#333333", fg="#ffffff", selectbackground="#00b09b",
                           selectforeground="white", borderwidth=1, highlightthickness=0, font=("Poppins", 12))
-        listbox.grid(row=row + 1, column=column, columnspan=columnspan, sticky="ew", padx=(20, 0))
+        listbox.grid(row=row + 1, column=column, columnspan=columnspan, sticky="ew", padx=(20,0))
         return listbox
 
     def connect_to_server(self):
