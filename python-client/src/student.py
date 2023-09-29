@@ -7,9 +7,7 @@ class QueueClient(QueueUI):
         super().__init__()
         self.logic = QueueLogic(self)
 
-
         self.join_queue_button.config(command=self.logic.join_queue)
-
 
     def listen_for_updates(self):
         self.logic.listen_for_updates()
