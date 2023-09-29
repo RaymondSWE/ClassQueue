@@ -25,8 +25,12 @@ class QueueLogic:
                 self.ui.listen_for_updates()
                 self.ui.status_label.config(text=f"Connected to {host}: SUB Port - {sub_port}, REQ Port - {req_port}")
                 messagebox.showinfo("Success", f"Connected to the server at {host} successfully!")
+                self.ui.status_label.config(
+                    image=self.ui.successful_connection_icon)
+
             else:
                 messagebox.showerror("Error", "Unable to connect to the server!")
+                self.ui.status_label.config(image=self.ui.failed_connection_icon)
                 self.ui.status_label.config(text="Unable to connect!")
         except Exception as e:
             messagebox.showerror("Error", f"Error connecting to the server: {e}")
