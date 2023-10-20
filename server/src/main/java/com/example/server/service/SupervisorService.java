@@ -38,7 +38,6 @@ public class SupervisorService {
     private final List<Supervisor> supervisors = new ArrayList<>();
 
 
-    // Method to add a new supervisor
     public void addSupervisor(String supervisorName) {
         Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
         supervisors.add(supervisor);
