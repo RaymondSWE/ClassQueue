@@ -21,18 +21,17 @@ import java.util.Map;
 public class StudentService {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
-
     private final List<Student> queue = new ArrayList<>();
     private String name;
     private int ticket = -1;
-
     private final ApplicationEventPublisher eventPublisher;
+    private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
 
     @Autowired
     public StudentService(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
-    private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
+    
 
 
     public int getTicket() {
@@ -101,8 +100,6 @@ public class StudentService {
         }
     }
 
-
-    //remove the first student in queue
     public Student removeFirstStudent() {
         return queue.remove(0);
     }
