@@ -49,11 +49,7 @@ public class StudentService {
         this.name = name;
         Student existingStudent = findStudentByName(name);
         if (existingStudent == null) {
-            List<String> clientIds = new ArrayList<>();
-            clientIds.add(clientId);
-            Student newStudent = new Student(name, clientIds);
-            addStudent(newStudent);
-            logger.info("New student joined: {}", name);
+            createAndAddStudent(name, clientId);
         } else if (!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
         }
@@ -67,7 +63,13 @@ public class StudentService {
                 .orElse(null);
     }
 
-
+    private void createAndAddStudent(String name, String clientId) {
+        List<String> clientIds = new ArrayList<>();
+        clientIds.add(clientId);
+        Student newStudent = new Student(name, clientIds);
+        addStudent(newStudent);
+        logger.info("New student joined: {}", name);
+    }
 
     private void addStudent(Student student) {
         if (!queue.contains(student)) {
