@@ -49,7 +49,7 @@ public class StudentService {
         this.name = name;
         Student existingStudent = findStudentByName(name);
         if (existingStudent == null) {
-            createAndAddStudent(name, clientId);
+            createAndEnqueueStudent(name, clientId);
         } else if (!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
         }
@@ -63,15 +63,15 @@ public class StudentService {
                 .orElse(null);
     }
 
-    private void createAndAddStudent(String name, String clientId) {
+    private void createAndEnqueueStudent(String name, String clientId) {
         List<String> clientIds = new ArrayList<>();
         clientIds.add(clientId);
         Student newStudent = new Student(name, clientIds);
-        addStudent(newStudent);
+        enqueueStudent(newStudent);
         logger.info("New student joined: {}", name);
     }
 
-    private void addStudent(Student student) {
+    private void enqueueStudent(Student student) {
         if (!queue.contains(student)) {
             queue.add(student);
             eventPublisher.publishEvent(new NewStudentEvent(student));
@@ -80,11 +80,11 @@ public class StudentService {
 
     public void removeStudentByName(String name) {
         queue.removeIf(student -> {
-            if (student.getName().equals(name)) {
+            boolean foundMatchingStudent = student.getName().equals(name);
+            if (foundMatchingStudent) {
                 eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
-                return true;
             }
-            return false;
+            return foundMatchingStudent;
         });
     }
 
