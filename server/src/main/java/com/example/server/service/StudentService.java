@@ -95,22 +95,18 @@ public class StudentService {
     @Scheduled(fixedRate = 4000)
     public void removeInactiveStudents() {
         Long currentTime = System.currentTimeMillis();
-        for (Map.Entry<String, Long> entry : lastHeartbeatReceived.entrySet()) {
+        lastHeartbeatReceived.entrySet().removeIf(entry -> {
             Long elapsedTime = currentTime - entry.getValue();
-            if (elapsedTime > 4000) {
+            boolean isStudentInactive = elapsedTime > 4000;
+            if (isStudentInactive) {
                 removeStudentByName(entry.getKey());
-                lastHeartbeatReceived.remove(entry.getKey());
                 logger.warn("Removed inactive student with name: {}", entry.getKey());
                 eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
             }
-        }
+            return isStudentInactive;
+        });
     }
 
-
-    //remove the first student in queue
-    public Student removeFirstStudent() {
-        return queue.remove(0);
-    }
 
     public List<Student> getQueue() {
         return new ArrayList<>(queue);
