@@ -6,11 +6,9 @@ import com.example.server.event.SupervisorStatusChangedEvent;
 import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
-import com.example.server.worker.PublisherWorker;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,10 +22,6 @@ public class SupervisorService {
     @Autowired
     private StudentService studentService;
 
-    @Autowired
-    @Lazy
-    private PublisherWorker publisherWorker;
-
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
@@ -37,8 +31,6 @@ public class SupervisorService {
 
     private final List<Supervisor> supervisors = new ArrayList<>();
 
-
-    // Method to add a new supervisor
     public void addSupervisor(String supervisorName) {
         Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
         supervisors.add(supervisor);

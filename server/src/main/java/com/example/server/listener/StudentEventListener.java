@@ -20,7 +20,7 @@ public class StudentEventListener {
         this.publisherWorker = publisherWorker;
         this.studentService = studentService;
     }
-@Async
+    @Async
     @EventListener
     public void handleNewStudentEvent(NewStudentEvent event) {
         publisherWorker.broadcastQueue(studentService.getQueue());

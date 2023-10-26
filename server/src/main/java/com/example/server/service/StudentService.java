@@ -25,14 +25,13 @@ public class StudentService {
     private final List<Student> queue = new ArrayList<>();
     private String name;
     private int ticket = -1;
-
+    private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public StudentService(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
-    private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
 
 
     public int getTicket() {
@@ -48,10 +47,7 @@ public class StudentService {
 
     public void manageStudent(String name, String clientId) {
         this.name = name;
-        Student existingStudent = queue.stream()
-                .filter(s -> s.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        Student existingStudent = findStudentByName(name);
         if (existingStudent == null) {
             List<String> clientIds = new ArrayList<>();
             clientIds.add(clientId);
@@ -64,11 +60,19 @@ public class StudentService {
 
     }
 
+    private Student findStudentByName(String name) {
+        return  queue.stream()
+                .filter(student -> student.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+
+
     private void addStudent(Student student) {
         if (!queue.contains(student)) {
             queue.add(student);
             eventPublisher.publishEvent(new NewStudentEvent(student));
-
         }
     }
 
@@ -84,7 +88,6 @@ public class StudentService {
 
     public void updateClientHeartbeat(String clientId) {
         lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
-
     }
 
     @Scheduled(fixedRate = 4000)
