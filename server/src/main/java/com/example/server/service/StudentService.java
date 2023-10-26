@@ -35,15 +35,18 @@ public class StudentService {
 
 
     public int getTicket() {
-        for (int i = 0; i < queue.size(); i++) {
-            if (queue.get(i).getName().equals(this.name)) {
-                this.ticket = i;
+        int index = 0;
+        for (Student student : queue) {
+            if (student.getName().equals(this.name)) {
+                this.ticket = index;
                 break;
             }
+            index++;
         }
 
         return ticket;
     }
+
 
     public void manageStudent(String name, String clientId) {
         this.name = name;
@@ -88,9 +91,6 @@ public class StudentService {
         });
     }
 
-    public void updateClientHeartbeat(String clientId) {
-        lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
-    }
 
     @Scheduled(fixedRate = 4000)
     public void removeInactiveStudents() {
@@ -107,6 +107,9 @@ public class StudentService {
         });
     }
 
+    public void updateClientHeartbeat(String clientId) {
+        lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
+    }
 
     public List<Student> getQueue() {
         return new ArrayList<>(queue);
