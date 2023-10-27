@@ -1,7 +1,7 @@
 import json
 import logging
 
-from config.server_handler import ServerHandler
+from service.server_handler import ServerHandler
 from error.connection_exceptions import EmptyResponseError
 from tkinter import messagebox
 import tkinter as tk
@@ -42,6 +42,8 @@ class SupervisorLogic:
             jsonResponse = response if isinstance(response, dict) else json.loads(response)
             logging.info("Connect as supervisor response: %s", jsonResponse)
             self.ui.listen_for_updates()
+            self.ui.attend_student_button['state'] = tk.NORMAL
+
         except json.JSONDecodeError:
             logging.error("Received non-JSON response from server: %s", response)
         except EmptyResponseError as se:
