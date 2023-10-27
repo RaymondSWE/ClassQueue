@@ -23,8 +23,6 @@ public class StudentService {
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     private final List<Student> queue = new ArrayList<>();
-    private String name;
-    private int ticket = -1;
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
     private final ApplicationEventPublisher eventPublisher;
 
@@ -34,22 +32,21 @@ public class StudentService {
     }
 
 
-    public int getTicket() {
+    public int getTicket(String name) {
         int index = 0;
         for (Student student : queue) {
-            if (student.getName().equals(this.name)) {
-                this.ticket = index;
-                break;
+            if (student.getName().equals(name)) {
+                logger.info("Ticket found for student: {} at index: {}", name, index);
+                return index;
             }
             index++;
         }
-
-        return ticket;
+        logger.warn("No ticket found for student: {}", name);
+        return -1;
     }
 
 
     public void manageStudent(String name, String clientId) {
-        this.name = name;
         Student existingStudent = findStudentByName(name);
         if (existingStudent == null) {
             createAndEnqueueStudent(name, clientId);
@@ -85,7 +82,7 @@ public class StudentService {
         queue.removeIf(student -> {
             boolean foundMatchingStudent = student.getName().equals(name);
             if (foundMatchingStudent) {
-                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
+                eventPublisher.publishEvent(new StudentDeletedEvent(this));
             }
             return foundMatchingStudent;
         });
@@ -101,7 +98,7 @@ public class StudentService {
             if (isStudentInactive) {
                 removeStudentByName(entry.getKey());
                 logger.warn("Removed inactive student with name: {}", entry.getKey());
-                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
+                eventPublisher.publishEvent(new StudentDeletedEvent(this));
             }
             return isStudentInactive;
         });
