@@ -19,14 +19,13 @@ import java.util.Objects;
 public class SupervisorService {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
 
-    @Autowired
-    private StudentService studentService;
-
+    private final StudentService studentService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public SupervisorService(ApplicationEventPublisher eventPublisher) {
+    public SupervisorService(ApplicationEventPublisher eventPublisher, StudentService studentService) {
         this.eventPublisher = eventPublisher;
+        this.studentService = studentService;
     }
 
     private final List<Supervisor> supervisors = new ArrayList<>();
@@ -51,10 +50,10 @@ public class SupervisorService {
                 attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
-                logger.warn("No students in the queue for");
+                logger.warn("No students in the queue for supervisor: {}", supervisorName);
             }
         } else {
-            logger.info("Supervisor not available or not found");
+            logger.info("Supervisor {} not available or not found", supervisorName);
         }
         return "";
     }
