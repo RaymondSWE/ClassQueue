@@ -1,4 +1,4 @@
-package com.example.server.listener;
+package com.example.server.eventlistener;
 
 import com.example.server.event.NewStudentEvent;
 import com.example.server.event.StudentDeletedEvent;
