@@ -6,11 +6,9 @@ import com.example.server.event.SupervisorStatusChangedEvent;
 import com.example.server.models.Student;
 import com.example.server.models.Supervisor;
 import com.example.server.models.SupervisorStatus;
-import com.example.server.worker.PublisherWorker;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,22 +19,16 @@ import java.util.Objects;
 public class SupervisorService {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SupervisorService.class);
 
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    @Lazy
-    private PublisherWorker publisherWorker;
-
+    private final StudentService studentService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public SupervisorService(ApplicationEventPublisher eventPublisher) {
+    public SupervisorService(ApplicationEventPublisher eventPublisher, StudentService studentService) {
         this.eventPublisher = eventPublisher;
+        this.studentService = studentService;
     }
 
     private final List<Supervisor> supervisors = new ArrayList<>();
-
 
     public void addSupervisor(String supervisorName) {
         Supervisor supervisor = new Supervisor(supervisorName, SupervisorStatus.AVAILABLE, null, null);
@@ -58,10 +50,10 @@ public class SupervisorService {
                 attendToStudent(supervisor, student, message);
                 return student.getName();
             } else {
-                logger.warn("No students in the queue for");
+                logger.warn("No students in the queue for supervisor: {}", supervisorName);
             }
         } else {
-            logger.info("Supervisor not available or not found");
+            logger.info("Supervisor {} not available or not found", supervisorName);
         }
         return "";
     }

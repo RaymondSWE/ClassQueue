@@ -21,87 +21,91 @@ import java.util.Map;
 public class StudentService {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     private final List<Student> queue = new ArrayList<>();
-    private String name;
-    private int ticket = -1;
-    private final ApplicationEventPublisher eventPublisher;
     private Map<String, Long> lastHeartbeatReceived = new HashMap<>();
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public StudentService(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
-    
 
 
-    public int getTicket() {
-        for (int i = 0; i < queue.size(); i++) {
-            if (queue.get(i).getName().equals(this.name)) {
-                this.ticket = i;
-                break;
+    public int getTicket(String name) {
+        int index = 0;
+        for (Student student : queue) {
+            if (student.getName().equals(name)) {
+                logger.info("Ticket found for student: {} at index: {}", name, index);
+                return index;
             }
+            index++;
         }
-
-        return ticket;
+        logger.warn("No ticket found for student: {}", name);
+        return -1;
     }
 
+
     public void manageStudent(String name, String clientId) {
-        this.name = name;
-        Student existingStudent = queue.stream()
-                .filter(s -> s.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        Student existingStudent = findStudentByName(name);
         if (existingStudent == null) {
-            List<String> clientIds = new ArrayList<>();
-            clientIds.add(clientId);
-            Student newStudent = new Student(name, clientIds);
-            addStudent(newStudent);
-            logger.info("New student joined: {}", name);
+            createAndEnqueueStudent(name, clientId);
         } else if (!existingStudent.getClientIds().contains(clientId)) {
             existingStudent.getClientIds().add(clientId);
         }
 
     }
 
-    private void addStudent(Student student) {
+    private Student findStudentByName(String name) {
+        return  queue.stream()
+                .filter(student -> student.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void createAndEnqueueStudent(String name, String clientId) {
+        List<String> clientIds = new ArrayList<>();
+        clientIds.add(clientId);
+        Student newStudent = new Student(name, clientIds);
+        enqueueStudent(newStudent);
+        logger.info("New student joined: {}", name);
+    }
+
+    private void enqueueStudent(Student student) {
         if (!queue.contains(student)) {
             queue.add(student);
             eventPublisher.publishEvent(new NewStudentEvent(student));
-
         }
     }
 
     public void removeStudentByName(String name) {
         queue.removeIf(student -> {
-            if (student.getName().equals(name)) {
-                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
-                return true;
+            boolean foundMatchingStudent = student.getName().equals(name);
+            if (foundMatchingStudent) {
+                eventPublisher.publishEvent(new StudentDeletedEvent(this));
             }
-            return false;
+            return foundMatchingStudent;
+        });
+    }
+
+
+    @Scheduled(fixedRate = 4000)
+    public void removeInactiveStudents() {
+        Long currentTime = System.currentTimeMillis();
+        lastHeartbeatReceived.entrySet().removeIf(entry -> {
+            Long elapsedTime = currentTime - entry.getValue();
+            boolean isStudentInactive = elapsedTime > 4000;
+            if (isStudentInactive) {
+                removeStudentByName(entry.getKey());
+                logger.warn("Removed inactive student with name: {}", entry.getKey());
+                eventPublisher.publishEvent(new StudentDeletedEvent(this));
+            }
+            return isStudentInactive;
         });
     }
 
     public void updateClientHeartbeat(String clientId) {
         lastHeartbeatReceived.put(clientId, System.currentTimeMillis());
-
-    }
-
-    @Scheduled(fixedRate = 4000)
-    public void removeInactiveStudents() {
-        Long currentTime = System.currentTimeMillis();
-        for (Map.Entry<String, Long> entry : lastHeartbeatReceived.entrySet()) {
-            Long elapsedTime = currentTime - entry.getValue();
-            if (elapsedTime > 4000) {
-                removeStudentByName(entry.getKey());
-                lastHeartbeatReceived.remove(entry.getKey());
-                logger.warn("Removed inactive student with name: {}", entry.getKey());
-                eventPublisher.publishEvent(new StudentDeletedEvent(this, name));
-            }
-        }
-    }
-
-    public Student removeFirstStudent() {
-        return queue.remove(0);
     }
 
     public List<Student> getQueue() {

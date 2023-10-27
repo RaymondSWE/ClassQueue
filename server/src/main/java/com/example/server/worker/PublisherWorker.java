@@ -43,7 +43,6 @@ public class PublisherWorker implements Runnable {
     }
 
 
-
     public void broadcastQueue(List<Student> queue) {
         zmqPublisherSocket.sendMore("queue");
         zmqPublisherSocket.send(convertQueueToJson(queue));

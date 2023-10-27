@@ -184,7 +184,7 @@ public class ResponderWorker implements Runnable {
             String clientId = json.getString("clientId");
 
             studentService.manageStudent(name, clientId);
-            int ticket = studentService.getTicket();
+            int ticket = studentService.getTicket(name);
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("ticket", ticket);
