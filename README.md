@@ -8,10 +8,8 @@
 ## Introduction
 This project implements a distributed queue system with a client-server architecture. The server is built using Java and Spring Boot, while the client is developed in Python with a Tkinter-based GUI.
 
-## Reflectio
-
+## Reflection
 During the development, we maintained a structured workflow with protected main branches, requiring pull requests and code reviews. Manual tests were conducted on each branch before merging PRs. The project was both enjoyable and educational.
-
 
 ## Getting started
 
@@ -20,8 +18,8 @@ You need to have the following installed in order to run this project:
 - Java 17 or later
 - Python 3.12 or later
 - A Maven environment
+  
 ### Setting Up the server
-
 1. Open a terminal and navigate to the `server` directory, located at the root of the project.
 2. Run the following command to install all the dependencies:
 ```console
