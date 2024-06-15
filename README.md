@@ -17,6 +17,11 @@ Welcome to the ClassQueue! This system is for a school project and demonstrates 
 ## Project Overview
 ClassQueue is a school project that allowed students to pick their languages or frameworks. We chose Spring Boot and Python to demonstrate an event-driven architecture, which is more efficient than constantly streaming data and can earn a High-Performance Mark (HPM).
 
+The backend server is built with Java and Spring Boot, handling the core logic and interactions. Two main worker components, `PublisherWorker` and `ResponderWorker`, manage the communication and processing:
+- **PublisherWorker:** Broadcasts updates to the clients, ensuring they receive the latest queue status and messages.
+- **ResponderWorker:** Handles incoming client requests, processes them, and performs necessary actions like updating queue status and responding to heartbeats.
+
+
 ## Reflection
 During development, we maintained a structured workflow with protected main branches, requiring pull requests and code reviews. Manual tests were conducted on each branch before merging PRs. The project was both enjoyable and educational.
 
@@ -24,45 +29,50 @@ During development, we maintained a structured workflow with protected main bran
 You need to have the following installed to run this project:
 - Java 17 or later
 - Python 3.12 or later
-- A Maven environment
+- Maven
+- ZeroMQ
   
-### Setting Up the server
-1. Open a terminal and navigate to the `server` directory at the project's root.
-2. Run the following command to install all the dependencies:
-```console
-mvn install
-```
-After the dependencies have been installed successfully, use the following command to run the server:
-```console
-mvn spring-boot:run
-```
-### Setting Up the client
+### Setting Up the Server
+1. Clone the repository:
+    ```console
+    git clone https://github.com/RaymondSWE/ClassQueue.git
+    cd ClassQueue/server
+    ```
+2. Install dependencies and build the project:
+    ```console
+    mvn install
+    ```
+3. Run the server:
+    ```console
+    mvn spring-boot:run
+    ```
 
-1. The client directory is located at the root of the project. Open a terminal and navigate to python-client.
-2. Run the following command to install the required libraries:
-   
-```console
-pip install -r requirements.txt
-```
+### Setting Up the Client
+1. Navigate to the `python-client` directory:
+    ```console
+    cd ../python-client
+    ```
+2. Install the required libraries:
+    ```console
+    pip install -r requirements.txt
+    ```
+3. Run the client applications located in src folder:
+    ```console
+    python student.py
+    python supervisor_client.py
+    ```
 
-3. The student and supervisor client is located under python-client/src and can be run using the following command:
-   
-```console
-python student.py
-python supervisor_client.py
-```
 
 ## API Documentation
 For detailed API documentation, please refer to the [API Documentation](https://github.com/RaymondSWE/ClassQueue/blob/main/API_DOCUMENTATION.md).
 
 ## 🤝 Contributing
-
 Contributions are welcome! Please follow these steps:
-
 1. Fork the repository.
 2. Create a new branch.
 3. Make your changes.
 4. Submit a pull request.
+
 
 
 ## 📄 License
