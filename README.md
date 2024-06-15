@@ -1,26 +1,33 @@
-# Distributed queue system - API documentation
+# ClassQueue - Distributed Queue System
 
-
-## Authors
- * **Nibar Ahmed** (a21nibar)
- * **Raman Mohammed** (a21rammo)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/RaymondSWE/ClassQueue/actions)
+[![GitHub stars](https://img.shields.io/github/stars/RaymondSWE/ClassQueue)](https://github.com/RaymondSWE/ClassQueue/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/RaymondSWE/ClassQueue)](https://github.com/RaymondSWE/ClassQueue/network)
+[![GitHub license](https://img.shields.io/github/license/RaymondSWE/ClassQueue)](https://github.com/RaymondSWE/ClassQueue/blob/main/LICENSE)
 
 ## Introduction
-This project implements a distributed queue system with a client-server architecture. The server is built using Java and Spring Boot, while the client is developed in Python with a Tkinter-based GUI.
+Welcome to the ClassQueue! This system is for a school project and demonstrates a distributed queue with a client-server architecture using ZeroMQ for messaging. The server is built with Java and Spring Boot, and the client is developed in Python using a Tkinter-based GUI. We initially considered using Electron but switched to Python for better native support for ZeroMQ.
+
+## Features
+- **Event-Driven Architecture:** Efficient handling of events using ZeroMQ.
+- **Multi-Client Support:** Multiple clients can connect and join the queue.
+- **Supervisor and Student Roles:** Different functionalities based on user roles.
+- **Heartbeat Mechanism:** Maintains queue integrity by checking client activity.
+
+## Project Overview
+ClassQueue is a school project that allowed students to pick their languages or frameworks. We chose Spring Boot and Python to demonstrate an event-driven architecture, which is more efficient than constantly streaming data and can earn a High-Performance Mark (HPM).
 
 ## Reflection
-During the development, we maintained a structured workflow with protected main branches, requiring pull requests and code reviews. Manual tests were conducted on each branch before merging PRs. The project was both enjoyable and educational.
+During development, we maintained a structured workflow with protected main branches, requiring pull requests and code reviews. Manual tests were conducted on each branch before merging PRs. The project was both enjoyable and educational.
 
 ## Getting started
-
-You need to have the following installed in order to run this project:
-
+You need to have the following installed to run this project:
 - Java 17 or later
 - Python 3.12 or later
 - A Maven environment
   
 ### Setting Up the server
-1. Open a terminal and navigate to the `server` directory, located at the root of the project.
+1. Open a terminal and navigate to the `server` directory at the project's root.
 2. Run the following command to install all the dependencies:
 ```console
 mvn install
@@ -46,153 +53,24 @@ python supervisor_client.py
 ```
 
 ## API Documentation
+For detailed API documentation, please refer to the [API Documentation](https://github.com/RaymondSWE/ClassQueue/blob/main/API_DOCUMENTATION.md).
 
-### Requests and responses
+## 🤝 Contributing
 
-#### Connection request
-Sent to the server to verify that a connection has been established
-```json
-{
-    "type": "startup",
-    "client_number": "<a unique number for the client>"
-}
-```
-server response:
-```
+Contributions are welcome! Please follow these steps:
 
-"Acknowledged startup"
-
-```
-#### Enter the queue
-Indicates that a user with specified name wants to enter the queue.
-A single user may connect through several clients. If another client with the same name is already connected, both clients hold the same place in the queue.
-```json
-{
-    "enterQueue": true,
-    "name": "<name>",
-    "clientId": "<unique id string>"
-}
-```
-
-server response:
-
-```json
-{
-    "ticket": <index represents the users' place in the queue>
-     "name":"<name>"
-}
-```
-
-#### Heartbeats
-Sent to the server in order to maintain the students' place in the queue. If the client is inactive for more than 4 seconds it's removed from the queue.
-
-```json
-{
-    "type": "heartbeat"
-    "name":"<student name>"
-    "clientID":"<unique id string>"
-}
-```
-
-server response:
-```
-An empty JSON string
-```
-
-#### Connect as supervisor
-Sent to the server in order to connect as a supervisor instead of a student
-```json
-{
-    "type": "supervisor"
-     "supervisorName": "<name of the supervisor>"
-     "addSupervisor": true
-}
-```
-
-server response:
-```json
-{
-    "status":"<success>"
-    "message": "<a message indicating that the supervisor was added>"
-}
-```
-
-#### Attend the queue
-Sent to the server when a supervisor attends a student in the queue
-```json
-{
-    "message":"<the message that is going to be sent to the student when they are informed about their turn to be attended.>"
-     "type":"supervisor", "attendStudent":true
-    "supervisorName": "<name of the supervisor that is going to attend the student>"
-}
-```
-server response:
-```json
-{
-    "status": "success"
-     "mesage":"<a message which indicates that a student is being attended>"
-}
-```
-#### Change the supervisor status to available
-Sent to the server in order to make the supervisor available
-```json
-{
-"type": "supervisor"
-     "makeAvailable": true
-     "supervisorName":"<name of the supervisor that is going to be made available>"
-}
-```
-server response:
-```json
-{
-    "status": "<success>",
-    "message":"<message which indicates that the supervisors' status has been changed>"
-}
-```
-#### Errors
-The server sends the following when an error is encountered:
-```json
-{
-    "message": "<a description of the error>"
-     "error":"<error type, invalidMessage>"
-}
-```
-### Broadcasts
-#### Queue status
-Sent to all clients in response to any changes in the queue, for example new clients entering the queue or students receiving supervision. The queue status is an ordered array of Queue tickets, where the first element represent the first student in the queue.
-```json
-
-{
-    "ticket": <index>
-     "name": "<name>"
-}, 
-
-```
-#### Supervisor status
-Sent to all clients in response to any changes in the list of supervisors, for example new supervisors connecting or when the status of a supervisor changes.
-
-```json
-{
-    "name": <name>
-     "status": "pending"|"available"|"occupied",
-    "client": undefined|{"ticket":<index>"
-    "studentName":"<name>"
-}}
-```
-
-#### Student messages
-the server sends messages specified by the supervisor to the student that is being attended.
-```json
-{
-    "supervisor":"<name of supervisor>",
-    "message":"<message from supervisor>"
-}
-```
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request.
 
 
+## 📄 License
 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-#### AsyncConfig
-- Configuration to enable asynchronous execution. The method will only require @async annotation to be async.
+---
+
+Thank you for visiting ClassQueue Don't forget to ⭐ this repository if you find it useful.
 
 
