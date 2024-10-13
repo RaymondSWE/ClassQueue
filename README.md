@@ -21,7 +21,6 @@ The backend server is built with Java and Spring Boot, handling the core logic a
 - **PublisherWorker:** Broadcasts updates to the clients, ensuring they receive the latest queue status and messages.
 - **ResponderWorker:** Handles incoming client requests, processes them, and performs necessary actions like updating queue status and responding to heartbeats.
 
-
 ## Reflection
 During development, we maintained a structured workflow with protected main branches, requiring pull requests and code reviews. Manual tests were conducted on each branch before merging PRs. The project was both enjoyable and educational.
 
@@ -65,14 +64,6 @@ You need to have the following installed to run this project:
 
 ## API Documentation
 For detailed API documentation, please refer to the [API Documentation](https://github.com/RaymondSWE/ClassQueue/blob/main/API_DOCUMENTATION.md).
-
-## 🤝 Contributing
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch.
-3. Make your changes.
-4. Submit a pull request.
-
 
 
 ## 📄 License
